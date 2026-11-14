@@ -27,13 +27,14 @@ body{
   -webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;
 }
 .wrap{max-width:640px;margin:0 auto;padding:0 15px}
-/* 顶部：单一深色块 + 大字号读数，让"今天多少"成为第一眼焦点 */
+/* 顶部：浅色卡片式，大字号读数仍然是第一眼焦点 */
 header.top{
   position:relative;overflow:hidden;
-  background:var(--brand);
-  color:#fff;
-  padding:calc(18px + constant(safe-area-inset-top)) 20px 22px;padding:calc(18px + env(safe-area-inset-top)) 20px 22px;
-  border-radius:0 0 18px 18px;
+  background:#fff;
+  color:var(--ink);
+  padding:calc(18px + constant(safe-area-inset-top)) 20px 20px;padding:calc(18px + env(safe-area-inset-top)) 20px 20px;
+  border-bottom:1px solid var(--line);
+  border-radius:0 0 16px 16px;
   box-shadow:none;
 }
 header .toprow{position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;max-width:640px;margin:0 auto}
@@ -41,19 +42,19 @@ header h1{margin:0;font-size:25px;font-weight:800;letter-spacing:.4px;line-heigh
 header .sub{margin-top:5px;font-size:16px;opacity:.92;letter-spacing:.2px}
 .avatar{
   width:58px;height:58px;border-radius:50%;flex:0 0 auto;
-  background:rgba(255,255,255,.12);
-  border:1.5px solid rgba(255,255,255,.26);
+  background:#f2f3f4;
+  border:1.5px solid var(--line);
   display:flex;align-items:center;justify-content:center;
-  font-size:21px;font-weight:800;color:#fff;cursor:pointer;
+  font-size:21px;font-weight:800;color:var(--ink);cursor:pointer;
   transition:transform .15s, background .15s;
 }
-.avatar:active{transform:scale(.94);background:rgba(255,255,255,.26)}
+.avatar:active{transform:scale(.94);background:#e7e9ea}
 /* 顶部大读数：血压是主角 */
 .hero-reading{
   position:relative;margin-top:20px;display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;
 }
 .hero-reading .val{
-  font-size:62px;font-weight:800;line-height:.95;letter-spacing:-2.5px;
+  font-size:62px;font-weight:800;line-height:.95;letter-spacing:-2.5px;color:var(--ink);
   font-variant-numeric:tabular-nums;
 }
 .hero-reading .val small{font-size:20px;font-weight:600;letter-spacing:0;opacity:.75;margin-left:4px}
@@ -61,7 +62,7 @@ header .sub{margin-top:5px;font-size:16px;opacity:.92;letter-spacing:.2px}
 .hero-reading .tag{
   display:inline-flex;align-items:center;gap:6px;
   padding:7px 14px;border-radius:999px;font-size:16px;font-weight:800;
-  background:rgba(255,255,255,.9);color:var(--brand2);margin-bottom:10px;
+  background:#eef0f1;color:var(--ink);margin-bottom:10px;
 }
 .hero-reading .tag.ok{background:#d9f5e8;color:#0a6b48}
 .hero-reading .tag.warn{background:#fdefd6;color:#8a5707}
@@ -107,10 +108,10 @@ select{background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http:
 button{font-family:inherit;cursor:pointer;border:none;border-radius:18px;font-weight:700}
 .btn-main{
   width:100%;margin-top:18px;padding:19px;font-size:24px;color:#fff;letter-spacing:.5px;
-  background:var(--accent);box-shadow:none;
+  background:var(--ink);box-shadow:none;
   transition:background .15s;
 }
-.btn-main:active{background:var(--accent2)}
+.btn-main:active{background:#000}
 .btn-ghost{
   background:#fff;color:var(--ink);padding:15px 16px;font-size:18px;
   width:100%;margin-top:10px;text-align:center;font-weight:700;
@@ -168,10 +169,10 @@ svg.chart{width:100%;height:auto;display:block;overflow:visible}
 .fab button{
   pointer-events:auto;width:100%;max-width:560px;margin:0 auto;display:block;
   padding:18px;border-radius:14px;font-size:23px;color:#fff;letter-spacing:.6px;
-  background:var(--accent);box-shadow:none;
+  background:var(--brand);box-shadow:none;
   transition:transform .1s, background .15s;
 }
-.fab button:active{transform:scale(.99);background:var(--accent2)}
+.fab button:active{transform:scale(.99);background:var(--brand2)}
 .toast{
   position:fixed;left:50%;bottom:140px;transform:translateX(-50%) translateY(16px) scale(.96);
   background:rgba(19,37,35,.96);color:#fff;padding:14px 26px;border-radius:16px;
@@ -203,14 +204,15 @@ body.modal-open{overflow:hidden}
 @keyframes sheetUp{from{transform:translateY(24px);opacity:.6}to{transform:translateY(0);opacity:1}}
 .modal .head{
   position:sticky;top:0;z-index:2;
-  background:var(--brand);
-  color:#fff;padding:18px 20px;font-size:20px;font-weight:800;letter-spacing:.3px;
+  background:#fff;
+  color:var(--ink);padding:16px 18px;font-size:19px;font-weight:800;letter-spacing:.3px;
   display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid var(--line);
   border-radius:0;
 }
 .modal .head button{
-  background:rgba(255,255,255,.16);color:#fff;font-size:22px;line-height:1;
-  width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:#f2f3f4;color:var(--ink2);font-size:20px;line-height:1;
+  width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
 }
 .modal .body{padding:18px 20px}
 .bigbtn{
@@ -280,10 +282,10 @@ body.modal-open{overflow:hidden}
 
 /* ===== 2026-11-15 新增：问一问医学 AI（小安） ===== */
 .vb-float{display:none;align-items:center;gap:8px;padding:11px 16px;border-radius:999px;
-  background:rgba(255,255,255,.10);color:#fff;border:1.5px solid rgba(255,255,255,.28);
+  background:#fff;color:var(--ink);border:1.5px solid #d8dcdf;
   font-size:17px;font-weight:800;letter-spacing:.2px;transition:transform .1s,background .15s}
-.vb-float:active{transform:scale(.95);background:rgba(255,255,255,.20)}
-.vb-float .vb-dot{width:9px;height:9px;border-radius:50%;background:#c9ced3;flex:0 0 auto}
+.vb-float:active{transform:scale(.95);background:#eff1f2}
+.vb-float .vb-dot{width:9px;height:9px;border-radius:50%;background:#9aa3aa;flex:0 0 auto}
 /* 手机上：小安做成页面内大按钮，同时底部有个圆形悬浮键，随时随地能问 */
 @media (max-width:700px){.vb-float{display:inline-flex}}
 .vb-fab{position:fixed;right:16px;bottom:calc(104px + env(safe-area-inset-bottom));z-index:55;
@@ -291,8 +293,8 @@ body.modal-open{overflow:hidden}
   background:var(--brand);color:#fff;
   box-shadow:0 6px 16px -6px rgba(20,24,28,.5);transition:transform .1s}
 .vb-fab:active{transform:scale(.94)}
-.vb-fab .vb-fab-t{font-size:19px;font-weight:800;line-height:1.1}
-.vb-fab .vb-fab-s{font-size:12px;opacity:.85;line-height:1.2}
+.vb-fab .vb-fab-t{font-size:15px;font-weight:800;line-height:1.1;white-space:nowrap}
+.vb-fab .vb-fab-s{font-size:11px;opacity:.85;line-height:1.2}
 .vb-intro{background:#f4f5f6;border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:19px;line-height:1.6;color:var(--ink2)}
 .vb-row{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
 .vb-quick{flex:1 1 46%;min-height:52px;padding:12px;border-radius:12px;background:#fff;border:1.5px solid #d8dcdf;
@@ -307,8 +309,8 @@ body.modal-open{overflow:hidden}
 .vb-msg.sys{justify-content:center}
 .vb-msg.sys .bub{background:#fffaf0;border:1px solid #f2e0bd;color:#7d5307;font-size:19px;text-align:center}
 .vb-msg.err .bub{background:#fdf1ef;border:1px solid #f5cdc7;color:#9b2b22;font-size:20px;font-weight:600}
-.vb-mic{width:100%;margin-top:0;padding:22px 16px;font-size:25px;font-weight:800;color:#fff;border-radius:14px;
-  background:var(--brand);box-shadow:none;transition:transform .1s,background .15s}
+.vb-mic{width:100%;margin-top:0;padding:22px 16px;font-size:25px;font-weight:800;color:var(--ink);border-radius:14px;
+  background:#fff;border:1.5px solid #cfd4d8;box-shadow:none;transition:transform .1s,background .15s}
 .vb-mic:active{transform:scale(.99)}
 .vb-mic.on{background:var(--bad);box-shadow:0 0 0 4px rgba(192,51,43,.16)}
 .vb-mic[disabled]{opacity:.55;box-shadow:none}
@@ -317,7 +319,7 @@ body.modal-open{overflow:hidden}
   background:#fff;color:var(--ink);font-family:inherit;text-align:left}
 .vb-input:focus{outline:none;border-color:var(--ink2);box-shadow:0 0 0 4px rgba(20,24,28,.08)}
 .vb-send{width:100%;margin-top:10px;padding:16px;font-size:20px;color:#fff;border-radius:12px;
-  background:var(--brand)}
+  background:var(--ink)}
 .vb-send[disabled]{opacity:.5}
 .vb-keyrow{display:flex;gap:8px;margin-top:8px}
 .vb-keyrow .vb-mic{flex:1;min-width:0}
@@ -338,17 +340,57 @@ body.modal-open{overflow:hidden}
 .vb-msg.ai .bub{background:transparent;border:none;border-radius:0;max-width:100%;padding:4px 2px}
 .vb-msg.ai{padding-right:6px}
 /* 用户的提问：右侧浅色块，宽度收窄，和大段回答区分开 */
-.vb-msg.me .bub{max-width:82%;padding:10px 14px;font-weight:600}
+.vb-msg.me .bub{max-width:92%;padding:10px 14px;font-weight:600}
 .vb-msg.sys .bub{border-radius:10px}
 .vb-msg.err .bub{border-radius:10px}
 /* 每题一段，段间距比行距大，长回答才不糊成一片 */
 .vb-msg.ai .bub{font-size:20px;line-height:1.75}
 .vb-msg+.vb-msg.ai{margin-top:2px}
 /* 底部输入条：单行圆角输入框 + 右侧发送按钮 */
-.vb-composer{position:sticky;bottom:0;margin-top:10px;padding-top:10px;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,#fff 22%)}
-.vb-sendbar{display:flex;gap:8px;align-items:flex-end}
-.vb-sendbar .vb-input{flex:1;min-width:0;border-radius:12px;padding:14px 14px;font-size:19px}
-.vb-sendbar .vb-send{width:auto;flex:0 0 auto;margin-top:0;min-width:84px;padding:15px 18px;font-size:19px}
+.vb-composer{position:sticky;bottom:0;margin-top:10px;padding-top:8px;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,#fff 18%)}
+/* 输入条：一个圆角框，左边语音、中间输入、右边发送（圆形箭头） */
+.vb-sendbar{display:flex;gap:8px;align-items:center;border:1.5px solid #d8dcdf;border-radius:26px;padding:6px 8px;background:#fff}
+.vb-sendbar:focus-within{border-color:#b9c0c6}
+.vb-sendbar .vb-input{flex:1;min-width:0;border:none;background:transparent;border-radius:0;padding:10px 4px;font-size:19px;box-shadow:none}
+.vb-sendbar .vb-input:focus{box-shadow:none}
+.vb-sendbar .vb-mic{width:44px;height:44px;flex:0 0 auto;min-width:0;margin:0;padding:0;border-radius:50%;
+  font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center}
+.vb-sendbar .vb-send{width:44px;height:44px;flex:0 0 auto;min-width:0;margin:0;padding:0;border-radius:50%;
+  font-size:21px;font-weight:800;line-height:1;display:flex;align-items:center;justify-content:center}
+.vb-sendbar .vb-send[disabled]{opacity:.4}
+/* 底部小字：一行免责说明 + 清空 */
+/* 天气卡片：一行读数 + 三天预报 + 穿衣建议 */
+.wx-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.wx-city{font-size:15px;color:var(--sub)}
+.wx-now{display:flex;align-items:baseline;gap:10px;margin:6px 0 12px}
+.wx-temp{font-size:44px;font-weight:800;letter-spacing:-1.5px;font-variant-numeric:tabular-nums;line-height:1}
+.wx-desc{font-size:18px;color:var(--ink2);font-weight:600}
+.wx-days{display:flex;gap:8px}
+.wx-day{flex:1;text-align:center;background:#f7f8f9;border:1px solid var(--line);border-radius:10px;padding:8px 4px}
+.wx-day .d{font-size:14px;color:var(--sub)}
+.wx-day .t{font-size:18px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
+.wx-day .w{font-size:14px;color:var(--sub);margin-top:2px}
+.wx-tip{font-size:17px;line-height:1.65;color:var(--ink2);margin-top:12px;padding:10px 12px;background:#f7f8f9;border-radius:10px}
+.wx-get{width:100%;padding:14px;font-size:18px;font-weight:700;color:var(--ink);background:#fff;border:1px solid #d8dcdf;border-radius:10px}
+.wx-get:active{background:#eff1f2}
+.vb-hint{font-size:16px;color:#8a9096;margin:0 0 10px;line-height:1.5}
+/* 快捷提问：输入框上方的小胶囊，像通用 AI 的推荐问题 */
+.vb-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.vb-chips::-webkit-scrollbar{display:none}
+.vb-chip{flex:0 0 auto;padding:9px 15px;border-radius:999px;border:1px solid #d8dcdf;background:#fff;
+  color:var(--ink2);font-size:16px;font-weight:600;white-space:nowrap;line-height:1.2}
+.vb-chip:active{background:#eff1f2}
+.vb-log:has(.vb-msg)~.vb-composer .vb-chips{display:none}
+@media print{.vb-chips{display:none!important}}
+.vb-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;font-size:15px;color:#8a9096}
+.vb-foot-btn{background:none;border:none;padding:6px 2px;font-size:15px;color:#8a9096;font-weight:600}
+.vb-foot-btn:active{color:#1b1e22}
+/* 空状态欢迎语：居中，像通用 AI 的首页 */
+.vb-hello{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:26px 10px 10px;min-height:180px}
+.vb-hello-mark{width:56px;height:56px;border-radius:50%;background:#f0f1f2;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:var(--ink);margin-bottom:16px}
+.vb-hello-t{font-size:23px;font-weight:800;color:var(--ink)}
+.vb-hello-s{font-size:17px;color:#8a9096;margin-top:8px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -368,6 +410,14 @@ body.modal-open{overflow:hidden}
 <main class="wrap">
   <section class="card" id="adviceCard" style="display:none">
     <div class="warnbar" id="adviceBox"></div>
+  </section>
+
+  <section class="card no-print" id="weatherCard" style="display:none">
+    <div class="wx-top"><h2>郑州天气</h2><span class="wx-city" id="wxUpdated"></span></div>
+    <div class="wx-now"><span class="wx-temp" id="wxTemp">--</span><span class="wx-desc" id="wxDesc"></span></div>
+    <div class="wx-days" id="wxDays"></div>
+    <div class="wx-tip" id="wxTip"></div>
+    <button class="wx-get" id="wxGet" type="button">看看郑州今天冷不冷</button>
   </section>
 
   <section class="card no-print" id="entryCard">
@@ -1176,6 +1226,105 @@ function renderChart(){
   var ex=computeExtra(p);
   var el2=document.getElementById('extraLine');
   if(el2){ el2.innerHTML = ex ? extraText(ex) : ''; }
+}
+
+/* ---------- 天气与穿衣建议 ---------- */
+/* 郑州坐标；想换城市只改这三行即可。接口是 Open-Meteo，免注册、不需要密钥。 */
+var WX_LAT=34.7466, WX_LON=113.6253, WX_CITY='郑州';
+var WX_CACHE_MS=30*60*1000;
+
+/* 把接口的天气代码翻成老人看得懂的话 */
+function wxText(code){
+  if(code===0) return '晴';
+  if(code===1) return '晴间多云';
+  if(code===2) return '多云';
+  if(code===3) return '阴';
+  if(code===45||code===48) return '有雾';
+  if(code>=51&&code<=57) return '毛毛雨';
+  if(code>=61&&code<=67) return '有雨';
+  if(code>=71&&code<=77) return '有雪';
+  if(code>=80&&code<=82) return '阵雨';
+  if(code>=85&&code<=86) return '阵雪';
+  if(code>=95) return '有雷雨';
+  return '多云';
+}
+
+/* 按最高温、最低温、昼夜温差给穿衣建议。宁可保守，不让老人着凉。 */
+function wxClothes(tmax,tmin){
+  var parts=[];
+  var t=Math.round((tmax+tmin)/2);
+  if(t<=0) parts.push('很冷，羽绒服、棉帽手套都穿上');
+  else if(t<=5) parts.push('冷，厚外套或棉服别脱');
+  else if(t<=10) parts.push('偏冷，穿厚外套');
+  else if(t<=15) parts.push('天凉，一件外套加毛衣正好');
+  else if(t<=20) parts.push('温度舒服，穿件薄外套就行');
+  else if(t<=26) parts.push('暖和，长袖单衣够了');
+  else parts.push('热，穿短袖，注意多喝水');
+  if((tmax-tmin)>=9) parts.push('早晚和中午差 '+Math.round(tmax-tmin)+' 度，出门带件能加减的外套');
+  if(tmin<=5) parts.push('早上出门记得戴帽子围巾');
+  return parts.join('；')+'。';
+}
+
+function wxRender(d){
+  var card=$('weatherCard');
+  if(!card||!d||!d.daily||!d.daily.time||!d.daily.time.length) return;
+  var mx=d.daily.temperature_2m_max, mn=d.daily.temperature_2m_min, wc=d.daily.weather_code;
+  $('wxTemp').textContent=Math.round(mx[0])+'°';
+  $('wxDesc').textContent=wxText(wc[0])+'　'+Math.round(mn[0])+'~'+Math.round(mx[0])+'℃';
+  var names=['今天','明天','后天'];
+  var days='';
+  for(var i=0;i<Math.min(3,mx.length);i++){
+    days+='<div class="wx-day"><div class="d">'+names[i]+'</div>'+
+      '<div class="t">'+Math.round(mn[i])+'~'+Math.round(mx[i])+'°</div>'+
+      '<div class="w">'+wxText(wc[i])+'</div></div>';
+  }
+  $('wxDays').innerHTML=days;
+  $('wxTip').textContent='穿衣：'+wxClothes(mx[0],mn[0]);
+  var g=document.querySelector('#weatherCard .wx-get'); if(g) g.style.display='none';
+  var hh=new Date().getHours();
+  $('wxUpdated').textContent=WX_CITY+' · '+(hh<12?'早上更新':'下午更新');
+  card.style.display='';
+}
+
+function wxCacheKey(){ return 'family-health-weather-'+WX_LAT; }
+/* 先用本机缓存（30 分钟内有效），没有就显示一个「看天气」按钮。
+   这样页面打开时不会自己联网，老人不想看天气就完全不产生任何请求。 */
+function loadWeather(){
+  try{
+    var raw=localStorage.getItem(wxCacheKey());
+    if(raw){
+      var c=JSON.parse(raw);
+      if(c&&c.t&&(Date.now()-c.t)<WX_CACHE_MS&&c.d){ wxRender(c.d); return; }
+    }
+  }catch(e){}
+  showWxAsk();
+}
+function showWxAsk(){
+  var card=$('weatherCard');
+  if(!card) return;
+  card.style.display='';
+  $('wxTemp').textContent='--';
+  $('wxDesc').textContent='';
+  $('wxDays').innerHTML='';
+  $('wxTip').textContent='';
+  var b=document.querySelector('#weatherCard .wx-get');
+  if(b){ b.style.display=''; b.disabled=false; b.textContent='看看'+WX_CITY+'今天冷不冷'; b.onclick=fetchWeather; }
+}
+function fetchWeather(){
+  var btn=document.querySelector('#weatherCard .wx-get');
+  if(btn){ btn.disabled=true; btn.textContent='正在查天气…'; }
+  var url='https://api.open-meteo.com/v1/forecast?latitude='+WX_LAT+'&longitude='+WX_LON+
+    '&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Asia%2FShanghai&forecast_days=3';
+  if(typeof fetch!=='function'){ showWxAsk(); return; }
+  fetch(url).then(function(r){ return r.json(); }).then(function(d){
+    if(!d||!d.daily) throw new Error('bad');
+    wxRender(d);
+    try{ localStorage.setItem(wxCacheKey(),JSON.stringify({t:Date.now(),d:d})); }catch(e){}
+  }).catch(function(){
+    var tip=$('wxTip');
+    if(tip) tip.textContent='这会儿查不到天气，可能是没联网。血压照常记就行。';
+    if(btn){ btn.disabled=false; btn.textContent='再试一次'; }
+  });
 }
 
 /* ---------- 最近记录 ---------- */
@@ -2211,32 +2360,34 @@ function openAssistant(presetText){
   if(!askPassOk()){ openPassGate(presetText); return; }
   var noKey=!askHasKey();
   var micOk=!!askMicSupported();
-  var h='<div class="vb-intro">我是小安，一个医学 AI。可以问我血压、吃药、吃什么、该不该去医院。'+
-    (micOk?'按住下面的大按钮说话就行。':'这台手机的浏览器不能语音，请在下面打字问。')+'</div>'+
-    (noKey?('<div class="warnbar caution" style="margin-top:10px">还没有填 AI 密钥，小安暂时不能回答。'+
-      '<br>点下面的「填密钥」后，把服务商给你的那一串字符粘贴进去就行。</div>'):'')+
-    (askEmbedded()?('<div class="vb-note" style="margin-top:8px">这台设备不用设置，直接用。</div>'):'')+
+  // 版式对齐通用 AI 对话：上方对话区，下方一个圆角输入框，不放介绍块和按钮墙
+  var h=
+    (micOk?'':'<div class="vb-hint">这台手机的浏览器不能语音，请在下面打字问。</div>')+
+    (noKey?('<div class="warnbar caution" style="margin:0 0 10px">还没有填 AI 密钥，小安暂时不能回答。<br>点下面的「填密钥」，把服务商给的那一串粘贴进去。</div>'):'')+
     '<div class="vb-log" id="vbLog"></div>'+
     '<div class="vb-composer">'+
       '<div class="vb-status" id="vbStatus" style="display:none"></div>'+
-      '<div class="vb-sendbar">'+
-        '<input class="vb-input" id="vbText" type="text" placeholder="在这里打字问小安" autocomplete="off" maxlength="1000">'+
-        '<button class="vb-send" id="vbSend" type="button">发送</button>'+
+      '<div class="vb-chips">'+
+        '<button class="vb-chip" type="button" data-vbq="我这次的血压要紧吗？">我这次的血压要紧吗</button>'+
+        '<button class="vb-chip" type="button" data-vbq="平时吃饭要注意什么？">吃饭要注意什么</button>'+
+        '<button class="vb-chip" type="button" data-vbq="今天忘了吃药，现在要不要补？">忘了吃药怎么办</button>'+
+        '<button class="vb-chip" type="button" data-vbq="俺孩儿最近怎么样？">问问俺孩儿</button>'+
       '</div>'+
-      '<div class="vb-keyrow">'+
-        '<button class="vb-mic" id="vbMic" type="button"'+(micOk?'':' disabled')+'>🎤 按住说话</button>'+
+      '<div class="vb-sendbar">'+
+        '<button class="vb-mic" id="vbMic" type="button" aria-label="按住说话"'+(micOk?'':' disabled')+'>🎤</button>'+
+        '<input class="vb-input" id="vbText" type="text" placeholder="'+(micOk?'发消息，或按住左边说话':'这台手机不能语音，在这里打字问')+'" autocomplete="off" maxlength="1000">'+
+        '<button class="vb-send" id="vbSend" type="button" aria-label="发送">↑</button>'+
       '</div>'+
       (noKey?'<button class="bigbtn primary" id="vbKeyNow" style="margin-top:10px">🔑 填密钥</button>':'')+
-      '<button class="bigbtn danger-ghost" id="vbClear" style="margin-top:10px">清空对话</button>'+
-    '</div>'+
-    '<div class="vb-note">小安讲的是一般健康知识，不能代替医生看病、开药。真不舒服请马上联系家人或打 120。</div>';
+      '<div class="vb-foot"><span>小安是健康助手，不能代替医生看病开药</span><button class="vb-foot-btn" id="vbClear" type="button">清空</button></div>'+
+    '</div>';
   showModal('问问小安',h,null);
   // 对话弹窗用 chat 版式：大屏居中、对话区独立滚动
   var m=$('modal'); if(m) m.classList.add('chat');
   var sheetEl=document.querySelector('.modal .sheet');
   if(sheetEl){ sheetEl.style.display='flex'; sheetEl.style.flexDirection='column'; }
   // 历史对话逐条用 DOM 拼进去（不走 innerHTML），用户说的话不会被当成标签解析
-  if(!askState.history.length) askAppend('sys','先在这里打字，或者按住下面的按钮说话。');
+  if(!askState.history.length){ showHello(); }
   else askState.history.forEach(function(m){ askAppend(m.role,m.content); });
   bindAssistantEvents();
   if(noKey){ var k=$('vbKeyNow'); if(k) k.onclick=openAskSettings; }
@@ -2246,9 +2397,18 @@ function askBubbleHtml(role,text,extra){
   var cls=role==='user'?'me':(role==='error'?'ai err':(role==='sys'?'sys':'ai'));
   return '<div class="vb-msg '+cls+'"><div class="bub">'+esc(text)+'</div></div>';
 }
+/* 空对话时的欢迎语：只有一句，像通用 AI 的首页 */
+/* 胶囊显隐由 CSS 的 :has(.vb-msg) 控制：一旦有消息就自动收起 */
+function showHello(){
+  var log=$('vbLog');
+  if(!log) return;
+  log.innerHTML='<div class="vb-hello"><div class="vb-hello-mark">安</div><div class="vb-hello-t">你好，我是小安</div><div class="vb-hello-s">血压、吃药、吃什么、该不该去医院，都可以问我</div></div>';
+}
 function askAppend(role,text){
   var log=$('vbLog');
   if(!log) return;
+  var hello=log.querySelector('.vb-hello');
+  if(hello && log.parentNode) hello.parentNode.removeChild(hello);
   var wrap=document.createElement('div');
   wrap.innerHTML=askBubbleHtml(role,text,'');
   var node=wrap.firstChild;
@@ -2384,6 +2544,11 @@ function bindVoiceButton(btn){
 function bindAssistantEvents(){
   var btn=$('vbMic');
   if(btn && !btn.disabled) bindVoiceButton(btn);
+  // 快捷提问胶囊：点一下就等于把这句话发出去
+  var chips=document.querySelectorAll('.vb-chips .vb-chip');
+  Array.prototype.forEach.call(chips,function(c){
+    c.onclick=function(){ sendAsk(c.getAttribute('data-vbq')||c.textContent); };
+  });
   var sendBtn=$('vbSend');
   if(sendBtn) sendBtn.onclick=function(){
     var box=$('vbText'); if(!box) return;
@@ -2651,6 +2816,7 @@ loadAskLog();
 })();
 renderAll();
 autoPickPeriod();   // 首次打开按当前时间预选时段，避免误记成"晨起"
+loadWeather();      // 只读本机缓存；没缓存就显示一个按钮，不自动联网
 
 /* 多标签页保护：另一个标签写入时，本页重新读取，避免整份覆盖 */
 window.addEventListener('storage',function(e){
