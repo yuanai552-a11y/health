@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#2b3238">
+<meta name="theme-color" content="#eaf3f7">
 <title>我的健康小本子</title>
 <style>
 :root{
   /* 简约配色：中性灰白打底 + 顶栏深墨蓝灰 + 唯一的橙色点缀（只给"记录"这个动作） */
-  --bg:#f4f5f6; --bg2:#f7faf9; --card:#ffffff;
-  --ink:#1b1e22; --ink2:#3a4046; --sub:#6a7076; --line:#e5e7e9;
-  --ok:#15704a; --warn:#8a5a00; --bad:#c0332b;
+  --bg:#f7f6f3; --bg2:#fbfaf7; --card:#ffffff;
+  --ink:#23282d; --ink2:#41474d; --sub:#6d7278; --line:#e8e6e1;
+  --ok:#14855a; --warn:#b06f00; --bad:#d23b2f;
   --brand:#2b3238; --brand2:#1c2227; --brand3:#3d454d;
-  --accent:#e2632c; --accent2:#c94a18;
+  --accent:#e8662f; --accent2:#cf4d17;
   --radius:14px; --radius-sm:11px;
   --shadow:0 1px 2px rgba(20,24,28,.05);
   --shadow-lift:0 2px 6px rgba(20,24,28,.07);
@@ -21,7 +21,11 @@
 html,body{margin:0;padding:0}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-  background:var(--bg);
+  background:
+    radial-gradient(120% 55% at 50% -8%, #e4f1f7 0%, rgba(228,241,247,0) 62%),
+    radial-gradient(95% 55% at 102% 104%, #fdeedd 0%, rgba(253,238,221,0) 60%),
+    var(--bg);
+  background-attachment:fixed;
   color:var(--ink);font-size:20px;line-height:1.55;letter-spacing:.01em;
   padding-bottom:calc(140px + constant(safe-area-inset-bottom));padding-bottom:calc(140px + env(safe-area-inset-bottom));
   -webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;
@@ -42,8 +46,9 @@ header h1{margin:0;font-size:25px;font-weight:800;letter-spacing:.4px;line-heigh
 header .sub{margin-top:5px;font-size:16px;opacity:.92;letter-spacing:.2px}
 .avatar{
   width:58px;height:58px;border-radius:50%;flex:0 0 auto;
-  background:#f2f3f4;
+  background:#fff;
   border:1.5px solid var(--line);
+  box-shadow:0 1px 2px rgba(20,24,28,.05);
   display:flex;align-items:center;justify-content:center;
   font-size:21px;font-weight:800;color:var(--ink);cursor:pointer;
   transition:transform .15s, background .15s;
@@ -62,7 +67,7 @@ header .sub{margin-top:5px;font-size:16px;opacity:.92;letter-spacing:.2px}
 .hero-reading .tag{
   display:inline-flex;align-items:center;gap:6px;
   padding:7px 14px;border-radius:999px;font-size:16px;font-weight:800;
-  background:#eef0f1;color:var(--ink);margin-bottom:10px;
+  background:#eef6f9;color:#255f7c;margin-bottom:10px;
 }
 .hero-reading .tag.ok{background:#d9f5e8;color:#0a6b48}
 .hero-reading .tag.warn{background:#fdefd6;color:#8a5707}
@@ -71,7 +76,7 @@ header .sub{margin-top:5px;font-size:16px;opacity:.92;letter-spacing:.2px}
 .hero-empty{position:relative;margin-top:18px;font-size:18px;opacity:.9;line-height:1.6}
 .card{
   background:var(--card);border-radius:var(--radius);padding:20px 18px;margin:14px 0;
-  box-shadow:var(--shadow);border:1px solid var(--line);
+  box-shadow:var(--shadow);border:1px solid #ece9e3;
 }
 .card h2{
   margin:0 0 14px;font-size:20px;font-weight:800;letter-spacing:.3px;
@@ -108,10 +113,10 @@ select{background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http:
 button{font-family:inherit;cursor:pointer;border:none;border-radius:18px;font-weight:700}
 .btn-main{
   width:100%;margin-top:18px;padding:19px;font-size:24px;color:#fff;letter-spacing:.5px;
-  background:var(--ink);box-shadow:none;
+  background:#2f6f8f;box-shadow:none;
   transition:background .15s;
 }
-.btn-main:active{background:#000}
+.btn-main:active{background:#255a74}
 .btn-ghost{
   background:#fff;color:var(--ink);padding:15px 16px;font-size:18px;
   width:100%;margin-top:10px;text-align:center;font-weight:700;
@@ -120,9 +125,9 @@ button{font-family:inherit;cursor:pointer;border:none;border-radius:18px;font-we
 .btn-ghost:active{background:#eff1f2}
 .btn-ghost.danger{background:#fdf0ee;color:var(--bad);border-color:#f6dcd8}
 .pill{display:inline-block;padding:5px 13px;border-radius:999px;font-size:15px;font-weight:800;white-space:nowrap;letter-spacing:.2px}
-.pill.ok{background:#dcf4e6;color:var(--ok)}
-.pill.warn{background:#fdefd6;color:var(--warn)}
-.pill.bad{background:#fde3df;color:var(--bad)}
+.pill.ok{background:#dcf6e8;color:#0d6b47}
+.pill.warn{background:#fdefd2;color:#9a5f00}
+.pill.bad{background:#fde2dd;color:#b02e23}
 .pill.none{background:#edf2f1;color:var(--sub)}
 .reading{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
 .reading .num{font-size:52px;font-weight:800;letter-spacing:-1.5px;line-height:1.1;font-variant-numeric:tabular-nums}
@@ -168,11 +173,15 @@ svg.chart{width:100%;height:auto;display:block;overflow:visible}
 }
 .fab button{
   pointer-events:auto;width:100%;max-width:560px;margin:0 auto;display:block;
-  padding:18px;border-radius:14px;font-size:23px;color:#fff;letter-spacing:.6px;
-  background:var(--brand);box-shadow:none;
+  padding:16px;border-radius:14px;font-size:21px;color:#fff;letter-spacing:.6px;
+  background:var(--accent);box-shadow:0 8px 20px -10px rgba(201,74,24,.6);
   transition:transform .1s, background .15s;
 }
-.fab button:active{transform:scale(.99);background:var(--brand2)}
+/* 页面底部留够空间：保证最下面的按钮滚到底时不会被这条悬浮条盖住 */
+body{padding-bottom:calc(190px + constant(safe-area-inset-bottom));padding-bottom:calc(190px + env(safe-area-inset-bottom))}
+/* 正在填血压时把悬浮条收起来——那时不需要它，还会挡住保存按钮 */
+body.editing .fab{display:none}
+.fab button:active{transform:scale(.99);background:var(--accent2)}
 .toast{
   position:fixed;left:50%;bottom:140px;transform:translateX(-50%) translateY(16px) scale(.96);
   background:rgba(19,37,35,.96);color:#fff;padding:14px 26px;border-radius:16px;
@@ -290,8 +299,8 @@ body.modal-open{overflow:hidden}
 @media (max-width:700px){.vb-float{display:inline-flex}}
 .vb-fab{position:fixed;right:16px;bottom:calc(104px + env(safe-area-inset-bottom));z-index:55;
   width:68px;height:68px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  background:var(--brand);color:#fff;
-  box-shadow:0 6px 16px -6px rgba(20,24,28,.5);transition:transform .1s}
+  background:#2f6f8f;color:#fff;
+  box-shadow:0 8px 18px -8px rgba(47,111,143,.65);transition:transform .1s}
 .vb-fab:active{transform:scale(.94)}
 .vb-fab .vb-fab-t{font-size:15px;font-weight:800;line-height:1.1;white-space:nowrap}
 .vb-fab .vb-fab-s{font-size:11px;opacity:.85;line-height:1.2}
@@ -319,7 +328,7 @@ body.modal-open{overflow:hidden}
   background:#fff;color:var(--ink);font-family:inherit;text-align:left}
 .vb-input:focus{outline:none;border-color:var(--ink2);box-shadow:0 0 0 4px rgba(20,24,28,.08)}
 .vb-send{width:100%;margin-top:10px;padding:16px;font-size:20px;color:#fff;border-radius:12px;
-  background:var(--ink)}
+  background:#2f6f8f}
 .vb-send[disabled]{opacity:.5}
 .vb-keyrow{display:flex;gap:8px;margin-top:8px}
 .vb-keyrow .vb-mic{flex:1;min-width:0}
@@ -366,13 +375,45 @@ body.modal-open{overflow:hidden}
 .wx-temp{font-size:44px;font-weight:800;letter-spacing:-1.5px;font-variant-numeric:tabular-nums;line-height:1}
 .wx-desc{font-size:18px;color:var(--ink2);font-weight:600}
 .wx-days{display:flex;gap:8px}
-.wx-day{flex:1;text-align:center;background:#f7f8f9;border:1px solid var(--line);border-radius:10px;padding:8px 4px}
+.wx-day{flex:1;text-align:center;background:#f2f8fb;border:1px solid #dcebf2;border-radius:10px;padding:8px 4px}
 .wx-day .d{font-size:14px;color:var(--sub)}
 .wx-day .t{font-size:18px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
 .wx-day .w{font-size:14px;color:var(--sub);margin-top:2px}
-.wx-tip{font-size:17px;line-height:1.65;color:var(--ink2);margin-top:12px;padding:10px 12px;background:#f7f8f9;border-radius:10px}
+.wx-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:15px;color:var(--ink2);margin:0 0 12px}
+.wx-meta span{white-space:nowrap}
+.wx-hourly{display:flex;gap:6px;overflow-x:auto;margin-top:10px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.wx-hourly::-webkit-scrollbar{display:none}
+.wx-h{flex:0 0 auto;text-align:center;background:#fff;border:1px solid #dcebf2;border-radius:10px;padding:7px 9px;min-width:60px}
+.wx-h .t2{font-size:13px;color:var(--sub)}
+.wx-h .v{font-size:17px;font-weight:800;margin-top:2px}
+.wx-h .p{font-size:12px;color:#2f6f8f;margin-top:1px}
+.wx-aqi{font-size:16px;line-height:1.6;margin-top:10px;padding:10px 12px;border-radius:10px;display:none}
+.wx-aqi.show{display:block}
+.wx-aqi.good{background:#eaf7ef;color:#14603f;border:1px solid #cfe9d9}
+.wx-aqi.mid{background:#fdf7e8;color:#7a5b12;border:1px solid #f2e2c4}
+.wx-aqi.bad{background:#fdeeea;color:#a3301f;border:1px solid #f5cfc7}
+.wx-tip{font-size:17px;line-height:1.65;color:#6b4a12;margin-top:12px;padding:10px 12px;background:#fdf6e9;border:1px solid #f3e4c8;border-radius:10px}
 .wx-get{width:100%;padding:14px;font-size:18px;font-weight:700;color:var(--ink);background:#fff;border:1px solid #d8dcdf;border-radius:10px}
 .wx-get:active{background:#eff1f2}
+/* 吃药打卡：一行一顿药，右边一个大勾 */
+.med-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.med-head h2{margin-bottom:0}
+.med-toggle{flex:0 0 auto;padding:9px 18px;font-size:16px;font-weight:700;color:#2f6f8f;
+  background:#eef6fa;border:1px solid #cfe3ee;border-radius:999px}
+.med-toggle.on{color:#0d6b47;background:#e8f7ef;border-color:#c9e9d8}
+.med-body{margin-top:14px}
+.med-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.med-row:last-of-type{border-bottom:none}
+.med-name{flex:1;min-width:0}
+.med-name .n{font-size:19px;font-weight:800}
+.med-name .t{font-size:15px;color:var(--sub);margin-top:2px}
+.med-chk{width:54px;height:54px;flex:0 0 auto;border-radius:50%;border:2px solid #d8dcdf;background:#fff;
+  font-size:24px;color:#c2c8cd;display:flex;align-items:center;justify-content:center}
+.med-chk.done{background:var(--ok);border-color:transparent;color:#fff;box-shadow:0 4px 12px -6px rgba(20,133,90,.5)}
+.med-stat{margin-top:12px;font-size:16px;color:var(--ink2);background:#f7f9f8;border:1px solid var(--line);
+  border-radius:10px;padding:10px 12px;line-height:1.6}
+.med-stat.warn{background:#fdf7ea;border-color:#f2e2c4;color:#7a5b12}
+.med-warn{font-size:15px;color:#a3301f;margin-top:8px}
 .vb-hint{font-size:16px;color:#8a9096;margin:0 0 10px;line-height:1.5}
 /* 快捷提问：输入框上方的小胶囊，像通用 AI 的推荐问题 */
 .vb-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -415,8 +456,11 @@ body.modal-open{overflow:hidden}
   <section class="card no-print" id="weatherCard" style="display:none">
     <div class="wx-top"><h2>郑州天气</h2><span class="wx-city" id="wxUpdated"></span></div>
     <div class="wx-now"><span class="wx-temp" id="wxTemp">--</span><span class="wx-desc" id="wxDesc"></span></div>
+    <div class="wx-meta" id="wxMeta"></div>
     <div class="wx-days" id="wxDays"></div>
+    <div class="wx-hourly" id="wxHourly"></div>
     <div class="wx-tip" id="wxTip"></div>
+    <div class="wx-aqi" id="wxAqi"></div>
     <button class="wx-get" id="wxGet" type="button">看看郑州今天冷不冷</button>
   </section>
 
@@ -438,18 +482,18 @@ body.modal-open{overflow:hidden}
     </div>
     <div class="warnbar caution" id="hourHint" style="display:none;font-size:17px;margin-top:12px"></div>
     <div class="row">
-      <div><label class="field" for="when">哪天测的</label>      <div><label class="field" for="rounds">量了几遍</label>
-        <select id="rounds">
-          <option value="2">量了2遍（取平均）</option>
-          <option value="1">只量了1遍</option>
-          <option value="3">量了3遍</option>
-        </select>
-      </div>
-
+      <div><label class="field" for="when">哪天测的</label>
         <select id="when">
           <option value="0">今天</option>
           <option value="1">昨天</option>
           <option value="2">前天</option>
+        </select>
+      </div>
+      <div><label class="field" for="rounds">量了几遍</label>
+        <select id="rounds">
+          <option value="2">量了2遍（取平均）</option>
+          <option value="1">只量了1遍</option>
+          <option value="3">量了3遍</option>
         </select>
       </div>
     </div>
@@ -458,6 +502,19 @@ body.modal-open{overflow:hidden}
     <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none">
     <button class="btn-ghost" id="skipBtn" type="button" style="margin-top:10px">今天没量，做个记号</button>
     <div class="hint" style="margin-top:10px">量之前先坐 5 分钟，不说话，胳膊放在桌上与心脏同高。</div>
+  </section>
+
+  <section class="card no-print" id="medCard">
+    <div class="med-head">
+      <h2>今天的药</h2>
+      <button class="med-toggle" id="medToggle" type="button" aria-pressed="false">开启</button>
+    </div>
+    <div class="med-body" id="medBody" style="display:none">
+      <div id="medList"></div>
+      <div class="med-stat" id="medStat"></div>
+    </div>
+    <div class="hint" id="medOff">不需要吃药的话，这一栏不用开。</div>
+    <div class="med-warn" id="medWarn" style="display:none">关闭会清掉已打的勾，不能恢复。</div>
   </section>
 
   <section class="card">
@@ -1228,6 +1285,126 @@ function renderChart(){
   if(el2){ el2.innerHTML = ex ? extraText(ex) : ''; }
 }
 
+/* ---------- 吃药打卡 ---------- */
+/* taken 结构：{ '2026-11-15': { m1: 1, m2: 1 } }，按天记，换天自动清零。 */
+function medKey(id){ return dayKey()+'|'+id; }
+function medTaken(p,id){ return !!(p.taken && p.taken[medKey(id)]); }
+
+function toggleMed(id){
+  var p=cur();
+  if(!p.taken) p.taken={};
+  var k=medKey(id);
+  if(p.taken[k]) delete p.taken[k]; else p.taken[k]=1;
+  // 只保留最近 60 天的打卡记录，防止无限增长
+  var keys=Object.keys(p.taken), cut={};
+  var keepFrom=dayKey(new Date(Date.now()-60*86400000));
+  keys.forEach(function(k2){ if(k2.slice(0,10)>=keepFrom) cut[k2]=1; });
+  p.taken=cut;
+  if(!save()){ toast('没能保存，请再点一次'); }
+  renderMeds();
+}
+
+/* 吃药栏是可选的：老人没在吃药就不该看到它。
+   开启状态按人单独记在 p.medOn 里；没设置过时，有打卡记录就当作已开启。 */
+function medOn(p){
+  if(p.medOn===true||p.medOn===false) return p.medOn;
+  return !!(p.taken && Object.keys(p.taken).length);
+}
+function renderMedPanel(){
+  var p=cur();
+  var on=medOn(p);
+  var body=$('medBody'), off=$('medOff'), btn=$('medToggle');
+  if(body) body.style.display = on ? '' : 'none';
+  if(off) off.style.display = on ? 'none' : '';
+  if(btn){
+    btn.textContent = on ? '关闭' : '开启';
+    btn.className = 'med-toggle' + (on?' on':'');
+    btn.setAttribute('aria-pressed', on?'true':'false');
+  }
+  if(on) renderMeds();
+}
+function toggleMedPanel(){
+  var p=cur();
+  var goingOff=medOn(p);
+  // 关闭会清空当天的勾，先问一句，避免手滑点掉
+  if(goingOff && p.taken && Object.keys(p.taken).length){
+    if(!confirm('关闭吃药栏会清掉已经打的勾，确定要关吗？')) return;
+  }
+  var prevOn=medOn(p);
+  var prevTaken=JSON.parse(JSON.stringify(p.taken||{}));
+  p.medOn = !prevOn;
+  if(p.medOn===false) p.taken={};      // 关掉就清掉打卡，免得下次开启时冒出旧数据
+  if(!save()){                         // 存不下就还原，别让界面跟存储对不上
+    p.medOn=prevOn; p.taken=prevTaken;
+    renderMedPanel();
+    return;
+  }
+  renderMedPanel();
+}
+
+function renderMeds(){
+  var p=cur(), box=$('medList'), stat=$('medStat');
+  if(!box) return;
+  var meds=(p.meds&&p.meds.length)?p.meds:[];
+  if(!meds.length){ box.innerHTML='<div class="hint">还没有设置吃药时间。</div>'; if(stat) stat.textContent=''; return; }
+  var done=0, html='';
+  meds.forEach(function(m){
+    var ok=medTaken(p,m.id); if(ok) done++;
+    html+='<div class="med-row"><div class="med-name"><div class="n">'+esc(m.name)+'</div>'+
+      '<div class="t">'+esc(m.time)+'</div></div>'+
+      '<button class="med-chk'+(ok?' done':'')+'" type="button" data-med="'+esc(m.id)+'" aria-label="'+esc(m.name)+'吃了没">'+(ok?'✓':'')+'</button></div>';
+  });
+  box.innerHTML=html;
+  Array.prototype.forEach.call(box.querySelectorAll('[data-med]'),function(b){
+    b.onclick=function(){ toggleMed(b.getAttribute('data-med')); };
+  });
+  // 本月统计：从第一次打卡那天算起，没打过卡就只说鼓励的话
+  // （没打卡 ≠ 没吃药，不能一进来就报"漏了 45 顿"，那是冤枉人）
+  if(stat){
+    var st=monthMedStat(p);
+    stat.className='med-stat'+(st.warn?' warn':'');
+    stat.textContent=st.text;
+  }
+}
+
+/* 本月统计：只用「开始打卡以来」的区间计算，避免把没用过的日子算成漏吃。
+   没打过任何卡时不给数字，只说一句中性提示——没打卡不等于没吃药。 */
+function monthMedStat(p){
+  var meds=(p.meds&&p.meds.length)?p.meds.length:0;
+  if(!meds) return {warn:false,text:''};
+  var y=new Date().getFullYear(), mo=new Date().getMonth();
+  var valid={};                                 // 当前药单的 id，只认这些
+  (p.meds||[]).forEach(function(m){ valid[String(m.id)]=1; });
+  var days={};                                  // 本月有打卡的日期
+  Object.keys(p.taken||{}).forEach(function(k){
+    var d=k.slice(0,10), mid=k.slice(11);
+    if(!valid[mid]) return;                     // 换过药单后的旧打卡不算数
+    var dt=new Date(d+'T00:00:00');
+    if(dt.getFullYear()===y && dt.getMonth()===mo) days[d]=(days[d]||0)+1;
+  });
+  var dayList=Object.keys(days).sort();
+  if(!dayList.length){
+    return {warn:false,text:'吃过的药点一下右边的圆点，记下来才能看到有没有漏。'};
+  }
+  // 从第一次打卡那天算到今天
+  var first=new Date(dayList[0]+'T00:00:00');
+  var today=new Date(); today.setHours(0,0,0,0);
+  var span=Math.round((today-first)/86400000)+1;
+  if(span<1) span=1;
+  var expect=meds*span, done=0;
+  dayList.forEach(function(d){ done+=days[d]; });
+  var miss=Math.max(0,expect-done);
+  // 才记了一两天就别急着报漏，先让人养成点圆点的习惯
+  if(span<3 || dayList.length<2){
+    return {warn:false,text:'已经记上 '+done+' 次。再多记几天，就能看出有没有漏。'};
+  }
+  if(miss===0) return {warn:false,text:'从 '+dayList[0].slice(5).replace('-','月')+'日 记到今天，一顿都没漏，很好。'};
+  var rate=Math.round(miss/expect*100);
+  if(rate<15) return {warn:false,text:'从开始记到今天，'+span+' 天里有 '+miss+' 顿没点，偶尔一次不用慌，明天记得按时吃。'};
+  if(rate<40) return {warn:true,text:'从开始记到今天，'+span+' 天里有 '+miss+' 顿没点（约 '+rate+'%）。可以让家人提醒一下。'};
+  return {warn:true,text:'从开始记到今天，'+span+' 天里有 '+miss+' 顿没点。点一下圆点就记上了，坚持几天再看。'};
+}
+
 /* ---------- 天气与穿衣建议 ---------- */
 /* 郑州坐标；想换城市只改这三行即可。接口是 Open-Meteo，免注册、不需要密钥。 */
 var WX_LAT=34.7466, WX_LON=113.6253, WX_CITY='郑州';
@@ -1279,7 +1456,67 @@ function wxRender(d){
       '<div class="w">'+wxText(wc[i])+'</div></div>';
   }
   $('wxDays').innerHTML=days;
+  // 湿度、体感、风力
+  var cur0=d.current||{};
+  var meta=[];
+  if(cur0.relative_humidity_2m!=null) meta.push('湿度 '+Math.round(cur0.relative_humidity_2m)+'%');
+  if(cur0.apparent_temperature!=null) meta.push('体感 '+Math.round(cur0.apparent_temperature)+'°');
+  if(d.daily.wind_speed_10m_max&&d.daily.wind_speed_10m_max[0]!=null) meta.push('风 '+Math.round(d.daily.wind_speed_10m_max[0])+' 公里/时');
+  if(d.daily.precipitation_probability_max&&d.daily.precipitation_probability_max[0]!=null) meta.push('下雨可能 '+Math.round(d.daily.precipitation_probability_max[0])+'%');
+  if(d.daily.sunrise&&d.daily.sunrise[0]) meta.push('日出 '+d.daily.sunrise[0].slice(11,16));
+  if(d.daily.sunset&&d.daily.sunset[0]) meta.push('日落 '+d.daily.sunset[0].slice(11,16));
+  if(d.daily.uv_index_max&&d.daily.uv_index_max[0]!=null) meta.push('紫外线 '+d.daily.uv_index_max[0]);
+  $('wxMeta').innerHTML=meta.map(function(t){ return '<span>'+esc(t)+'</span>'; }).join('');
+
+  // 逐时：从现在起 8 个时段
+  var hr=$('wxHourly'), hh='';
+  if(d.hourly&&d.hourly.time&&d.hourly.time.length){
+    // 只取「当前小时及之后」，绝不能显示已经过去的小时
+    var nowH=new Date(), nowDay=nowH.toDateString();
+    var idx=-1;
+    for(var k=0;k<d.hourly.time.length;k++){
+      var tk=new Date(d.hourly.time[k]);
+      if(tk.getTime()>=nowH.getTime()-3600000){ idx=k; break; }   // 允许当前整点
+    }
+    if(idx<0) idx=0;
+    for(var j=idx;j<Math.min(idx+8,d.hourly.time.length);j++){
+      var h=new Date(d.hourly.time[j]);
+      var label=(j===idx)?'现在':(h.toDateString()!==nowDay?'明天'+h.getHours()+'时':pad(h.getHours())+'时');
+      var pop=(d.hourly.precipitation_probability&&d.hourly.precipitation_probability[j])||0;
+      var tv=(d.hourly.temperature_2m&&d.hourly.temperature_2m[j]!=null)?Math.round(d.hourly.temperature_2m[j])+'°':'--';
+      hh+='<div class="wx-h"><div class="t2">'+esc(label)+'</div>'+
+        '<div class="v">'+tv+'</div>'+
+        (pop>=20?'<div class="p">雨 '+pop+'%</div>':'')+'</div>';
+    }
+  }
+  if(hr) hr.innerHTML=hh;
+
   $('wxTip').textContent='穿衣：'+wxClothes(mx[0],mn[0]);
+
+  // 空气质量：只在拿到时显示，并按等级换颜色
+  var aq=$('wxAqi'), ac=d._aqi;
+  if(aq){
+    if(ac&&ac.us_aqi!==undefined&&ac.us_aqi!==null){
+      var v=Math.round(ac.us_aqi), lv, cls, txt;
+      if(v<=50){ cls='good'; txt='空气不错'; }
+      else if(v<=100){ cls='mid'; txt='空气一般'; }
+      else if(v<=150){ cls='mid'; txt='空气较差'; }
+      else { cls='bad'; txt='空气差'; }
+      if(v>100){
+        txt+='，今天最好别在户外晨练，血压高的时候更要当心，出门戴上口罩';
+      }else if(v>50){
+        txt+='，能开门窗通气，出门问题不大';
+      }else{
+        txt+='，可以出去走走';
+      }
+      aq.className='wx-aqi show '+cls;
+      aq.textContent='空气 '+v+'（'+txt+'）';
+    }else{
+      aq.className='wx-aqi';
+      aq.textContent='';
+    }
+  }
+
   var g=document.querySelector('#weatherCard .wx-get'); if(g) g.style.display='none';
   var hh=new Date().getHours();
   $('wxUpdated').textContent=WX_CITY+' · '+(hh<12?'早上更新':'下午更新');
@@ -1313,11 +1550,20 @@ function showWxAsk(){
 function fetchWeather(){
   var btn=document.querySelector('#weatherCard .wx-get');
   if(btn){ btn.disabled=true; btn.textContent='正在查天气…'; }
-  var url='https://api.open-meteo.com/v1/forecast?latitude='+WX_LAT+'&longitude='+WX_LON+
-    '&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Asia%2FShanghai&forecast_days=3';
+  var base='https://api.open-meteo.com/v1/forecast?latitude='+WX_LAT+'&longitude='+WX_LON+
+    '&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max,wind_speed_10m_max,sunrise,sunset,uv_index_max'+
+    '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m'+
+    '&hourly=temperature_2m,precipitation_probability&timezone=Asia%2FShanghai&forecast_days=3';
+  var aqiUrl='https://air-quality-api.open-meteo.com/v1/air-quality?latitude='+WX_LAT+'&longitude='+WX_LON+'&current=us_aqi,pm2_5';
   if(typeof fetch!=='function'){ showWxAsk(); return; }
-  fetch(url).then(function(r){ return r.json(); }).then(function(d){
+  // 天气和空气质量分开取：一个失败不影响另一个
+  Promise.all([
+    fetch(base).then(function(r){ return r.json(); }),
+    fetch(aqiUrl).then(function(r){ return r.json(); }).catch(function(){ return null; })
+  ]).then(function(list){
+    var d=list[0], a=list[1];
     if(!d||!d.daily) throw new Error('bad');
+    if(a&&a.current) d._aqi=a.current;
     wxRender(d);
     try{ localStorage.setItem(wxCacheKey(),JSON.stringify({t:Date.now(),d:d})); }catch(e){}
   }).catch(function(){
@@ -1349,6 +1595,8 @@ function startEditRecord(r){
 
 /* 切换标题与按钮文案，让老人清楚现在是"记新的"还是"改旧的" */
 function setEditingMode(on){
+  // 编辑时收起底部悬浮条，免得挡住「保存」按钮
+  document.body.classList.toggle('editing', !!on);
   var t=$('entryTitle'), b=$('saveBtn');
   if(t) t.textContent = on ? '修改这次记录' : '记一次血压';
   if(b) b.textContent = on ? '保存修改' : '保存这次记录';
@@ -2798,7 +3046,7 @@ function checkBackupAge(){
 function renderAll(){
   var p=cur();
   $('nameInput').value=p.name||''; $('ageInput').value=p.age||''; $('kinInput').value=p.kin||'';
-  renderSummary(); renderChart(); renderRecent(); renderTip(); checkBackupAge(); renderLastHint(); renderAskCard();
+  renderSummary(); renderChart(); renderRecent(); renderTip(); checkBackupAge(); renderLastHint(); renderAskCard(); renderMedPanel();
 }
 
 /* ---------- 小安的入口绑定 ----------
@@ -2813,6 +3061,8 @@ loadAskLog();
   });
   var sb=$('vbSetupBtn');
   if(sb) sb.onclick=openAskSettings;
+  var mt=$('medToggle');
+  if(mt) mt.onclick=toggleMedPanel;
 })();
 renderAll();
 autoPickPeriod();   // 首次打开按当前时间预选时段，避免误记成"晨起"
