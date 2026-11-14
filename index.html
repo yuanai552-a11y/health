@@ -3,53 +3,46 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f766e">
+<meta name="theme-color" content="#2b3238">
 <title>我的健康小本子</title>
 <style>
 :root{
-  /* 主色：沉稳墨绿；强调色：只给"记录"这个动作用的暖橙 */
-  --bg:#eef2f1; --bg2:#f7faf9; --card:#ffffff;
-  --ink:#132523; --ink2:#2c4442; --sub:#5f7573; --line:#e3ebe9;
-  --ok:#0b7a52; --warn:#a8690a; --bad:#c33b31;
-  --brand:#0d5f57; --brand2:#08433d; --brand3:#12756b;
+  /* 简约配色：中性灰白打底 + 顶栏深墨蓝灰 + 唯一的橙色点缀（只给"记录"这个动作） */
+  --bg:#f4f5f6; --bg2:#f7faf9; --card:#ffffff;
+  --ink:#1b1e22; --ink2:#3a4046; --sub:#6a7076; --line:#e5e7e9;
+  --ok:#15704a; --warn:#8a5a00; --bad:#c0332b;
+  --brand:#2b3238; --brand2:#1c2227; --brand3:#3d454d;
   --accent:#e2632c; --accent2:#c94a18;
-  --radius:24px; --radius-sm:16px;
-  --shadow:0 1px 2px rgba(16,50,45,.04), 0 8px 24px -12px rgba(16,50,45,.16);
-  --shadow-lift:0 2px 4px rgba(16,50,45,.05), 0 16px 36px -16px rgba(16,50,45,.22);
+  --radius:14px; --radius-sm:11px;
+  --shadow:0 1px 2px rgba(20,24,28,.05);
+  --shadow-lift:0 2px 6px rgba(20,24,28,.07);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-  background:radial-gradient(120% 80% at 50% 0%, var(--bg2) 0%, var(--bg) 55%) fixed;
+  background:var(--bg);
   color:var(--ink);font-size:20px;line-height:1.55;letter-spacing:.01em;
   padding-bottom:calc(140px + constant(safe-area-inset-bottom));padding-bottom:calc(140px + env(safe-area-inset-bottom));
   -webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;
 }
 .wrap{max-width:640px;margin:0 auto;padding:0 15px}
-/* 顶部：深墨绿渐变 + 大字号读数，让"今天多少"成为第一眼焦点 */
+/* 顶部：单一深色块 + 大字号读数，让"今天多少"成为第一眼焦点 */
 header.top{
   position:relative;overflow:hidden;
-  background:linear-gradient(155deg,#10564f 0%,var(--brand) 42%,var(--brand2) 100%);
+  background:var(--brand);
   color:#fff;
   padding:calc(18px + constant(safe-area-inset-top)) 20px 22px;padding:calc(18px + env(safe-area-inset-top)) 20px 22px;
-  border-radius:0 0 30px 30px;
-  box-shadow:0 10px 30px -12px rgba(8,60,55,.45);
-}
-/* 顶部一层极淡的径向高光，避免纯平色显得廉价 */
-header.top::before{
-  content:"";position:absolute;inset:-40% -20% auto auto;width:340px;height:340px;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,255,255,.14) 0%,rgba(255,255,255,0) 68%);
-  pointer-events:none;
+  border-radius:0 0 18px 18px;
+  box-shadow:none;
 }
 header .toprow{position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;max-width:640px;margin:0 auto}
 header h1{margin:0;font-size:25px;font-weight:800;letter-spacing:.4px;line-height:1.25}
 header .sub{margin-top:5px;font-size:16px;opacity:.92;letter-spacing:.2px}
 .avatar{
   width:58px;height:58px;border-radius:50%;flex:0 0 auto;
-  background:rgba(255,255,255,.16);
-  border:1.5px solid rgba(255,255,255,.38);
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  background:rgba(255,255,255,.12);
+  border:1.5px solid rgba(255,255,255,.26);
   display:flex;align-items:center;justify-content:center;
   font-size:21px;font-weight:800;color:#fff;cursor:pointer;
   transition:transform .15s, background .15s;
@@ -62,7 +55,6 @@ header .sub{margin-top:5px;font-size:16px;opacity:.92;letter-spacing:.2px}
 .hero-reading .val{
   font-size:62px;font-weight:800;line-height:.95;letter-spacing:-2.5px;
   font-variant-numeric:tabular-nums;
-  text-shadow:0 2px 12px rgba(0,0,0,.14);
 }
 .hero-reading .val small{font-size:20px;font-weight:600;letter-spacing:0;opacity:.75;margin-left:4px}
 .hero-reading .unit{font-size:16px;opacity:.7;font-weight:600;letter-spacing:.5px;margin-bottom:8px}
@@ -77,8 +69,8 @@ header .sub{margin-top:5px;font-size:16px;opacity:.92;letter-spacing:.2px}
 .hero-meta{position:relative;margin-top:12px;font-size:16px;opacity:.9;letter-spacing:.2px}
 .hero-empty{position:relative;margin-top:18px;font-size:18px;opacity:.9;line-height:1.6}
 .card{
-  background:var(--card);border-radius:var(--radius);padding:20px 18px;margin:16px 0;
-  box-shadow:var(--shadow);border:1px solid rgba(227,235,233,.9);
+  background:var(--card);border-radius:var(--radius);padding:20px 18px;margin:14px 0;
+  box-shadow:var(--shadow);border:1px solid var(--line);
 }
 .card h2{
   margin:0 0 14px;font-size:20px;font-weight:800;letter-spacing:.3px;
@@ -87,7 +79,7 @@ header .sub{margin-top:5px;font-size:16px;opacity:.92;letter-spacing:.2px}
 /* 标题前的小竖条，替代emoji，显得克制 */
 .card h2::before{
   content:"";width:4px;height:18px;border-radius:2px;
-  background:linear-gradient(180deg,var(--brand3),var(--brand));flex:0 0 auto;
+  background:var(--ink2);flex:0 0 auto;
 }
 .hint{color:var(--sub);font-size:18px;line-height:1.6}
 .row{display:flex;gap:10px;margin-top:12px}
@@ -95,7 +87,7 @@ header .sub{margin-top:5px;font-size:16px;opacity:.92;letter-spacing:.2px}
 .row:first-child{margin-top:0}
 label.field{display:block;font-size:16px;color:var(--sub);margin-bottom:7px;font-weight:600;letter-spacing:.2px}
 input,select{
-  width:100%;font-size:32px;font-weight:700;padding:15px 12px;border-radius:18px;
+  width:100%;font-size:32px;font-weight:700;padding:15px 12px;border-radius:var(--radius-sm);
   border:1.5px solid var(--line);background:#f8fbfa;color:var(--ink);text-align:center;
   font-family:inherit;font-variant-numeric:tabular-nums;
   transition:border-color .15s, background .15s, box-shadow .15s;
@@ -107,25 +99,24 @@ input[type=text]{font-size:23px;font-weight:600}
 input[type=time],select{font-size:19px;font-weight:600;padding:13px}
 input::placeholder{color:#8497a4;font-weight:600}
 input:focus,select:focus{
-  outline:none;border-color:var(--brand3);background:#fff;
-  box-shadow:0 0 0 4px rgba(18,117,107,.10);
+  outline:none;border-color:var(--ink2);background:#fff;
+  box-shadow:0 0 0 4px rgba(20,24,28,.07);
 }
 select{background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f7573' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 12px center;background-size:18px;padding-right:36px}
 button{font-family:inherit;cursor:pointer;border:none;border-radius:18px;font-weight:700}
 .btn-main{
   width:100%;margin-top:18px;padding:19px;font-size:24px;color:#fff;letter-spacing:.5px;
-  background:linear-gradient(160deg,var(--brand3) 0%,var(--brand) 60%,var(--brand2) 100%);
-  box-shadow:0 8px 22px -8px rgba(13,95,87,.55), inset 0 1px 0 rgba(255,255,255,.14);
-  transition:transform .1s, box-shadow .15s;
+  background:var(--accent);box-shadow:none;
+  transition:background .15s;
 }
-.btn-main:active{transform:scale(.985);box-shadow:0 4px 12px -6px rgba(13,95,87,.5)}
+.btn-main:active{background:var(--accent2)}
 .btn-ghost{
-  background:#f1f6f5;color:var(--brand2);padding:15px 16px;font-size:18px;
+  background:#fff;color:var(--ink);padding:15px 16px;font-size:18px;
   width:100%;margin-top:10px;text-align:center;font-weight:700;
-  border:1px solid rgba(227,235,233,.9);transition:background .15s;
+  border:1px solid #d8dcdf;transition:background .15s;
 }
-.btn-ghost:active{background:#e6efed}
+.btn-ghost:active{background:#eff1f2}
 .btn-ghost.danger{background:#fdf0ee;color:var(--bad);border-color:#f6dcd8}
 .pill{display:inline-block;padding:5px 13px;border-radius:999px;font-size:15px;font-weight:800;white-space:nowrap;letter-spacing:.2px}
 .pill.ok{background:#dcf4e6;color:var(--ok)}
@@ -149,18 +140,16 @@ button{font-family:inherit;cursor:pointer;border:none;border-radius:18px;font-we
   font-size:26px;color:#c2d0ce;flex:0 0 auto;transition:all .18s;
 }
 .chk.done{
-  background:linear-gradient(160deg,#12a06b,var(--ok));border-color:transparent;color:#fff;
-  box-shadow:0 4px 12px -4px rgba(11,122,82,.5);
+  background:var(--ok);border-color:transparent;color:#fff;box-shadow:none;
 }
 /* 图表：淡渐变底，替代纯白 */
 .chart-shell{
-  background:linear-gradient(180deg,#fbfdfc 0%,#f5faf8 100%);
-  border-radius:18px;padding:8px 4px 4px;margin:2px 0 4px;
+  background:#fff;border-radius:12px;padding:8px 4px 4px;margin:2px 0 4px;
 }
 svg.chart{width:100%;height:auto;display:block;overflow:visible}
-.legend{display:flex;gap:10px 16px;flex-wrap:wrap;font-size:16px;color:#4a6160;margin-top:12px;line-height:1.7}
+.legend{display:flex;gap:10px 16px;flex-wrap:wrap;font-size:16px;color:var(--sub);margin-top:12px;line-height:1.7}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:0}
-.tabs{display:flex;gap:8px;margin:0 0 16px;background:#f0f5f4;padding:4px;border-radius:16px}
+.tabs{display:flex;gap:8px;margin:0 0 16px;background:#eff1f2;padding:4px;border-radius:12px}
 .tabs button{
   flex:1;padding:11px;font-size:17px;background:transparent;color:var(--sub);
   border-radius:12px;transition:all .18s;font-weight:700;
@@ -173,17 +162,16 @@ svg.chart{width:100%;height:auto;display:block;overflow:visible}
 .fab{
   position:fixed;left:0;right:0;bottom:0;z-index:50;
   padding:12px 18px calc(14px + env(safe-area-inset-bottom));
-  background:linear-gradient(180deg,rgba(238,242,241,0) 0%,rgba(238,242,241,.9) 38%,var(--bg) 100%);
+  background:linear-gradient(180deg,rgba(244,245,246,0) 0%,rgba(244,245,246,.92) 38%,var(--bg) 100%);
   pointer-events:none;
 }
 .fab button{
   pointer-events:auto;width:100%;max-width:560px;margin:0 auto;display:block;
-  padding:18px;font-size:23px;color:#fff;letter-spacing:.6px;
-  background:linear-gradient(160deg,var(--accent) 0%,var(--accent2) 100%);
-  box-shadow:0 10px 26px -10px rgba(201,74,24,.65), inset 0 1px 0 rgba(255,255,255,.2);
-  transition:transform .1s;
+  padding:18px;border-radius:14px;font-size:23px;color:#fff;letter-spacing:.6px;
+  background:var(--accent);box-shadow:none;
+  transition:transform .1s, background .15s;
 }
-.fab button:active{transform:scale(.98)}
+.fab button:active{transform:scale(.99);background:var(--accent2)}
 .toast{
   position:fixed;left:50%;bottom:140px;transform:translateX(-50%) translateY(16px) scale(.96);
   background:rgba(19,37,35,.96);color:#fff;padding:14px 26px;border-radius:16px;
@@ -198,7 +186,7 @@ svg.chart{width:100%;height:auto;display:block;overflow:visible}
 }
 .warnbar.danger{background:#fdf1ef;border-color:#f5cdc7;color:#9b2b22}
 .warnbar.caution{background:#fff8ec;border-color:#f0dcb8;color:#7d5307}
-.footnote{text-align:center;color:#556a68;font-size:16px;margin:26px 0 14px;line-height:1.8;letter-spacing:.2px}
+.footnote{text-align:center;color:var(--sub);font-size:16px;margin:26px 0 14px;line-height:1.8;letter-spacing:.2px}
 .modal{
   position:fixed;inset:0;background:rgba(9,32,29,.5);display:none;z-index:200;
   align-items:flex-end;justify-content:center;
@@ -208,16 +196,17 @@ svg.chart{width:100%;height:auto;display:block;overflow:visible}
 body.modal-open{overflow:hidden}
 .modal .sheet{
   background:#fff;width:100%;max-width:640px;
-  border-radius:26px 26px 0 0;max-height:88vh;overflow:auto;padding:0 0 calc(22px + env(safe-area-inset-bottom));
+  border-radius:var(--radius) var(--radius) 0 0;max-height:88vh;overflow:auto;padding:0 0 calc(22px + env(safe-area-inset-bottom));
   box-shadow:0 -12px 40px -16px rgba(0,0,0,.4);
   animation:sheetUp .26s cubic-bezier(.22,1,.36,1);
 }
 @keyframes sheetUp{from{transform:translateY(24px);opacity:.6}to{transform:translateY(0);opacity:1}}
 .modal .head{
   position:sticky;top:0;z-index:2;
-  background:linear-gradient(155deg,#10564f,var(--brand) 70%,var(--brand2));
+  background:var(--brand);
   color:#fff;padding:18px 20px;font-size:20px;font-weight:800;letter-spacing:.3px;
   display:flex;justify-content:space-between;align-items:center;
+  border-radius:0;
 }
 .modal .head button{
   background:rgba(255,255,255,.16);color:#fff;font-size:22px;line-height:1;
@@ -225,19 +214,17 @@ body.modal-open{overflow:hidden}
 }
 .modal .body{padding:18px 20px}
 .bigbtn{
-  width:100%;padding:17px;font-size:19px;background:#f2f7f6;color:var(--ink);
-  margin-top:10px;text-align:center;font-weight:700;border-radius:16px;
-  border:1px solid rgba(227,235,233,.9);transition:background .15s;
+  width:100%;padding:17px;font-size:19px;background:#fff;color:var(--ink);
+  margin-top:10px;text-align:center;font-weight:700;border-radius:12px;
+  border:1px solid #d8dcdf;transition:background .15s;
 }
-.bigbtn:active{background:#e8f0ee}
+.bigbtn:active{background:#eff1f2}
 .bigbtn.primary{
-  background:linear-gradient(160deg,var(--brand3),var(--brand2));color:#fff;border-color:transparent;
-  box-shadow:0 8px 20px -10px rgba(13,95,87,.6);
+  background:var(--brand);color:#fff;border-color:transparent;box-shadow:none;
 }
 .bigbtn.danger-ghost{background:#fff;color:#c33b31;border:1px solid #f0c8c3;box-shadow:none;margin-top:0}
 .bigbtn.danger-solid{
-  background:linear-gradient(160deg,#d0483c,var(--bad));color:#fff;border-color:transparent;
-  box-shadow:0 8px 20px -10px rgba(195,59,49,.55);
+  background:var(--bad);color:#fff;border-color:transparent;box-shadow:none;
 }
 /* 尊重系统的"减少动态效果"设置 */
 @media (prefers-reduced-motion: reduce){
@@ -267,7 +254,7 @@ body.modal-open{overflow:hidden}
 .list .t{font-size:18px !important}
 .legend{font-size:17px !important}
 .pill{font-size:17px !important}
-:root{--sub:#4a5f5d}
+:root{--sub:#6a7076}
 
 /* 最近记录：整行不再可点，右侧是独立按钮，触控区域够大 */
 .list li{gap:8px;padding:12px 0}
@@ -276,10 +263,10 @@ body.modal-open{overflow:hidden}
 .rec-main .t{color:var(--sub);font-size:17px !important;margin-top:2px;line-height:1.4}
 .rec-btn{
   flex:0 0 auto;min-width:56px;min-height:44px;padding:10px 12px;
-  font-size:16px;font-weight:700;border-radius:12px;
-  background:#eef5f4;color:#0b5b55;border:1px solid #d7e5e2;
+  font-size:16px;font-weight:700;border-radius:10px;
+  background:#fff;color:var(--ink);border:1px solid #d8dcdf;
 }
-.rec-btn:active{background:#e0ece9}
+.rec-btn:active{background:#eff1f2}
 .rec-btn.del{background:#fdf0ee;color:#c33b31;border-color:#f6dcd8}
 .rec-btn.del:active{background:#fbe3df}
 
@@ -293,50 +280,75 @@ body.modal-open{overflow:hidden}
 
 /* ===== 2026-11-15 新增：问一问医学 AI（小安） ===== */
 .vb-float{display:none;align-items:center;gap:8px;padding:11px 16px;border-radius:999px;
-  background:rgba(255,255,255,.16);color:#fff;border:1.5px solid rgba(255,255,255,.42);
+  background:rgba(255,255,255,.10);color:#fff;border:1.5px solid rgba(255,255,255,.28);
   font-size:17px;font-weight:800;letter-spacing:.2px;transition:transform .1s,background .15s}
-.vb-float:active{transform:scale(.95);background:rgba(255,255,255,.28)}
-.vb-float .vb-dot{width:9px;height:9px;border-radius:50%;background:#ffd166;flex:0 0 auto}
+.vb-float:active{transform:scale(.95);background:rgba(255,255,255,.20)}
+.vb-float .vb-dot{width:9px;height:9px;border-radius:50%;background:#c9ced3;flex:0 0 auto}
 /* 手机上：小安做成页面内大按钮，同时底部有个圆形悬浮键，随时随地能问 */
 @media (max-width:700px){.vb-float{display:inline-flex}}
 .vb-fab{position:fixed;right:16px;bottom:calc(104px + env(safe-area-inset-bottom));z-index:55;
   width:68px;height:68px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  background:linear-gradient(160deg,#12756b,var(--brand2));color:#fff;
-  box-shadow:0 10px 24px -8px rgba(8,60,55,.7),inset 0 1px 0 rgba(255,255,255,.2);transition:transform .1s}
+  background:var(--brand);color:#fff;
+  box-shadow:0 6px 16px -6px rgba(20,24,28,.5);transition:transform .1s}
 .vb-fab:active{transform:scale(.94)}
 .vb-fab .vb-fab-t{font-size:19px;font-weight:800;line-height:1.1}
 .vb-fab .vb-fab-s{font-size:12px;opacity:.85;line-height:1.2}
-.vb-intro{background:#f2f8f7;border:1px solid #dbe9e6;border-radius:16px;padding:14px 16px;font-size:19px;line-height:1.6;color:#294a48}
+.vb-intro{background:#f4f5f6;border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:19px;line-height:1.6;color:var(--ink2)}
 .vb-row{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
-.vb-quick{flex:1 1 46%;min-height:52px;padding:12px;border-radius:14px;background:#fff;border:1.5px solid #d7e5e2;
-  color:#0b5b55;font-size:17px;font-weight:700;text-align:left;line-height:1.4}
-.vb-quick:active{background:#eaf3f1}
+.vb-quick{flex:1 1 46%;min-height:52px;padding:12px;border-radius:12px;background:#fff;border:1.5px solid #d8dcdf;
+  color:var(--ink);font-size:17px;font-weight:700;text-align:left;line-height:1.4}
+.vb-quick:active{background:#eff1f2}
 .vb-log{max-height:52vh;overflow:auto;-webkit-overflow-scrolling:touch;margin-top:12px;padding-right:2px}
 .vb-msg{margin:0 0 12px;display:flex}
 .vb-msg .bub{max-width:88%;padding:12px 15px;border-radius:16px;font-size:20px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
 .vb-msg.me{justify-content:flex-end}
-.vb-msg.me .bub{background:linear-gradient(160deg,var(--brand3),var(--brand));color:#fff;border-bottom-right-radius:6px}
-.vb-msg.ai .bub{background:#f2f7f6;color:var(--ink);border:1px solid #e2ebe9;border-bottom-left-radius:6px}
+.vb-msg.me .bub{background:#eceef0;color:var(--ink);border:1px solid #dfe3e6;border-bottom-right-radius:6px}
+.vb-msg.ai .bub{background:#fff;color:var(--ink);border:1px solid var(--line);border-bottom-left-radius:6px}
 .vb-msg.sys{justify-content:center}
 .vb-msg.sys .bub{background:#fffaf0;border:1px solid #f2e0bd;color:#7d5307;font-size:19px;text-align:center}
 .vb-msg.err .bub{background:#fdf1ef;border:1px solid #f5cdc7;color:#9b2b22;font-size:20px;font-weight:600}
-.vb-mic{width:100%;margin-top:6px;padding:24px 16px;font-size:27px;font-weight:800;color:#fff;border-radius:20px;
-  background:linear-gradient(160deg,var(--brand3) 0%,var(--brand) 60%,var(--brand2) 100%);
-  box-shadow:0 10px 24px -10px rgba(13,95,87,.6),inset 0 1px 0 rgba(255,255,255,.16);transition:transform .1s}
-.vb-mic:active{transform:scale(.985)}
-.vb-mic.on{background:linear-gradient(160deg,#d0483c,var(--bad));box-shadow:0 0 0 8px rgba(195,59,49,.15),0 10px 24px -10px rgba(195,59,49,.6)}
+.vb-mic{width:100%;margin-top:0;padding:22px 16px;font-size:25px;font-weight:800;color:#fff;border-radius:14px;
+  background:var(--brand);box-shadow:none;transition:transform .1s,background .15s}
+.vb-mic:active{transform:scale(.99)}
+.vb-mic.on{background:var(--bad);box-shadow:0 0 0 4px rgba(192,51,43,.16)}
 .vb-mic[disabled]{opacity:.55;box-shadow:none}
 .vb-status{font-size:19px;color:#7d5307;text-align:center;margin-top:10px;line-height:1.5}
 .vb-input{width:100%;font-size:19px;font-weight:600;padding:13px 12px;border-radius:14px;border:1.5px solid var(--sub);
   background:#fff;color:var(--ink);font-family:inherit;text-align:left}
-.vb-input:focus{outline:none;border-color:var(--brand3);box-shadow:0 0 0 4px rgba(18,117,107,.10)}
-.vb-send{width:100%;margin-top:10px;padding:16px;font-size:20px;color:#fff;border-radius:16px;
-  background:linear-gradient(160deg,var(--brand3),var(--brand2))}
+.vb-input:focus{outline:none;border-color:var(--ink2);box-shadow:0 0 0 4px rgba(20,24,28,.08)}
+.vb-send{width:100%;margin-top:10px;padding:16px;font-size:20px;color:#fff;border-radius:12px;
+  background:var(--brand)}
 .vb-send[disabled]{opacity:.5}
 .vb-keyrow{display:flex;gap:8px;margin-top:8px}
+.vb-keyrow .vb-mic{flex:1;min-width:0}
 .vb-keyrow .vb-input{flex:1;min-width:0;font-size:17px}
 .vb-note{font-size:18px;color:var(--sub);line-height:1.6;margin-top:10px}
 @media print{.vb-fab,.vb-log,.vb-mic,.vb-keyrow{display:none!important}}
+
+/* ===== 问一问对话：参照 DeepSeek 的对话版式 ===== */
+/* 桌面/横屏：弹窗变成居中的对话卡片，而不是贴底的抽屉 */
+@media (min-width:641px){
+  .modal.chat{align-items:center;padding:16px}
+  .modal.chat .sheet{max-width:760px;border-radius:16px;max-height:86vh;box-shadow:0 18px 48px -20px rgba(20,24,28,.45)}
+  .modal.chat .head{border-radius:16px 16px 0 0}
+}
+/* 对话区：独立滚动，底部留白，气泡像 DeepSeek 那样左右分列 */
+.modal.chat .vb-log{margin-top:4px;max-height:none;flex:1 1 auto;min-height:180px;padding:4px 2px 8px}
+/* AI 回答：不留气泡框，直接铺在对话区上，读长文更省眼 */
+.vb-msg.ai .bub{background:transparent;border:none;border-radius:0;max-width:100%;padding:4px 2px}
+.vb-msg.ai{padding-right:6px}
+/* 用户的提问：右侧浅色块，宽度收窄，和大段回答区分开 */
+.vb-msg.me .bub{max-width:82%;padding:10px 14px;font-weight:600}
+.vb-msg.sys .bub{border-radius:10px}
+.vb-msg.err .bub{border-radius:10px}
+/* 每题一段，段间距比行距大，长回答才不糊成一片 */
+.vb-msg.ai .bub{font-size:20px;line-height:1.75}
+.vb-msg+.vb-msg.ai{margin-top:2px}
+/* 底部输入条：单行圆角输入框 + 右侧发送按钮 */
+.vb-composer{position:sticky;bottom:0;margin-top:10px;padding-top:10px;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,#fff 22%)}
+.vb-sendbar{display:flex;gap:8px;align-items:flex-end}
+.vb-sendbar .vb-input{flex:1;min-width:0;border-radius:12px;padding:14px 14px;font-size:19px}
+.vb-sendbar .vb-send{width:auto;flex:0 0 auto;margin-top:0;min-width:84px;padding:15px 18px;font-size:19px}
 </style>
 </head>
 <body>
@@ -408,14 +420,14 @@ body.modal-open{overflow:hidden}
     </div>
     <div class="chart-shell"><svg class="chart" id="chart" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet"></svg></div>
     <div class="legend">
-      <span><i style="background:#0f766e"></i>高压</span>
-      <span><i style="background:#e0632f"></i>低压</span>
+      <span><i style="background:#3a4046"></i>高压</span>
+      <span><i style="background:#e2632c"></i>低压</span>
       <span><i style="background:#f0c9c6"></i>高压超标区（≥135）</span>
       <span><i style="background:#c0392f"></i>那次偏高</span>
       <span style="color:#8a5a00">低压超过 85 也会标红</span>
     </div>
     <div id="statLine" class="hint" style="margin-top:12px"></div>
-    <div id="extraLine" class="hint" style="margin-top:8px;color:#3d5553"></div>
+    <div id="extraLine" class="hint" style="margin-top:8px;color:#4a5056"></div>
   </section>
 
   <section class="card no-print" id="tipCard">
@@ -427,7 +439,7 @@ body.modal-open{overflow:hidden}
 
   <section class="card no-print" id="voiceCard">
     <h2>问问小安（医学 AI）</h2>
-    <div class="vb-intro" id="vbCardState">说不清、拿不准的时候，按住下面的绿色大按钮，把话直接说出来问它。</div>
+    <div class="vb-intro" id="vbCardState">说不清、拿不准的时候，按住下面的「按住说话」大按钮，把话直接说出来问它。</div>
     <div class="vb-row">
       <button class="vb-quick" type="button" data-vbq="我这次的血压要紧吗？">我这次的血压要紧吗？</button>
       <button class="vb-quick" type="button" data-vbq="我妈血压高，平时吃饭要注意什么？">吃饭要注意什么？</button>
@@ -665,6 +677,9 @@ function isHigh(sys,dia){ return sys>=HL_SYS||dia>=HL_DIA; }
 /* ---------- 弹窗 ---------- */
 var modalCbs={};
 function showModal(title,html,onClose){
+  // 默认清掉上一次的 chat 版式（对话界面会自己加回来），避免样式串到别的弹窗
+  $('modal').classList.remove('chat');
+  var sh=document.querySelector('.modal .sheet'); if(sh){ sh.style.display=''; sh.style.flexDirection=''; }
   $('modalTitle').textContent=title; $('modalBody').innerHTML=html;
   // 先执行上一个弹窗未消费的清理回调，避免资源（如照片 URL）泄漏
   if(modalCbs.close){ var prev=modalCbs.close; modalCbs.close=null; try{ prev(); }catch(e){} }
@@ -676,6 +691,8 @@ function showModal(title,html,onClose){
 }
 function closeModal(){
   $('modal').classList.remove('open');
+  $('modal').classList.remove('chat');
+  var s=document.querySelector('.modal .sheet'); if(s){ s.style.display=''; s.style.flexDirection=''; }
   document.body.classList.remove('modal-open');
   if(modalCbs.close){ var c=modalCbs.close; modalCbs.close=null; c(); }
 }
@@ -725,7 +742,7 @@ function copyText(text, okMsg){
 function showCopyFallback(text){
   showModal('请手动复制',
     '<div class="hint">这台手机不允许自动复制。请长按下面的框，全选后点“复制”：</div>'+
-    '<textarea readonly id="fallbackBox" style="width:100%;height:200px;font-size:14px;margin-top:10px;padding:10px;border:2px solid #dde8e7;border-radius:12px">'+esc(text)+'</textarea>'+
+    '<textarea readonly id="fallbackBox" style="width:100%;height:200px;font-size:14px;margin-top:10px;padding:10px;border:2px solid #e5e7e9;border-radius:12px">'+esc(text)+'</textarea>'+
     '<button class="bigbtn primary" id="fallbackOk" style="margin-top:10px">我知道了</button>');
   var box=$('fallbackBox');
   if(box){ box.focus(); try{ box.select(); }catch(e){} }
@@ -976,14 +993,14 @@ function renderDiet(g){
   };
   var tip=lines[level]||lines.none;
   $('dietBox').innerHTML='<div style="font-size:18px;line-height:1.6">'+tip+'</div>'+
-    '<div style="font-size:16px;color:#4a6160;margin-top:8px">每天吃盐最好不超过 5 克，大约一平勺。'+
+    '<div style="font-size:16px;color:#6a7076;margin-top:8px">每天吃盐最好不超过 5 克，大约一平勺。'+
     '有肾病、或不确定自己该吃什么药的，先问问医生。</div>';
 }
 function renderEmergency(p){
   var telRaw=String(p.kin||'').replace(/[^0-9+]/g,'');
   if(telRaw.length>=3){
     var tel=telRaw;
-    $('callLine').innerHTML='家人电话：<a href="tel:'+encodeURI(tel)+'" style="font-size:22px;font-weight:800;color:#0f766e">'+esc(p.kin)+'</a>（点一下就能拨打）<br><span style="font-size:16px">急救电话：120</span>';
+    $('callLine').innerHTML='家人电话：<a href="tel:'+encodeURI(tel)+'" style="font-size:22px;font-weight:800;color:#1b1e22">'+esc(p.kin)+'</a>（点一下就能拨打）<br><span style="font-size:16px">急救电话：120</span>';
   }else{
     $('callLine').innerHTML='急救电话：<a href="tel:120" style="font-size:22px;font-weight:800;color:#c33b31">120</a>（点一下就能拨打）　<span style="font-size:15px">在设置里填上家人电话，这里还会出现家人的一键拨打</span>';
   }
@@ -1095,14 +1112,14 @@ function renderChart(){
   gridVals.forEach(function(v){
     if(v<yMin||v>yMax) return;
     var isRef=(v===HL_SYS);
-    g+='<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="'+(isRef?'#d98b84':'#eef4f2')+'" stroke-width="1"'+(isRef?' stroke-dasharray="5 6"':'')+'/>';
-    g+='<text x="'+(padL-10)+'" y="'+(Y(v)+5)+'" text-anchor="end" font-size="15" fill="#5f7573" font-weight="600">'+v+'</text>';
+    g+='<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="'+(isRef?'#d98b84':'#eef0f1')+'" stroke-width="1"'+(isRef?' stroke-dasharray="5 6"':'')+'/>';
+    g+='<text x="'+(padL-10)+'" y="'+(Y(v)+5)+'" text-anchor="end" font-size="15" fill="#6a7076" font-weight="600">'+v+'</text>';
   });
   g+='<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+(H-padB)+'" y2="'+(H-padB)+'" stroke="#c9d7d6"/>';
   var ticks=6;
   for(var i=0;i<=ticks;i++){
     var t=from+(now-from)*i/ticks, d=new Date(t), x=padL+(W-padL-padR)*i/ticks;
-    g+='<text x="'+x+'" y="'+(H-padB+22)+'" text-anchor="middle" font-size="15" fill="#5f7573" font-weight="600">'+(d.getMonth()+1)+'/'+d.getDate()+'</text>';
+    g+='<text x="'+x+'" y="'+(H-padB+22)+'" text-anchor="middle" font-size="15" fill="#6a7076" font-weight="600">'+(d.getMonth()+1)+'/'+d.getDate()+'</text>';
   }
   if(!rs.length){
     g+='<g opacity="0.5"><rect x="'+(W/2-46)+'" y="'+(H/2-46)+'" width="92" height="66" rx="10" fill="none" stroke="#b9cbc8" stroke-width="2"/>'+
@@ -1120,12 +1137,12 @@ function renderChart(){
     });
     return s;
   }
-  g+=series('sys','#0d5f57',HL_SYS);
+  g+=series('sys','#3a4046',HL_SYS);
   g+=series('dia','#e2632c',HL_DIA);
   var last=rs[rs.length-1];
   // 最新值标签加底色，避免压在网格线上
   var lx=X(last.ts).toFixed(1), ly=Y(last.sys);
-  g+='<rect x="'+(lx-16)+'" y="'+(ly-26)+'" width="32" height="19" rx="6" fill="#0d5f57"/>';
+  g+='<rect x="'+(lx-16)+'" y="'+(ly-26)+'" width="32" height="19" rx="6" fill="#3a4046"/>';
   g+='<text x="'+lx+'" y="'+(ly-12)+'" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">'+last.sys+'</text>';
   svg.innerHTML=g;
 
@@ -1284,15 +1301,15 @@ function showRecordDetail(r){
     '<div style="text-align:center;margin:8px 0 16px">'+
       '<div style="font-size:44px;font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums">'+
         esc(r.sys)+'<span style="color:#93a5a4">/</span>'+esc(r.dia)+
-        '<span style="font-size:16px;font-weight:600;color:#5f7573;margin-left:4px">mmHg</span>'+
+        '<span style="font-size:16px;font-weight:600;color:#6a7076;margin-left:4px">mmHg</span>'+
       '</div>'+
       '<div class="pill '+tagClass(g)+'" style="margin-top:8px">'+esc(g.text)+'</div>'+
     '</div>'+
     '<table style="width:100%;font-size:17px;border-collapse:collapse">'+
-      '<tr><td style="padding:7px 0;color:#5f7573">测量时间</td><td style="text-align:right;font-weight:700">'+fmt(r.ts)+'</td></tr>'+
-      '<tr><td style="padding:7px 0;color:#5f7573">测量时段</td><td style="text-align:right;font-weight:700">'+esc(r.period)+'</td></tr>'+
-      (r.rounds?('<tr><td style="padding:7px 0;color:#5f7573">量了几遍</td><td style="text-align:right;font-weight:700">'+esc(r.rounds)+' 遍</td></tr>'):'')+
-      (r.pulse?('<tr><td style="padding:7px 0;color:#5f7573">脉搏</td><td style="text-align:right;font-weight:700">'+esc(r.pulse)+' 次/分</td></tr>'):'')+
+      '<tr><td style="padding:7px 0;color:#6a7076">测量时间</td><td style="text-align:right;font-weight:700">'+fmt(r.ts)+'</td></tr>'+
+      '<tr><td style="padding:7px 0;color:#6a7076">测量时段</td><td style="text-align:right;font-weight:700">'+esc(r.period)+'</td></tr>'+
+      (r.rounds?('<tr><td style="padding:7px 0;color:#6a7076">量了几遍</td><td style="text-align:right;font-weight:700">'+esc(r.rounds)+' 遍</td></tr>'):'')+
+      (r.pulse?('<tr><td style="padding:7px 0;color:#6a7076">脉搏</td><td style="text-align:right;font-weight:700">'+esc(r.pulse)+' 次/分</td></tr>'):'')+
     '</table>'+
     '<div class="hint" style="margin-top:12px;font-size:16px">'+adviceText(g.level)+'</div>'+
     '<button class="bigbtn primary" id="detEdit" style="margin-top:18px">改这次的数字</button>'+
@@ -1384,7 +1401,7 @@ function renderReport(){
     setTimeout(function(){ try{ window.print(); }catch(e){ toast('这台设备的浏览器不支持打印'); } setTimeout(done,1500); },60);
   };
 }
-function row(k,v){ return '<tr><td style="padding:8px 0;color:#5b6f6e">'+k+'</td><td style="text-align:right;font-weight:800">'+v+'</td></tr>'; }
+function row(k,v){ return '<tr><td style="padding:8px 0;color:#6a7076">'+k+'</td><td style="text-align:right;font-weight:800">'+v+'</td></tr>'; }
 
 /* ---------- 导入导出 ---------- */
 /* 备份必须包含所有人。只导出当前人会让人在换手机时
@@ -1632,7 +1649,7 @@ $('importBtn').onclick=function(){
     '<div class="hint">方式一：选择备份文件（用系统浏览器打开本页时可用）</div>'+
     '<button class="bigbtn primary" id="pickFile">📁 选择备份文件</button>'+
     '<div class="hint" style="margin-top:16px">方式二：把之前“复制备份文字”的内容粘进来（微信里用这个）</div>'+
-    '<textarea id="pasteBox" placeholder="在这里长按粘贴备份内容" style="width:100%;height:140px;font-size:15px;margin-top:8px;padding:10px;border:2px solid #dde8e7;border-radius:12px;font-family:inherit"></textarea>'+
+    '<textarea id="pasteBox" placeholder="在这里长按粘贴备份内容" style="width:100%;height:140px;font-size:15px;margin-top:8px;padding:10px;border:2px solid #e5e7e9;border-radius:12px;font-family:inherit"></textarea>'+
     '<button class="bigbtn primary" id="pasteOk" style="margin-top:10px">从粘贴内容恢复</button>');
   var pf=$('pickFile'); if(pf) pf.onclick=function(){ closeModal(); $('importFile').click(); };
   var po=$('pasteOk'); if(po) po.onclick=function(){
@@ -1849,7 +1866,7 @@ function renderTip(next){
   box.setAttribute('data-idx', idx);
   box.setAttribute('data-day', dayKey());
   var tip=TIPS[idx];
-  box.innerHTML='<div style="font-weight:800;font-size:19px;margin-bottom:6px;color:#0d5f57">'+tip.t+'</div>'+
+  box.innerHTML='<div style="font-weight:800;font-size:19px;margin-bottom:6px;color:#1b1e22">'+tip.t+'</div>'+
                 '<div>'+tip.d+'</div>';
 }
 
@@ -1880,18 +1897,30 @@ var ASK_SITES=[
   {id:'custom',     name:'自定义网址（高级）', site:'', path:'/chat/completions', model:''}
 ];
 var ASK_DEFAULT_SITE=ASK_SITES[0].id;
+/* 关于孩子：爸妈问起「我儿子/金源/俺孩儿」时，小安照这里回；改这几行就能改说法。 */
+var ASK_ABOUT_KID={
+  name:'郭金源',
+  nicknames:['郭金源','金源','俺孩儿','俺儿','我儿','孩子'],
+  role:'这份血压记录就是他帮您做的，他一直在替您操心身体',
+  doing:'在学校用功读书、正踏踏实实努力',
+  praise:'孩子在学校用功读书、踏实上进，还惦记着家里，心也细——您这份小本子就是他做的'
+};
+
 /* 小安的人设。改这里就能换语气、换专科，不需要动别的代码。 */
 var ASK_PERSONA=[
 '你叫「小安」，是「健康小本子」里的一位专业医学 AI 健康助理，主要服务对象是记录血压的老人和替他们照看的子女。',
 '你具备心血管内科和老年医学的专业背景，熟悉《中国高血压防治指南》等公开权威材料里的通用知识。',
 '你知道家属自己用电子血压计量的是「家庭自测」，判级标准是 ≥135/85 算偏高，和医院的 140/90 不一样，回答时要分开说。',
 '你只做健康教育、生活方式指导、测量方法解释，以及「这个情况要不要去找医生」的判断。',
-'回答方式：用普通话口语，像面对面跟老人说话，短句、大白话、不用英文缩写、不用 Markdown 表格和星号；先说结论再说怎么做，不客套；一次只回答最关键的一两句，不超过 180 字，除非对方要求展开；涉及数字给具体值（比如「每天吃盐别超过 5 克，大约一个啤酒瓶盖」）。问的内容和血压、健康无关，用一句话温和地拉回来。',
+'回答方式：用普通话口语，像面对面跟老人说话，短句、大白话、不用英文缩写、不用 Markdown 表格和星号；先说结论再说怎么做，不客套；一次只回答最关键的一两句，不超过 180 字，除非对方要求展开；涉及数字给具体值（比如「每天吃盐别超过 5 克，大约一个啤酒瓶盖」）。问的内容和血压、健康无关，一般用一句话温和地拉回来；但如果问的是孩子（见下面「关于孩子」那条），就先把这句话答好，再把话头带回健康。',
 '绝对不能做：不开药、不给剂量、不说「加半片」「可以停掉某种药」，一律让他去问医生；不根据聊天下诊断，不说「你这是高血压三级」这类结论；不推荐具体药品品牌、保健品和偏方。',
 '遇到这些情况，先让他马上打 120 或马上去医院：胸口闷痛、喘不上气；说话不清、嘴角歪、一侧手脚没劲；突然剧烈头痛、看东西模糊；突然眼前发黑、站不稳、快要晕倒；血压 ≥180/110 并且人不舒服。',
 '如果血压只是偏高、人没有不舒服，不要制造恐慌：让他安静坐 5 分钟复测，连续几天偏高再把记录带给医生看。',
 '用户会上传他自己的「血压记录摘要」作为背景资料。可以引用里面的数字，但绝不能编造摘要里没有的数值；摘要为空就说「还没有记录」。只在被问到时才提这些数字，不要每条都复述一遍。',
 '摘要里的数字永远是最新的。之前对话里出现过的血压数字都算过期，一律以摘要为准；两者不一致时不要提旧数字。',
+'关于孩子：老人提到'+ASK_ABOUT_KID.nicknames.slice(0,3).join('、')+'这些叫法时，说的就是'+ASK_ABOUT_KID.name+'——'+ASK_ABOUT_KID.role+'，他现在'+ASK_ABOUT_KID.doing+'。被问到时顺着老人的话，用肯定的语气说：'+ASK_ABOUT_KID.praise+'。如果老人说孩子在忙、别打扰他，就接一句「他惦记您，您好好的他就安心了」。',
+'夸孩子要真诚、有分寸，落在具体的事上（惦记家里、心细、踏实），不要堆形容词，不超过三句；夸完把话头拉回老人的健康，问一句血压测得怎么样、按时吃药没有。不要编造他的成绩、学校、专业、工作、收入、行程和感情这些具体信息——不知道就不说。',
+'关于孩子的问题，语气要暖，但绝不能借机说「不用去医院了」「血压没事了」这类话；涉及身体的话照旧按前面的规则说。',
 '最后提醒一次：你是健康教育助手，不是他的主治医生。'
 ].join('\n');
 
@@ -2044,7 +2073,15 @@ var askState={history:[],busy:false,busySince:0,listening:false,recTried:false,r
 
 function askSystemPrompt(){
   // 摘要放在 system 里，用户只看得到自己说的话
-  return ASK_PERSONA+'\n\n【用户的血压记录摘要】\n'+buildHealthContext();
+  return ASK_PERSONA+'\n\n【用户的血压记录摘要】\n'+buildHealthContext()+askAboutKidLine();
+}
+/* 把孩子的叫法补进摘要，让小安知道老人嘴里的「俺孩儿」是谁。
+   只发这段固定的称呼对照，不发姓名、年龄以外的任何个人信息。 */
+function askAboutKidLine(){
+  var nick=ASK_ABOUT_KID.nicknames.filter(function(n){ return n.length>=2; });
+  if(!nick.length) return '';
+  return '\n\n【关于家里人】\n老人可能把'+ASK_ABOUT_KID.name+'叫作：'+nick.join('、')+'。这几个叫法都指同一个人，也就是做这份记录的本家孩子。'
+       +'问到他时，按人设里「关于孩子」的规则回答。';
 }
 
 /* 调用接口。任何失败都要能给出一句老人看得懂的话，不能只抛英文错误。 */
@@ -2180,18 +2217,26 @@ function openAssistant(presetText){
       '<br>点下面的「填密钥」后，把服务商给你的那一串字符粘贴进去就行。</div>'):'')+
     (askEmbedded()?('<div class="vb-note" style="margin-top:8px">这台设备不用设置，直接用。</div>'):'')+
     '<div class="vb-log" id="vbLog"></div>'+
-    '<button class="vb-mic" id="vbMic" type="button"'+(micOk?'':' disabled')+'>🎤 按住说话</button>'+
-    '<div class="vb-status" id="vbStatus" style="display:none"></div>'+
-    '<div class="vb-keyrow">'+
-      '<input class="vb-input" id="vbText" type="text" placeholder="或者在这里打字问" autocomplete="off" maxlength="1000">'+
+    '<div class="vb-composer">'+
+      '<div class="vb-status" id="vbStatus" style="display:none"></div>'+
+      '<div class="vb-sendbar">'+
+        '<input class="vb-input" id="vbText" type="text" placeholder="在这里打字问小安" autocomplete="off" maxlength="1000">'+
+        '<button class="vb-send" id="vbSend" type="button">发送</button>'+
+      '</div>'+
+      '<div class="vb-keyrow">'+
+        '<button class="vb-mic" id="vbMic" type="button"'+(micOk?'':' disabled')+'>🎤 按住说话</button>'+
+      '</div>'+
+      (noKey?'<button class="bigbtn primary" id="vbKeyNow" style="margin-top:10px">🔑 填密钥</button>':'')+
+      '<button class="bigbtn danger-ghost" id="vbClear" style="margin-top:10px">清空对话</button>'+
     '</div>'+
-    '<button class="vb-send" id="vbSend" type="button">发送</button>'+
-    (noKey?'<button class="bigbtn primary" id="vbKeyNow" style="margin-top:10px">🔑 填密钥</button>':'')+
-    '<div class="vb-note">小安讲的是一般健康知识，不能代替医生看病、开药。真不舒服请马上联系家人或打 120。</div>'+
-    '<button class="bigbtn danger-ghost" id="vbClear" style="margin-top:14px">清空对话</button>';
+    '<div class="vb-note">小安讲的是一般健康知识，不能代替医生看病、开药。真不舒服请马上联系家人或打 120。</div>';
   showModal('问问小安',h,null);
+  // 对话弹窗用 chat 版式：大屏居中、对话区独立滚动
+  var m=$('modal'); if(m) m.classList.add('chat');
+  var sheetEl=document.querySelector('.modal .sheet');
+  if(sheetEl){ sheetEl.style.display='flex'; sheetEl.style.flexDirection='column'; }
   // 历史对话逐条用 DOM 拼进去（不走 innerHTML），用户说的话不会被当成标签解析
-  if(!askState.history.length) askAppend('sys','先试试点上面的常见问题，或者按住绿色按钮说话。');
+  if(!askState.history.length) askAppend('sys','先在这里打字，或者按住下面的按钮说话。');
   else askState.history.forEach(function(m){ askAppend(m.role,m.content); });
   bindAssistantEvents();
   if(noKey){ var k=$('vbKeyNow'); if(k) k.onclick=openAskSettings; }
@@ -2559,7 +2604,7 @@ function renderAskCard(){
     el.innerHTML='小安已经准备好。<span style="color:#8a5700;font-weight:700">第一次用要先输家人口令</span>，输过之后这台设备就不用再输了。';
     return;
   }
-  el.innerHTML='小安已经可以用了。按住绿色大按钮说话，它会结合你本机的血压记录回答。';
+  el.innerHTML='小安已经可以用了。按住「按住说话」那个大按钮，它会结合你本机的血压记录回答。';
 }
 
 /* ---------- 启动 ---------- */
