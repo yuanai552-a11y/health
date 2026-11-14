@@ -290,6 +290,53 @@ body.modal-open{overflow:hidden}
 .pill.lowdia{background:#e4f0fb;color:#1f5d8c}
 .pill.lowsys{background:#e4f0fb;color:#1f5d8c}
 .tag.lowsys{background:#e4f0fb;color:#1f5d8c}
+
+/* ===== 2026-11-15 新增：问一问医学 AI（小安） ===== */
+.vb-float{display:none;align-items:center;gap:8px;padding:11px 16px;border-radius:999px;
+  background:rgba(255,255,255,.16);color:#fff;border:1.5px solid rgba(255,255,255,.42);
+  font-size:17px;font-weight:800;letter-spacing:.2px;transition:transform .1s,background .15s}
+.vb-float:active{transform:scale(.95);background:rgba(255,255,255,.28)}
+.vb-float .vb-dot{width:9px;height:9px;border-radius:50%;background:#ffd166;flex:0 0 auto}
+/* 手机上：小安做成页面内大按钮，同时底部有个圆形悬浮键，随时随地能问 */
+@media (max-width:700px){.vb-float{display:inline-flex}}
+.vb-fab{position:fixed;right:16px;bottom:calc(104px + env(safe-area-inset-bottom));z-index:55;
+  width:68px;height:68px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,#12756b,var(--brand2));color:#fff;
+  box-shadow:0 10px 24px -8px rgba(8,60,55,.7),inset 0 1px 0 rgba(255,255,255,.2);transition:transform .1s}
+.vb-fab:active{transform:scale(.94)}
+.vb-fab .vb-fab-t{font-size:19px;font-weight:800;line-height:1.1}
+.vb-fab .vb-fab-s{font-size:12px;opacity:.85;line-height:1.2}
+.vb-intro{background:#f2f8f7;border:1px solid #dbe9e6;border-radius:16px;padding:14px 16px;font-size:19px;line-height:1.6;color:#294a48}
+.vb-row{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+.vb-quick{flex:1 1 46%;min-height:52px;padding:12px;border-radius:14px;background:#fff;border:1.5px solid #d7e5e2;
+  color:#0b5b55;font-size:17px;font-weight:700;text-align:left;line-height:1.4}
+.vb-quick:active{background:#eaf3f1}
+.vb-log{max-height:52vh;overflow:auto;-webkit-overflow-scrolling:touch;margin-top:12px;padding-right:2px}
+.vb-msg{margin:0 0 12px;display:flex}
+.vb-msg .bub{max-width:88%;padding:12px 15px;border-radius:16px;font-size:20px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
+.vb-msg.me{justify-content:flex-end}
+.vb-msg.me .bub{background:linear-gradient(160deg,var(--brand3),var(--brand));color:#fff;border-bottom-right-radius:6px}
+.vb-msg.ai .bub{background:#f2f7f6;color:var(--ink);border:1px solid #e2ebe9;border-bottom-left-radius:6px}
+.vb-msg.sys{justify-content:center}
+.vb-msg.sys .bub{background:#fffaf0;border:1px solid #f2e0bd;color:#7d5307;font-size:19px;text-align:center}
+.vb-msg.err .bub{background:#fdf1ef;border:1px solid #f5cdc7;color:#9b2b22;font-size:20px;font-weight:600}
+.vb-mic{width:100%;margin-top:6px;padding:24px 16px;font-size:27px;font-weight:800;color:#fff;border-radius:20px;
+  background:linear-gradient(160deg,var(--brand3) 0%,var(--brand) 60%,var(--brand2) 100%);
+  box-shadow:0 10px 24px -10px rgba(13,95,87,.6),inset 0 1px 0 rgba(255,255,255,.16);transition:transform .1s}
+.vb-mic:active{transform:scale(.985)}
+.vb-mic.on{background:linear-gradient(160deg,#d0483c,var(--bad));box-shadow:0 0 0 8px rgba(195,59,49,.15),0 10px 24px -10px rgba(195,59,49,.6)}
+.vb-mic[disabled]{opacity:.55;box-shadow:none}
+.vb-status{font-size:19px;color:#7d5307;text-align:center;margin-top:10px;line-height:1.5}
+.vb-input{width:100%;font-size:19px;font-weight:600;padding:13px 12px;border-radius:14px;border:1.5px solid var(--sub);
+  background:#fff;color:var(--ink);font-family:inherit;text-align:left}
+.vb-input:focus{outline:none;border-color:var(--brand3);box-shadow:0 0 0 4px rgba(18,117,107,.10)}
+.vb-send{width:100%;margin-top:10px;padding:16px;font-size:20px;color:#fff;border-radius:16px;
+  background:linear-gradient(160deg,var(--brand3),var(--brand2))}
+.vb-send[disabled]{opacity:.5}
+.vb-keyrow{display:flex;gap:8px;margin-top:8px}
+.vb-keyrow .vb-input{flex:1;min-width:0;font-size:17px}
+.vb-note{font-size:18px;color:var(--sub);line-height:1.6;margin-top:10px}
+@media print{.vb-fab,.vb-log,.vb-mic,.vb-keyrow{display:none!important}}
 </style>
 </head>
 <body>
@@ -303,6 +350,7 @@ body.modal-open{overflow:hidden}
     <button class="avatar" id="avatarBtn" type="button" aria-label="切换记录的人">爸</button>
   </div>
   <div id="heroZone"></div>
+  <button class="vb-float" id="vbHero" type="button"><span class="vb-dot"></span>问小安</button>
 </header>
 
 <main class="wrap">
@@ -377,6 +425,19 @@ body.modal-open{overflow:hidden}
   </section>
 
 
+  <section class="card no-print" id="voiceCard">
+    <h2>问问小安（医学 AI）</h2>
+    <div class="vb-intro" id="vbCardState">说不清、拿不准的时候，按住下面的绿色大按钮，把话直接说出来问它。</div>
+    <div class="vb-row">
+      <button class="vb-quick" type="button" data-vbq="我这次的血压要紧吗？">我这次的血压要紧吗？</button>
+      <button class="vb-quick" type="button" data-vbq="我妈血压高，平时吃饭要注意什么？">吃饭要注意什么？</button>
+      <button class="vb-quick" type="button" data-vbq="今天忘了吃药，现在要不要补？">忘了吃药怎么办？</button>
+      <button class="vb-quick" type="button" data-vbq="这段时间血压忽高忽低，是什么原因？">忽高忽低怎么回事？</button>
+    </div>
+    <button class="btn-ghost" id="vbOpen" type="button" style="margin-top:12px">💬 打开对话窗口</button>
+    <div class="vb-note">小安讲的是通用的健康知识，不能代替医生看病开药。真不舒服请按上面的「紧急情况怎么办」处理。</div>
+  </section>
+
   <section class="card" id="dietCard">
     <h2>今天怎么吃</h2>
     <div id="dietBox" class="hint"></div>
@@ -403,13 +464,14 @@ body.modal-open{overflow:hidden}
     <div class="row">
       <div><label class="field" for="kinInput">家人电话（紧急时拨打）</label><input type="text" id="kinInput" inputmode="tel" placeholder="留空就不显示"></div>
     </div>
-    <div class="hint" style="margin-top:8px">所有记录只存在这台手机上，不会传到任何网站。</div>
+    <div class="hint" style="margin-top:8px">所有记录只存在这台手机上，不联网。只有你主动问「小安」时，才会把整理好的血压摘要发给 AI 服务商（见下面小安设置）。</div>
     <button class="btn-ghost" id="reportBtn">📄 生成报告给医生看</button>
     <button class="btn-ghost" id="exportBtn">💾 备份数据（换手机用）</button>
     <div class="warnbar caution" id="backupWarn" style="display:none;margin-bottom:10px"></div>
     <button class="btn-ghost" id="voiceBtn">🔊 语音读出结果：关闭</button>
     <button class="btn-ghost" id="weeklyBtn">📤 复制本周小结（发到家庭群）</button>
     <button class="btn-ghost" id="copyBackupBtn">📋 复制备份文字（微信里用这个）</button>
+    <button class="btn-ghost" id="vbSetupBtn">🤖 小安设置（填 AI 密钥）</button>
     <button class="btn-ghost" id="importBtn">📥 从备份恢复</button>
     <div class="hint" style="margin-top:8px;color:#8a5a00">微信清理缓存可能会清掉记录，建议每月点一次备份。</div>
     <input type="file" id="importFile" accept=".json,application/json" style="display:none">
@@ -425,12 +487,15 @@ body.modal-open{overflow:hidden}
 
   <div class="footnote">
     本页面只作日常记录和趋势参考，<br>不能替代医生诊断和处方。不舒服请及时就医。<br>
-    <span style="font-size:13px">数据保存在本机 · 不联网</span>
+    <span style="font-size:13px">记录保存在本机 · 只有问小安时才联网</span>
   </div>
 </main>
 
 <div class="fab no-print"><button id="quickAdd">＋ 马上记一次血压</button></div>
 <div class="toast" id="toast"></div>
+<button class="vb-fab no-print" id="vbFab" type="button" aria-label="问小安">
+  <span class="vb-fab-t">问小安</span><span class="vb-fab-s">语音</span>
+</button>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="sheet">
@@ -1788,6 +1853,715 @@ function renderTip(next){
                 '<div>'+tip.d+'</div>';
 }
 
+/* ---------- 问一问医学 AI（小安） ----------
+   设计要点：
+   1. 密钥只存在这台手机的 localStorage 里，不上传到任何自己的服务器（前端直接用）。
+   2. 每次提问只把「整理好的血压摘要」带上，不发原始备份和家人的其他信息。
+   3. 没有密钥、浏览器不支持录音时不报错，只给清楚的一句话说明怎么开。
+   4. 语音优先：普通话识别（浏览器自带），失败自动退到键盘输入，老人都能用。 */
+/* ===== 内置配置（给"换台设备也能直接用"用） =====
+   把下面两行填上，密钥和地址就写进了这个 HTML 文件本身：
+   任何人打开这个文件都能直接用，不用再设置一遍。
+   注意：密钥是明文写在文件里的，谁拿到这个文件谁就能用你的额度。
+   所以这个文件只能发给自家人，不要传到网上、群里、网盘公开链接。 */
+var ASK_EMBED_KEY='sk-760122d52ed841ecb3c7d543f009603c';
+var ASK_EMBED_PASS='0813';                               // 家人口令：先输这个才让用 AI（可改）
+var ASK_EMBED_SITE='https://api.deepseek.com';          // 接口根地址（官方地址，不带 /v1 也可以）
+var ASK_EMBED_MODEL='deepseek-flash';                    // 账号里实际可用的模型名
+
+var ASK_KEY='family-health-ai-key';
+var ASK_LOGKEY='family-health-ai-log';
+var ASK_SITE_KEY='family-health-ai-site';
+// 常见服务商。文件里没内置配置时，默认用 DeepSeek 官方。
+var ASK_SITES=[
+  {id:'deepseek',   name:'DeepSeek 官方（推荐）', default:true, site:'https://api.deepseek.com', path:'/chat/completions', model:'deepseek-flash'},
+  {id:'tnt',        name:'TNT 中转站（网页会被跨域拦住）', site:'https://nocf.tntapi.com/v1', path:'/chat/completions', model:'deepseek-v4.1-flash'},
+  {id:'openai',     name:'OpenAI 官方', site:'https://api.openai.com', path:'/v1/chat/completions', model:'gpt-4o-mini'},
+  {id:'custom',     name:'自定义网址（高级）', site:'', path:'/chat/completions', model:''}
+];
+var ASK_DEFAULT_SITE=ASK_SITES[0].id;
+/* 小安的人设。改这里就能换语气、换专科，不需要动别的代码。 */
+var ASK_PERSONA=[
+'你叫「小安」，是「健康小本子」里的一位专业医学 AI 健康助理，主要服务对象是记录血压的老人和替他们照看的子女。',
+'你具备心血管内科和老年医学的专业背景，熟悉《中国高血压防治指南》等公开权威材料里的通用知识。',
+'你知道家属自己用电子血压计量的是「家庭自测」，判级标准是 ≥135/85 算偏高，和医院的 140/90 不一样，回答时要分开说。',
+'你只做健康教育、生活方式指导、测量方法解释，以及「这个情况要不要去找医生」的判断。',
+'回答方式：用普通话口语，像面对面跟老人说话，短句、大白话、不用英文缩写、不用 Markdown 表格和星号；先说结论再说怎么做，不客套；一次只回答最关键的一两句，不超过 180 字，除非对方要求展开；涉及数字给具体值（比如「每天吃盐别超过 5 克，大约一个啤酒瓶盖」）。问的内容和血压、健康无关，用一句话温和地拉回来。',
+'绝对不能做：不开药、不给剂量、不说「加半片」「可以停掉某种药」，一律让他去问医生；不根据聊天下诊断，不说「你这是高血压三级」这类结论；不推荐具体药品品牌、保健品和偏方。',
+'遇到这些情况，先让他马上打 120 或马上去医院：胸口闷痛、喘不上气；说话不清、嘴角歪、一侧手脚没劲；突然剧烈头痛、看东西模糊；突然眼前发黑、站不稳、快要晕倒；血压 ≥180/110 并且人不舒服。',
+'如果血压只是偏高、人没有不舒服，不要制造恐慌：让他安静坐 5 分钟复测，连续几天偏高再把记录带给医生看。',
+'用户会上传他自己的「血压记录摘要」作为背景资料。可以引用里面的数字，但绝不能编造摘要里没有的数值；摘要为空就说「还没有记录」。只在被问到时才提这些数字，不要每条都复述一遍。',
+'摘要里的数字永远是最新的。之前对话里出现过的血压数字都算过期，一律以摘要为准；两者不一致时不要提旧数字。',
+'最后提醒一次：你是健康教育助手，不是他的主治医生。'
+].join('\n');
+
+var ASK_CUSTOM_KEY='family-health-ai-custom';
+/* 把"根地址 + 路径"拆开，保证拼出来的完整地址和用户写的一模一样。
+   例：https://nocf.tntapi.com/v1 + /chat/completions */
+function askSplitUrl(url){
+  var u=String(url||'').trim();
+  return {site:u, path:''};
+}
+/* 由"用户填的地址"算出真正要请求的完整 URL。
+   规则只有两条，避免各处各拼一次、拼出 aaa/chat/completions/chat/completions：
+   1) 地址里已经带 /chat/completions 的，原样使用；
+   2) 否则在末尾补一个 /chat/completions。
+   中间路径（/v1、/v2 等）一律保留。 */
+function askFullUrl(raw){
+  var u=String(raw||'').trim().replace(/\/+$/,'');
+  if(!u) return '';
+  if(/\/chat\/completions$/i.test(u)) return u;
+  return u+'/chat/completions';
+}
+function askUrlOfSite(s){ return askFullUrl(String((s&&s.site)||'').replace(/\/+$/,'')+String((s&&s.path)||'')); }
+function askSite(){
+  // 只有文件里内置了密钥、或者使用者明确点了"所有设备都用文件里的设置"时，才忽略本机设置。
+  // 不能只看"内置了地址"：那会让人在本机选的网址永远不生效。
+  if(askEmbedForced()){
+    var es=askSplitUrl(ASK_EMBED_SITE||'');
+    return {id:'embed', name:'文件内置', site:es.site, path:'',
+            model:String(ASK_EMBED_MODEL||'deepseek-flash')};
+  }
+  var id=ASK_DEFAULT_SITE, custom=null;
+  try{
+    id=localStorage.getItem(ASK_SITE_KEY)||ASK_DEFAULT_SITE;
+    var raw=localStorage.getItem(ASK_CUSTOM_KEY);
+    if(raw) custom=JSON.parse(raw);
+  }catch(e){ id=ASK_DEFAULT_SITE; custom=null; }
+  var base=ASK_SITES[0], found=false;
+  for(var i=0;i<ASK_SITES.length;i++) if(ASK_SITES[i].id===id){ base=ASK_SITES[i]; found=true; }
+  if(!found) base=ASK_SITES[0];
+  var out={id:base.id,name:base.name,site:base.site,path:base.path,model:base.model};
+  if(base.id==='custom'&&custom&&custom.url){
+    var sp=askSplitUrl(custom.url);
+    out.site=sp.site; out.path='';
+    if(custom.model) out.model=String(custom.model);
+  }
+  return out;
+}
+/* 三种用法都要成立：
+   1) 自己这台：本机设置的优先，想换就换；
+   2) 发给爸妈：文件里内置了密钥，他们打开就能用，什么都不用填；
+   3) 明确勾了"所有设备都用文件里的设置"：这时本机设置一律不生效，防止各台设备越用越乱。 */
+var ASK_FORCE_KEY='family-health-ai-force';
+var ASK_PASSKEY='family-health-ai-pass';
+/* 家人口令：
+   口令以明文写在文件里（ASK_EMBED_PASS），这一点要说清楚——它只用来挡住
+   随手打开这个文件的人，挡不住会看网页源码的人。想要真正保密就别把密钥放进文件。
+   输过一次后，这台设备永久记住，以后不用再输（清缓存或换设备才会再问一次）。
+   没填口令时这个功能完全不生效，和以前一样。 */
+function askPassSet(){ return String(ASK_EMBED_PASS||'').trim().length>0; }
+function askPassOk(){
+  if(!askPassSet()) return true;
+  try{
+    var got=localStorage.getItem(ASK_PASSKEY)||'';
+    // 通过过就是通过过，不再等到期。旧版本留下的到期时间戳一并忽略。
+    return got==='1';
+  }catch(e){ return false; }
+}
+function askPassRemember(){
+  // 这台设备记住口令，不再过期：老人只需第一次输入，以后打开直接用。
+  // 副作用：谁拿到这台手机、打开这个文件，就能直接用（额度是共用的一份）。
+  try{ localStorage.setItem(ASK_PASSKEY,'1'); localStorage.removeItem(ASK_PASSKEY+'-until'); }catch(e){}
+}
+/* 简易校验串（不是 SHA-256，也不用于口令比对）。
+   留在这里只作兼容：老版本可能在 ASK_EMBED_PASS 里存过这种 32 位校验串。 */
+function askHash(txt){
+  var s=String(txt||'');
+  var h1=0x811c9dc5, h2=0x01000193, h3=0x9e3779b9;
+  for(var i=0;i<s.length;i++){
+    var c=s.charCodeAt(i);
+    h1=((h1^c)*16777619)>>>0;
+    h2=((h2+c*2654435761)^(h2>>>7))>>>0;
+    h3=((h3^(c*40503))<<5 | h3>>>27)>>>0;
+  }
+  var parts=[h1>>>0,h2>>>0,h3>>>0,s.length>>>0];
+  return parts.map(function(x){ return ('00000000'+x.toString(16)).slice(-8); }).join('');
+}
+function askForceAll(){
+  try{ return localStorage.getItem(ASK_FORCE_KEY)==='1'; }catch(e){ return false; }
+}
+/* 什么时候必须用文件内置的设置：内置了密钥（发给别人用的那一份），
+   或者使用者自己勾了"所有设备都用文件里的设置" */
+function askEmbedForced(){ return !!(ASK_EMBED_KEY||askForceAll()); }
+function askUseEmbeddedKey(){ return !!(ASK_EMBED_KEY||askForceAll()); }
+function askKey(){
+  var own='';
+  try{ own=String(localStorage.getItem(ASK_KEY)||'').trim(); }catch(e){ own=''; }
+  if(own&&!askEmbedForced()) return own;      // 自己填的，且没有强制走文件设置
+  return String(ASK_EMBED_KEY||'').trim()||own;
+}
+function askHasKey(){ return !!askKey(); }
+function askKeySource(){
+  var own='';
+  try{ own=String(localStorage.getItem(ASK_KEY)||'').trim(); }catch(e){ own=''; }
+  if(own&&!askEmbedForced()) return 'own';
+  return String(ASK_EMBED_KEY||'').trim() ? 'embed' : (own?'own':'none');
+}
+/* 内置了密钥的那一份文件，界面上就不用再让老人填 */
+function askEmbedded(){ return !!String(ASK_EMBED_KEY||'').trim(); }
+
+/* 把血压记录压缩成一段文字摘要。只发必要的数字，不发明细里的其他字段。 */
+function buildHealthContext(){
+  var p=cur();
+  // 只发称呼不发真实姓名：判断血压问题用不到真实姓名，少发一点个人信息
+  var who=(p.label||'我');
+  var lines=[];
+  lines.push('用户资料：'+who+(p.age?('，'+p.age+' 岁'):'')+'。判级标准用家庭自测 ≥'+HL_SYS+'/'+HL_DIA+'。');
+  var rs=(p.records||[]);
+  if(!rs.length){
+    lines.push('目前还没有任何血压记录。');
+    return lines.join('\n');
+  }
+  var recent=rs.slice(-14);
+  var s=0,d=0,over=0;
+  recent.forEach(function(r){ s+=Number(r.sys); d+=Number(r.dia); if(isHigh(Number(r.sys),Number(r.dia))) over++; });
+  lines.push('共有 '+rs.length+' 条记录，最近 '+recent.length+' 次平均 '+Math.round(s/recent.length)+'/'+Math.round(d/recent.length)+' mmHg，其中偏高 '+over+' 次。');
+  var byPeriod={};
+  recent.forEach(function(r){
+    var k=r.period||'未记录';
+    if(!byPeriod[k]) byPeriod[k]={n:0,s:0,d:0};
+    byPeriod[k].n++; byPeriod[k].s+=Number(r.sys); byPeriod[k].d+=Number(r.dia);
+  });
+  Object.keys(byPeriod).forEach(function(k){
+    var v=byPeriod[k];
+    if(v.n<2) return;
+    lines.push(k+'平均 '+Math.round(v.s/v.n)+'/'+Math.round(v.d/v.n)+'（'+v.n+' 次）');
+  });
+  var last=rs[rs.length-1];
+  var g=grade(Number(last.sys),Number(last.dia));
+  lines.push('最近一次：'+fmt(last.ts)+' '+last.period+'，'+last.sys+'/'+last.dia+' mmHg'+(last.pulse?('，脉搏 '+last.pulse):'')+'，页面判级「'+g.text+'」。');
+  lines.push('最近几次明细（新的在后）：');
+  recent.slice(-10).forEach(function(r){
+    lines.push('  '+fmt(r.ts)+' '+r.period+'  '+r.sys+'/'+r.dia+(r.pulse?('（脉搏 '+r.pulse+'）'):''));
+  });
+  return lines.join('\n');
+}
+
+/* 历史对话：只留最近 6 轮，太长会让老人等更久、也更容易跑题 */
+function askHistory(){ return (askState.history||[]).slice(-12); }
+var askState={history:[],busy:false,busySince:0,listening:false,recTried:false,rec:null};
+
+function askSystemPrompt(){
+  // 摘要放在 system 里，用户只看得到自己说的话
+  return ASK_PERSONA+'\n\n【用户的血压记录摘要】\n'+buildHealthContext();
+}
+
+/* 调用接口。任何失败都要能给出一句老人看得懂的话，不能只抛英文错误。 */
+function askSend(text){
+  var key=askKey();
+  if(!key){ return Promise.reject({code:'NO_KEY'}); }
+  var site=askSite();
+  var url=String(site.site||'').replace(/\/+$/,'')+(site.path||'');
+  if(/\/chat\/completions$/i.test(url)){ /* 已是完整地址 */ }
+  else { url=askFullUrl(url); }
+
+  var body={
+    model:String(site.model||'deepseek-flash'),
+    messages:[{role:'system',content:askSystemPrompt()}]
+      .concat(askHistory())
+      .concat([{role:'user',content:String(text||'').slice(0,1000)}]),
+    temperature:0.3,
+    max_tokens:600,
+    stream:false
+  };
+  var ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
+  var opts={method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify(body)};
+  if(ctrl) opts.signal=ctrl.signal;
+
+  /* 超时必须自己"抢先"结束这件事。
+     不能只在 fetch 的 then/catch 里判断——请求一直不返回时，then 和 catch 都不会执行，
+     界面就会永远停在"正在想"、按钮永远锁着（旧浏览器无 AbortController 时尤其明显）。
+     这里用 Promise.race 让超时先落地，保证界面一定能恢复。 */
+  return new Promise(function(resolve,reject){
+    var settled=false;
+    var timer=setTimeout(function(){
+      if(settled) return;
+      settled=true;
+      if(ctrl){ try{ ctrl.abort(); }catch(e){} }
+      reject({code:'TIMEOUT'});
+    },45000);
+    var finish=function(fn,val){
+      if(settled) return;
+      settled=true;
+      clearTimeout(timer);
+      fn(val);
+    };
+    var p;
+    try{ p=fetch(url,opts); }
+    catch(e){ finish(reject,{code:'NET'}); return; }
+    p.then(function(res){
+      return res.text().then(function(raw){ return {res:res,raw:raw}; });
+    }).then(function(r){
+      var res=r.res, raw=r.raw;
+      var o=null;
+      try{ o=JSON.parse(raw); }catch(e){ o=null; }
+      if(!res.ok){
+        var msg=(o&&o.error&&o.error.message)?String(o.error.message):'';
+        finish(reject,{code:'HTTP',status:res.status,msg:msg});
+        return;
+      }
+      if(!o){ finish(reject,{code:'BAD_JSON'}); return; }
+      var out='';
+      if(o.choices&&o.choices[0]){
+        var m=o.choices[0].message||{};
+        out=(typeof m.content==='string')?m.content:(o.choices[0].text||'');
+      }
+      out=String(out||'').trim();
+      if(!out){ finish(reject,{code:'EMPTY'}); return; }
+      finish(resolve,out);
+    },function(err){
+      // 超时已经先落地的话，这里的失败不用再报一次
+      if(err&&err.name==='AbortError'){ finish(reject,{code:'TIMEOUT'}); return; }
+      finish(reject,{code:'NET'});
+    });
+  });
+}
+
+/* 把小安的回答念出来。
+   老人"语音输入"的下一步往往就是"语音听答案"——只显示文字，还得凑近读。
+   默认开启（这是本页面对老人的核心价值），可以在设置里关掉。
+   念的时候把 Markdown 符号、括号里的英文注释去掉，读起来更顺。 */
+function askSpeak(text){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    if(askVoiceOff()) return;
+    var clean=String(text||'')
+      .replace(/[*#_`>]+/g,'')
+      .replace(/[（(][^）)]{0,30}[A-Za-z][^）)]{0,30}[）)]/g,'')
+      .replace(/\s+/g,' ')
+      .trim();
+    if(!clean) return;
+    var u=new SpeechSynthesisUtterance(clean);
+    u.lang='zh-CN';
+    u.rate=0.85;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){ /* 念不出来不影响看文字 */ }
+}
+/* 语音播报开关：默认开启，存在本机 */
+var ASK_VOICE_KEY='family-health-ai-voice';
+function askVoiceOff(){
+  try{ return localStorage.getItem(ASK_VOICE_KEY)==='off'; }catch(e){ return false; }
+}
+function askSetVoiceOff(off){
+  try{ localStorage.setItem(ASK_VOICE_KEY,off?'off':'on'); }catch(e){}
+}
+
+/* 错误 → 老人看得懂的话 */
+function askErrorText(e){
+  var c=e&&e.code;
+  if(c==='NO_KEY') return '还没填 AI 密钥。点「小安设置」填一次就好。';
+  if(c==='TIMEOUT') return '网络有点慢，小安没有回话。请检查网络后再问一次。';
+  if(c==='NET') return '连不上 AI 服务。可能是这台手机没网，也可能是这个服务商不允许网页直接调用（TNT 中转就是这种），换成允许网页调用的服务商才行。';
+  if(c==='EMPTY') return '小安这次没说话，请再问一次。';
+  if(c==='BAD_JSON') return '接口返回的内容看不懂。可能是网址填错了，请到「小安设置」检查。';
+  if(c==='HTTP'){
+    if(e.status===401||e.status===403) return '密钥不对或者已经失效。请到「小安设置」重新填一次。';
+    if(e.status===402) return '这个 AI 账户余额不够了，请充值后再用。';
+    if(e.status===429) return '问得太快了，等一两分钟再问。';
+    if(e.status===404) return '接口网址不对（404）。请到「小安设置」检查网址和模型名。';
+    if(e.status>=500) return 'AI 服务那边暂时出问题了，过一会儿再试。';
+    // 不认识的状态码只报代码，不把服务商原文显示给人看（第三方返回里可能夹带请求内容）
+    return '出错了（代码 '+e.status+'）。请到「小安设置」检查密钥和网址。';
+  }
+  return '出了点问题，请再试一次。';
+}
+
+/* ---- 对话界面（放在通用弹窗里，复用现有样式） ---- */
+function openAssistant(presetText){
+  // 文件里设了家人口令、而这台设备还没通过：先要口令，通过后再进对话
+  if(!askPassOk()){ openPassGate(presetText); return; }
+  var noKey=!askHasKey();
+  var micOk=!!askMicSupported();
+  var h='<div class="vb-intro">我是小安，一个医学 AI。可以问我血压、吃药、吃什么、该不该去医院。'+
+    (micOk?'按住下面的大按钮说话就行。':'这台手机的浏览器不能语音，请在下面打字问。')+'</div>'+
+    (noKey?('<div class="warnbar caution" style="margin-top:10px">还没有填 AI 密钥，小安暂时不能回答。'+
+      '<br>点下面的「填密钥」后，把服务商给你的那一串字符粘贴进去就行。</div>'):'')+
+    (askEmbedded()?('<div class="vb-note" style="margin-top:8px">这台设备不用设置，直接用。</div>'):'')+
+    '<div class="vb-log" id="vbLog"></div>'+
+    '<button class="vb-mic" id="vbMic" type="button"'+(micOk?'':' disabled')+'>🎤 按住说话</button>'+
+    '<div class="vb-status" id="vbStatus" style="display:none"></div>'+
+    '<div class="vb-keyrow">'+
+      '<input class="vb-input" id="vbText" type="text" placeholder="或者在这里打字问" autocomplete="off" maxlength="1000">'+
+    '</div>'+
+    '<button class="vb-send" id="vbSend" type="button">发送</button>'+
+    (noKey?'<button class="bigbtn primary" id="vbKeyNow" style="margin-top:10px">🔑 填密钥</button>':'')+
+    '<div class="vb-note">小安讲的是一般健康知识，不能代替医生看病、开药。真不舒服请马上联系家人或打 120。</div>'+
+    '<button class="bigbtn danger-ghost" id="vbClear" style="margin-top:14px">清空对话</button>';
+  showModal('问问小安',h,null);
+  // 历史对话逐条用 DOM 拼进去（不走 innerHTML），用户说的话不会被当成标签解析
+  if(!askState.history.length) askAppend('sys','先试试点上面的常见问题，或者按住绿色按钮说话。');
+  else askState.history.forEach(function(m){ askAppend(m.role,m.content); });
+  bindAssistantEvents();
+  if(noKey){ var k=$('vbKeyNow'); if(k) k.onclick=openAskSettings; }
+  else if(presetText){ sendAsk(presetText); }
+}
+function askBubbleHtml(role,text,extra){
+  var cls=role==='user'?'me':(role==='error'?'ai err':(role==='sys'?'sys':'ai'));
+  return '<div class="vb-msg '+cls+'"><div class="bub">'+esc(text)+'</div></div>';
+}
+function askAppend(role,text){
+  var log=$('vbLog');
+  if(!log) return;
+  var wrap=document.createElement('div');
+  wrap.innerHTML=askBubbleHtml(role,text,'');
+  var node=wrap.firstChild;
+  if(node) log.appendChild(node);
+  log.scrollTop=log.scrollHeight;
+}
+function askStatus(msg){
+  var el=$('vbStatus');
+  if(!el) return;
+  if(!msg){ el.style.display='none'; el.textContent=''; return; }
+  el.style.display=''; el.textContent=msg;
+}
+function sendAsk(text){
+  text=String(text||'').trim();
+  if(!text) return;
+  if(askState.busy){ toast('小安正在回答，稍等一下'); return; }
+  if(!askHasKey()){ openAskSettings(); return; }
+  askState.busy=true;
+  askState.busySince=Date.now();
+  askAppend('user',text);
+  askStatus('小安正在想，请稍等…');
+  var sendBtn=$('vbSend'); if(sendBtn) sendBtn.disabled=true;
+  askSend(text).then(function(reply){
+    askState.busy=false;
+    askStatus('');
+    var sb=$('vbSend'); if(sb) sb.disabled=false;
+    askState.history.push({role:'user',content:text});
+    askState.history.push({role:'assistant',content:reply});
+    askAppend('ai',reply);
+    askSpeak(reply);          // 念出来，老人不用凑近看
+    saveAskLog();
+  },function(err){
+    askState.busy=false;
+    var sb=$('vbSend'); if(sb) sb.disabled=false;
+    askStatus('');
+    askAppend('error',askErrorText(err));
+  });
+}
+/* 对话只存在本机，方便老人回头翻；最多留 40 条 */
+function saveAskLog(){
+  try{ localStorage.setItem(ASK_LOGKEY,JSON.stringify(askState.history.slice(-40))); }catch(e){}
+}
+function loadAskLog(){
+  try{
+    var raw=localStorage.getItem(ASK_LOGKEY);
+    if(!raw) return;
+    var arr=JSON.parse(raw);
+    if(Array.isArray(arr)){
+      askState.history=arr.filter(function(m){ return m&&(m.role==='user'||m.role==='assistant')&&typeof m.content==='string'; }).slice(-40);
+    }
+  }catch(e){ askState.history=[]; }
+}
+
+/* ---- 语音识别（浏览器自带，安卓 Chrome 与微信部分版本可用） ---- */
+function askMicSupported(){
+  try{ return !!(window.SpeechRecognition||window.webkitSpeechRecognition); }catch(e){ return false; }
+}
+function makeRecognizer(){
+  var Ctor=null;
+  try{ Ctor=window.SpeechRecognition||window.webkitSpeechRecognition; }catch(e){ Ctor=null; }
+  if(!Ctor) return null;
+  var rec=new Ctor();
+  rec.lang='zh-CN';
+  rec.interimResults=true;
+  rec.continuous=false;
+  rec.maxAlternatives=1;
+  return rec;
+}
+function askMicStart(){
+  if(askState.busy){ askStatus('小安正在回答，稍等一下。'); return; }
+  if(!askMicSupported()){
+    askStatus('这台手机的浏览器不能语音识别，请在下面的框里打字问。');
+    return;
+  }
+  if(askState.listening) return;
+  try{
+    askState.rec=makeRecognizer();
+    if(!askState.rec){ askStatus('这台手机的浏览器不能语音识别，请打字问。'); return; }
+    var finalText='';
+    askState.rec.onresult=function(ev){
+      // 只累加"已确定"的结果：中间结果会来回改，整段覆盖会丢掉已经说完的前半句
+      var s='';
+      for(var i=0;i<ev.results.length;i++) if(ev.results[i].isFinal) s+=ev.results[i][0].transcript;
+      if(s) finalText=s;
+      var show=s||(ev.results[ev.results.length-1]?ev.results[ev.results.length-1][0].transcript:'');
+      askStatus('听到：'+show);
+    };
+    askState.rec.onerror=function(ev){
+      var code=(ev&&ev.error)||'';
+      if(code==='not-allowed'||code==='service-not-allowed') askStatus('没有拿到麦克风权限。请在浏览器设置里允许使用麦克风，或者直接在下面打字。');
+      else if(code==='no-speech') askStatus('没听到声音，按住按钮再说一次。');
+      else if(code==='network') askStatus('语音识别要联网，网络不通。请打字问。');
+      else askStatus('语音没识别成功，请再说一次，或者在下面打字。');
+    };
+    askState.rec.onend=function(){
+      askState.listening=false;
+      var btn=$('vbMic'); if(btn){ btn.classList.remove('on'); btn.textContent='🎤 按住说话'; }
+      var t=String(finalText||'').trim();
+      if(t){ askStatus(''); sendAsk(t); }
+      else if($('vbStatus') && !$('vbStatus').textContent) askStatus('没听清，按住按钮再说一次。');
+    };
+    askState.listening=true;
+    askState.rec.start();
+    var btn=$('vbMic');
+    if(btn){ btn.classList.add('on'); btn.textContent='… 正在听，请说话'; }
+    askStatus('请说话，说完松开。');
+  }catch(e){
+    askState.listening=false;
+    askStatus('语音没启动成功，请在下面打字问。');
+  }
+}
+function askMicStop(){
+  if(!askState.listening||!askState.rec) return;
+  try{ askState.rec.stop(); }catch(e){}
+}
+/* 语音按钮如何触发：
+   桌面浏览器没有触摸事件，用单击开始/再点结束；
+   手机上有触摸事件（部分安卓浏览器点下去只发 pointer 不出 click），用"按下开始、松手结束"。
+   两者互斥：能触摸只用触摸，避免点一下就被触发两次。 */
+function bindVoiceButton(btn){
+  if(!btn) return;
+  var touchable=false;
+  try{ touchable=('ontouchstart' in window)||('ontouchstart' in document.documentElement); }catch(e){ touchable=false; }
+  if(touchable){
+    btn.onclick=null;
+    btn.addEventListener('touchstart',function(e){ if(e&&e.preventDefault) e.preventDefault(); askMicStart(); },{passive:false});
+    btn.addEventListener('touchend',function(e){ if(e&&e.preventDefault) e.preventDefault(); askMicStop(); },{passive:false});
+    btn.addEventListener('touchcancel',function(){ askMicStop(); },{passive:true});
+  }else{
+    btn.onclick=function(){ if(askState.listening) askMicStop(); else askMicStart(); };
+  }
+}
+function bindAssistantEvents(){
+  var btn=$('vbMic');
+  if(btn && !btn.disabled) bindVoiceButton(btn);
+  var sendBtn=$('vbSend');
+  if(sendBtn) sendBtn.onclick=function(){
+    var box=$('vbText'); if(!box) return;
+    var t=box.value; box.value=''; sendAsk(t);
+  };
+  var box=$('vbText');
+  if(box) box.onkeydown=function(e){ if(e.key==='Enter'){ e.preventDefault(); var t=this.value; this.value=''; sendAsk(t); } };
+  var clr=$('vbClear');
+  if(clr) clr.onclick=function(){
+    askState.history=[];
+    try{ localStorage.removeItem(ASK_LOGKEY); }catch(e){}
+    var log=$('vbLog');
+    if(log) log.innerHTML='<div class="vb-msg sys"><div class="bub">对话已清空。</div></div>';
+    toast('对话已清空');
+  };
+}
+
+/* 输入家人口令的窗口。输错 5 次就先歇 1 分钟，防止有人一直试。 */
+var askPassTries=0, askPassLockUntil=0;
+var openAfterPass=null;   // 过口令之后要接着打开的东西（对话/设置）
+function openPassGate(presetText){
+  var wait=Math.max(0,Math.round((askPassLockUntil-Date.now())/1000));
+  var h='<div class="vb-intro">问小安需要先输入家里人定的口令。<b>这台设备只需输一次，以后打开就能直接问。</b></div>'+
+    (wait>0?('<div class="warnbar caution" style="margin-top:10px">输错次数太多，请等 '+wait+' 秒再试。</div>'):'')+
+    '<label class="field" for="vbPassInput" style="margin-top:12px">家人口令</label>'+
+    '<input class="vb-input" id="vbPassInput" type="password" autocomplete="off" spellcheck="false" placeholder="问家里人要一下">'+
+    (wait>0?'':'<button class="bigbtn primary" id="vbPassOk" style="margin-top:14px">确定</button>')+
+    '<div class="vb-note">不只是家人看到这个文件也打不开小安——但请记住，这个保护只能挡住随手打开的人。</div>';
+  // 弹窗被关掉（点×或点遮罩）时清掉残留，避免下次点小安时打开别的东西
+  showModal('请输入口令',h,function(){ openAfterPass=null; });
+  var ok=$('vbPassOk');
+  if(ok) ok.onclick=function(){
+    var box=$('vbPassInput');
+    var v=box?String(box.value||''):'';
+    var mine=String(ASK_EMBED_PASS||'').trim();
+    // 明文口令直接比；另外兼容老版本存过的 32 位校验串
+    var good=(v===mine)||(mine.length===32&&askHash(v)===mine);
+    if(good){
+      askPassTries=0;
+      askPassRemember();
+      // 顺序很重要：closeModal 会触发本窗的 onClose（把 openAfterPass 清掉），
+      // 所以必须先把"接下来去哪儿"取出来，再关窗。
+      var next=openAfterPass; openAfterPass=null;
+      closeModal();
+      renderAskCard();
+      if(next) next();
+      else openAssistant(presetText||'');
+    }else{
+      askPassTries++;
+      if(askPassTries>=5){ askPassLockUntil=Date.now()+60000; askPassTries=0; }
+      toast('口令不对，再想想');
+      openPassGate(presetText);
+    }
+  };
+  var b=$('vbPassInput');
+  if(b){ try{ b.focus(); }catch(e){} b.onkeydown=function(e){ if(e.key==='Enter'&&ok){ ok.onclick(); } }; }
+}
+
+/* ---- 密钥设置 ---- */
+function openAskSettings(){
+  // 设置页里能真实调用接口（"先试连一下"），所以同样要过口令，否则口令对额度形同虚设
+  if(!askPassOk()){
+    openAfterPass=openAskSettings;
+    openPassGate('');
+    return;
+  }
+  var curSite=askSite();
+  var opts=ASK_SITES.map(function(s){
+    return '<option value="'+s.id+'"'+(s.id===curSite.id?' selected':'')+'>'+esc(s.name)+'</option>';
+  }).join('');
+  var has=askKey();
+  var forced=askForceAll();
+  var builtIn=!!String(ASK_EMBED_KEY||'').trim();
+  var h='<div class="vb-intro">小安需要一串「AI 密钥」才能回答。密钥只存在这台手机上，不会发到我们的服务器，页面会用你的手机直接连服务商。'+
+    (has?'<br><b>当前已填好密钥（来源：'+(askKeySource()==='embed'?'文件内置':'本机设置')+'）。</b>':'')+'</div>'+
+    // 内置了密钥时，这一页的输入一律不生效。必须说清楚，否则用户以为自己换了密钥，实际还在用旧的。
+    (builtIn?('<div class="warnbar caution" style="margin-top:10px">这个文件里已经写好了密钥，<b>下面填的密钥和网址不会生效</b>。'+
+      '要换密钥，请用记事本打开这个网页文件，改 <b>var ASK_EMBED_KEY=</b> 那一行。'+
+      '<br>「先试连一下」测的也是文件里那个密钥。</div>'):'')+
+    '<div class="vb-note" style="margin-top:10px">你说换台设备也要能直接用？把密钥写进 HTML 文件里一次即可：打开文件，找到 <b>var ASK_EMBED_KEY=</b> 那一行，把密钥填进去。之后任何人打开这个文件都不用再设置。</div>'+
+    '<label class="field" for="vbSiteSel" style="margin-top:14px">AI 服务商</label>'+
+    '<select id="vbSiteSel">'+opts+'</select>'+
+    '<div id="vbSiteExtra"></div>'+
+    '<label class="field" for="vbKeyInput" style="margin-top:12px">AI 密钥（一串字母和数字）</label>'+
+    '<input class="vb-input" id="vbKeyInput" type="text" autocomplete="off" spellcheck="false" placeholder="粘贴在这里，例如 sk-xxxxxxxx">'+
+    '<div class="vb-note">用的是 TNT 中转的话：服务商选「TNT 中转站」，密钥填 TNT 给你的 key，模型名填中转站里有的名字（默认 deepseek-v4.1-flash）。'
+      +'用 DeepSeek 官方的话：到 platform.deepseek.com 的「API keys」里新建，复制 sk- 开头那串。</div>'+
+    '<label class="field" style="margin-top:14px;display:flex;gap:10px;align-items:flex-start">'
+      +'<input type="checkbox" id="vbForce" '+(forced?'checked':'')+' style="width:26px;height:26px;flex:0 0 auto;margin:0;padding:0">'
+      +'<span style="font-size:17px;font-weight:600">所有设备都用文件里写好的设置</span></label>'+
+    '<div class="vb-note">勾上之后，这台设备里存的密钥和网址都不再生效，一律用文件里内置的那一份。'
+      +'(文件里没写内置密钥时，这个开关不会影响你在这里填的密钥。)</div>'+
+    '<label class="field" style="margin-top:16px;display:flex;gap:10px;align-items:flex-start">'
+      +'<input type="checkbox" id="vbSpeakToggle" '+(askVoiceOff()?'':'checked')+' style="width:26px;height:26px;flex:0 0 auto;margin:0;padding:0">'
+      +'<span style="font-size:18px;font-weight:600">把回答念出来（声音）</span></label>'+
+    '<button class="bigbtn primary" id="vbKeySave" style="margin-top:14px">保存</button>'+
+    '<button class="bigbtn" id="vbTest">先试连一下</button>'+
+    (has?'<button class="bigbtn danger-ghost" id="vbKeyDel" style="margin-top:10px">删掉这台手机上存的密钥</button>':'');
+  showModal('小安设置',h,null);
+  var speakTog=$('vbSpeakToggle');
+  if(speakTog) speakTog.onchange=function(){
+    askSetVoiceOff(!this.checked);
+    toast(this.checked?'已打开：回答会念出来':'已关闭：只看文字');
+  };
+  var sel=$('vbSiteSel');
+  function paintExtra(forceId){
+    var s=askSite();
+    // 下拉框刚被改动时，以它的当前值为准。
+    // 不能只看存储里的值：用户改了选择但还没点保存，存储里仍是旧值。
+    var id=forceId||(sel&&sel.value)||s.id;
+    var box=$('vbSiteExtra');
+    if(!box) return;
+    if(id==='custom'){
+      box.innerHTML='<label class="field" for="vbSiteUrl" style="margin-top:12px">接口完整网址</label>'+
+        '<input class="vb-input" id="vbSiteUrl" type="text" autocomplete="off" placeholder="https://…/chat/completions">'+
+        '<label class="field" for="vbModel" style="margin-top:10px">模型名</label>'+
+        '<input class="vb-input" id="vbModel" type="text" autocomplete="off" placeholder="例如 deepseek-chat">';
+    }else{
+      var preset=ASK_SITES[0];
+      for(var i=0;i<ASK_SITES.length;i++) if(ASK_SITES[i].id===id) preset=ASK_SITES[i];
+      box.innerHTML='<div class="vb-note">用「'+esc(preset.name)+'」：地址 '+esc(preset.site+preset.path)+
+        '，模型 '+esc(preset.model)+'，不用另外改。</div>';
+    }
+  }
+  if(sel) sel.onchange=function(){ paintExtra(sel.value); };
+  paintExtra();
+  var saveBtn=$('vbKeySave');
+  if(saveBtn) saveBtn.onclick=function(){
+    var k=$('vbKeyInput');
+    var v=k?String(k.value||'').trim():'';
+    if(!v){ toast('还没填密钥'); return; }
+    if(v.length<10){ toast('密钥看着太短了，请检查是否复制完整'); return; }
+    // 以用户当前在下拉框里选的为准，不读存储里的旧值（旧值要等保存后才更新）
+    var pick=(sel&&sel.value)||ASK_DEFAULT_SITE;
+    var customData=null;
+    if(pick==='custom'){
+      var u=$('vbSiteUrl'), m=$('vbModel');
+      var full=u?String(u.value||'').trim():'';
+      var model=m?String(m.value||'').trim():'';
+      if(full.indexOf('https://')!==0){ toast('网址要以 https:// 开头'); return; }
+      customData={url:full,model:model||'deepseek-v4.1-flash'};
+    }
+    var forceEl=$('vbForce');
+    try{
+      // 先写网址/服务商，再写密钥：保证接下来读到的配置是最新的
+      localStorage.setItem(ASK_SITE_KEY,pick);
+      if(customData) localStorage.setItem(ASK_CUSTOM_KEY,JSON.stringify(customData));
+      localStorage.setItem(ASK_KEY,v);
+      if(forceEl){ localStorage.setItem(ASK_FORCE_KEY,forceEl.checked?'1':'0'); }
+    }catch(e){ toast('这台手机存不了设置，可能在无痕模式'); return; }
+    closeModal(); renderAskCard(); toast('密钥已保存，可以问小安了');
+  };
+  var testBtn=$('vbTest');
+  if(testBtn) testBtn.onclick=function(){
+    var k=$('vbKeyInput');
+    var v=k?String(k.value||'').trim():'';
+    if(!v){ toast('先填上密钥再试'); return; }
+    // 临时把界面上的密钥/网址/开关写进去试一次，试完原样还原
+    // 先校验再写存储：校验不过就直接退出，绝不留半截配置（否则会把用户原来的服务商选择冲掉）
+    var pick=(sel&&sel.value)||ASK_DEFAULT_SITE;
+    var customData=null;
+    if(pick==='custom'){
+      var u=$('vbSiteUrl'), m=$('vbModel');
+      var full=u?String(u.value||'').trim():'';
+      if(full.indexOf('https://')!==0){ toast('网址要以 https:// 开头'); return; }
+      customData={url:full,model:(m?String(m.value||'').trim():'')||'deepseek-flash'};
+    }
+    var old={k:null,s:null,c:null,f:null};
+    try{
+      old.k=localStorage.getItem(ASK_KEY); old.s=localStorage.getItem(ASK_SITE_KEY);
+      old.c=localStorage.getItem(ASK_CUSTOM_KEY); old.f=localStorage.getItem(ASK_FORCE_KEY);
+      localStorage.setItem(ASK_SITE_KEY,pick);
+      if(customData) localStorage.setItem(ASK_CUSTOM_KEY,JSON.stringify(customData));
+      var fe=$('vbForce');
+      if(fe) localStorage.setItem(ASK_FORCE_KEY,fe.checked?'1':'0');
+      localStorage.setItem(ASK_KEY,v);
+    }catch(e){}
+    var restore=function(){
+      try{
+        if(old.k===null) localStorage.removeItem(ASK_KEY); else localStorage.setItem(ASK_KEY,old.k);
+        if(old.s===null) localStorage.removeItem(ASK_SITE_KEY); else localStorage.setItem(ASK_SITE_KEY,old.s);
+        if(old.c===null) localStorage.removeItem(ASK_CUSTOM_KEY); else localStorage.setItem(ASK_CUSTOM_KEY,old.c);
+        if(old.f===null) localStorage.removeItem(ASK_FORCE_KEY); else localStorage.setItem(ASK_FORCE_KEY,old.f);
+      }catch(e){}
+    };
+    testBtn.disabled=true; testBtn.textContent='正在连接…';
+    askSend('你好，请用一句话回答。').then(function(){
+      testBtn.disabled=false; testBtn.textContent='连接成功 ✓';
+      toast('连接成功，小安能答话');
+      restore();
+    },function(err){
+      testBtn.disabled=false; testBtn.textContent='先试连一下';
+      restore();
+      showModal('连接没有成功','<div class="warnbar danger">'+esc(askErrorText(err))+'</div>'+
+        '<div class="hint" style="margin-top:10px">常见原因：密钥复制少了字符、密钥已失效、或者账户余额不足。</div>'+
+        '<button class="bigbtn primary" id="vbBack" style="margin-top:12px">回去改</button>');
+      var b=$('vbBack'); if(b) b.onclick=openAskSettings;
+    });
+  };
+  var delBtn=$('vbKeyDel');
+  if(delBtn) delBtn.onclick=function(){
+    var okDel=true;
+    try{ localStorage.removeItem(ASK_KEY); localStorage.removeItem(ASK_CUSTOM_KEY); }catch(e){ okDel=false; }
+    closeModal(); renderAskCard();
+    toast(okDel?'已删掉这台手机上的密钥':'没能删掉，可能是在无痕模式或存储不可用');
+  };
+}
+
+/* 首页卡片上的状态文字：一眼看出现在能不能用 */
+function renderAskCard(){
+  var el=$('vbCardState');
+  if(!el) return;
+  if(!askHasKey()){
+    el.innerHTML='<span style="color:#8a5700;font-weight:700">还没填 AI 密钥，小安暂时不能回答。</span>点下面的按钮，粘贴一次就好（只需设置一次）。';
+    return;
+  }
+  if(askPassSet()&&!askPassOk()){
+    el.innerHTML='小安已经准备好。<span style="color:#8a5700;font-weight:700">第一次用要先输家人口令</span>，输过之后这台设备就不用再输了。';
+    return;
+  }
+  el.innerHTML='小安已经可以用了。按住绿色大按钮说话，它会结合你本机的血压记录回答。';
+}
+
 /* ---------- 启动 ---------- */
 /* 太久没备份就提醒。安卓浏览器清缓存会丢数据，养成备份习惯能救回来。 */
 function checkBackupAge(){
@@ -1814,8 +2588,22 @@ function checkBackupAge(){
 function renderAll(){
   var p=cur();
   $('nameInput').value=p.name||''; $('ageInput').value=p.age||''; $('kinInput').value=p.kin||'';
-  renderSummary(); renderChart(); renderRecent(); renderTip(); checkBackupAge(); renderLastHint();
+  renderSummary(); renderChart(); renderRecent(); renderTip(); checkBackupAge(); renderLastHint(); renderAskCard();
 }
+
+/* ---------- 小安的入口绑定 ----------
+   三处入口：顶部「问小安」、页面里的悬浮键、设置里的「小安设置」。
+   用可选绑定：元素缺失时不能抛错，否则后面的启动代码全都跑不到。 */
+loadAskLog();
+(function bindAskEntries(){
+  var tops=[$('vbHero'),$('vbFab'),$('vbOpen')];
+  tops.forEach(function(b){ if(b) b.onclick=function(){ openAssistant(''); }; });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-vbq]'),function(b){
+    b.onclick=function(){ openAssistant(b.getAttribute('data-vbq')||''); };
+  });
+  var sb=$('vbSetupBtn');
+  if(sb) sb.onclick=openAskSettings;
+})();
 renderAll();
 autoPickPeriod();   // 首次打开按当前时间预选时段，避免误记成"晨起"
 
