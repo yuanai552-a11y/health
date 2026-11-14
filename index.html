@@ -101,6 +101,8 @@ input,select{
   transition:border-color .15s, background .15s, box-shadow .15s;
   -webkit-appearance:none;appearance:none;
 }
+/* 三个数字框必须用大字号：它们会被 input[type=text] 的规则覆盖，所以单独指定 */
+#sys,#dia,#pulse{font-size:32px;font-weight:700}
 input[type=text]{font-size:23px;font-weight:600}
 input[type=time],select{font-size:19px;font-weight:600;padding:13px}
 input::placeholder{color:#8497a4;font-weight:600}
@@ -232,6 +234,7 @@ body.modal-open{overflow:hidden}
   background:linear-gradient(160deg,var(--brand3),var(--brand2));color:#fff;border-color:transparent;
   box-shadow:0 8px 20px -10px rgba(13,95,87,.6);
 }
+.bigbtn.danger-ghost{background:#fff;color:#c33b31;border:1px solid #f0c8c3;box-shadow:none;margin-top:0}
 .bigbtn.danger-solid{
   background:linear-gradient(160deg,#d0483c,var(--bad));color:#fff;border-color:transparent;
   box-shadow:0 8px 20px -10px rgba(195,59,49,.55);
@@ -256,6 +259,37 @@ body.modal-open{overflow:hidden}
   header.top h1{font-size:20px}
   header .sub{font-size:13px;color:#333}
 }
+
+/* ===== 本轮优化追加样式 ===== */
+/* 辅助文字整体加大、加深，老人更容易看清 */
+.field{font-size:18px !important}
+.card > .hint, #adviceBox, .footnote{font-size:19px}
+.list .t{font-size:18px !important}
+.legend{font-size:17px !important}
+.pill{font-size:17px !important}
+:root{--sub:#4a5f5d}
+
+/* 最近记录：整行不再可点，右侧是独立按钮，触控区域够大 */
+.list li{gap:8px;padding:12px 0}
+.rec-main{display:flex;flex-direction:column;flex:1;min-width:0}
+.rec-main .v{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.rec-main .t{color:var(--sub);font-size:17px !important;margin-top:2px;line-height:1.4}
+.rec-btn{
+  flex:0 0 auto;min-width:56px;min-height:44px;padding:10px 12px;
+  font-size:16px;font-weight:700;border-radius:12px;
+  background:#eef5f4;color:#0b5b55;border:1px solid #d7e5e2;
+}
+.rec-btn:active{background:#e0ece9}
+.rec-btn.del{background:#fdf0ee;color:#c33b31;border-color:#f6dcd8}
+.rec-btn.del:active{background:#fbe3df}
+
+/* 判级配色统一：新增 ish（收缩压高·舒张压低）和 lowdia（低压偏低） */
+.tag.ish{background:#ffe9d6;color:#9a4a00}
+.tag.lowdia{background:#e4f0fb;color:#1f5d8c}
+.pill.ish{background:#ffe9d6;color:#9a4a00}
+.pill.lowdia{background:#e4f0fb;color:#1f5d8c}
+.pill.lowsys{background:#e4f0fb;color:#1f5d8c}
+.tag.lowsys{background:#e4f0fb;color:#1f5d8c}
 </style>
 </head>
 <body>
@@ -277,7 +311,8 @@ body.modal-open{overflow:hidden}
   </section>
 
   <section class="card no-print" id="entryCard">
-    <h2>记一次血压</h2>
+    <h2 id="entryTitle">记一次血压</h2>
+    <div id="lastTimeHint" class="hint" style="margin-bottom:12px;display:none"></div>
     <div class="row">
       <div><label class="field" for="sys">高压（收缩压）</label><input type="text" id="sys" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="---"></div>
       <div><label class="field" for="dia">低压（舒张压）</label><input type="text" id="dia" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="---"></div>
@@ -291,9 +326,27 @@ body.modal-open{overflow:hidden}
         </select>
       </div>
     </div>
-    <button class="btn-main" id="saveBtn">保存这次记录</button>
+    <div class="warnbar caution" id="hourHint" style="display:none;font-size:17px;margin-top:12px"></div>
+    <div class="row">
+      <div><label class="field" for="when">哪天测的</label>      <div><label class="field" for="rounds">量了几遍</label>
+        <select id="rounds">
+          <option value="2">量了2遍（取平均）</option>
+          <option value="1">只量了1遍</option>
+          <option value="3">量了3遍</option>
+        </select>
+      </div>
+
+        <select id="when">
+          <option value="0">今天</option>
+          <option value="1">昨天</option>
+          <option value="2">前天</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-main" id="saveBtn" type="button">保存这次记录</button>
     <button class="btn-ghost" id="photoBtn" style="text-align:center;margin-top:12px">📷 拍血压计屏幕，放大照着填</button>
     <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none">
+    <button class="btn-ghost" id="skipBtn" type="button" style="margin-top:10px">今天没量，做个记号</button>
     <div class="hint" style="margin-top:10px">量之前先坐 5 分钟，不说话，胳膊放在桌上与心脏同高。</div>
   </section>
 
@@ -303,6 +356,7 @@ body.modal-open{overflow:hidden}
       <button data-range="7" class="on">近7天</button>
       <button data-range="30">近30天</button>
       <button data-range="90">近3个月</button>
+      <button data-range="month">按月看</button>
     </div>
     <div class="chart-shell"><svg class="chart" id="chart" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet"></svg></div>
     <div class="legend">
@@ -313,6 +367,7 @@ body.modal-open{overflow:hidden}
       <span style="color:#8a5a00">低压超过 85 也会标红</span>
     </div>
     <div id="statLine" class="hint" style="margin-top:12px"></div>
+    <div id="extraLine" class="hint" style="margin-top:8px;color:#3d5553"></div>
   </section>
 
   <section class="card no-print" id="tipCard">
@@ -352,6 +407,8 @@ body.modal-open{overflow:hidden}
     <button class="btn-ghost" id="reportBtn">📄 生成报告给医生看</button>
     <button class="btn-ghost" id="exportBtn">💾 备份数据（换手机用）</button>
     <div class="warnbar caution" id="backupWarn" style="display:none;margin-bottom:10px"></div>
+    <button class="btn-ghost" id="voiceBtn">🔊 语音读出结果：关闭</button>
+    <button class="btn-ghost" id="weeklyBtn">📤 复制本周小结（发到家庭群）</button>
     <button class="btn-ghost" id="copyBackupBtn">📋 复制备份文字（微信里用这个）</button>
     <button class="btn-ghost" id="importBtn">📥 从备份恢复</button>
     <div class="hint" style="margin-top:8px;color:#8a5a00">微信清理缓存可能会清掉记录，建议每月点一次备份。</div>
@@ -399,12 +456,32 @@ function safePeriod(p){
 var S=loadState();
 function uid(){ return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
 function loadState(){
-  var o=null;
-  try{ var raw=localStorage.getItem(ROOT); if(raw) o=JSON.parse(raw); }catch(e){}
+  var o=null, raw=null, parseFailed=false;
+  try{ raw=localStorage.getItem(ROOT); }catch(e){ raw=null; }
+  if(raw){
+    try{ o=JSON.parse(raw); }
+    catch(e){ parseFailed=true; o=null; }
+  }
+  // 数据损坏：不能静默当成"没有数据"，否则下一次保存会把原数据覆盖掉，永久丢失
+  if(parseFailed || (raw && !o)){
+    try{ localStorage.setItem(ROOT+'-corrupt', raw); }catch(e){}
+    setTimeout(function(){
+      showModal('数据读不出来',
+        '<div class="warnbar danger">存在手机里的记录读不出来了，可能是数据损坏。<br><br>'+
+        '原始数据已经另存了一份，没有被覆盖。请先找一下之前的备份，用「从备份恢复」导入。</div>'+
+        '<button class="bigbtn primary" id="corruptCopy">复制原始数据（找子女帮忙看看）</button>'+
+        '<button class="bigbtn" id="corruptReset">我知道了，先不管</button>');
+      var c=$('corruptCopy');
+      if(c) c.onclick=function(){ copyText(raw||'','原始数据已复制'); };
+      var r2=$('corruptReset');
+      if(r2) r2.onclick=closeModal;
+    }, 300);
+  }
   if(o&&Array.isArray(o.people)&&o.people.length){
     o.people.forEach(function(p){
       p.records=sanitizeRecords(p.records);   // 旧数据同样清洗：字段合法、period 白名单、补 rid
       p.taken=(p.taken&&typeof p.taken==='object')?p.taken:{};
+      p.skipped=(p.skipped&&typeof p.skipped==='object')?p.skipped:{};
       p.meds=sanitizeMeds(p.meds);
       p.label=String(p.label||''); p.name=String(p.name||''); p.age=String(p.age||''); p.kin=String(p.kin||'');
     });
@@ -438,7 +515,8 @@ function sanitizeRecords(arr){
     // rid 必须稳定：同一份备份重复导入要得到同一个 id，否则按 rid 去重会失效。
     // 优先沿用原 rid，没有就用内容指纹（时间+三个数值）生成。
     var rid=r.rid?String(r.rid):('f'+ts.toString(36)+'_'+sys+'_'+dia+'_'+(pulse==null?'x':pulse));
-    out.push({ts:ts,sys:sys,dia:dia,pulse:pulse,period:safePeriod(r.period),rid:rid});
+    var rd=Number(r.rounds);
+    out.push({ts:ts,sys:sys,dia:dia,pulse:pulse,period:safePeriod(r.period),rid:rid,rounds:(rd>=1&&rd<=5)?rd:null});
   });
   out.sort(function(a,b){ return a.ts-b.ts; });
   return out;
@@ -504,12 +582,15 @@ function grade(sys,dia){
   if(sys>=160||dia>=100) return {level:'high',text:'高',cls:'bad'};
   // 3) 家庭自测标准下的升高
   if(sys>=HL_SYS||dia>=HL_DIA) return {level:'high',text:'偏高',cls:'bad'};
-  // 4) 正常高值：任一值接近阈值
-  if(sys>=130||dia>=80) return {level:'watch',text:'有点高',cls:'warn'};
-  // 5) 偏低：收缩压与舒张压两者同时偏低
-  if(sys<90&&dia<60) return {level:'low',text:'偏低',cls:'warn'};
-  // 6) 舒张压单独偏低（如 125/50）：不能显示成"正常"
+  // 4) 两个都低（如 88/55）：整体偏低，先说"偏低"
+  if(sys<90 && dia<60) return {level:'low',text:'偏低',cls:'warn'};
+  // 5) 只有舒张压低（如 130/55）：必须在"有点高/正常"之前判断，
+  //    否则会显示成"有点高"，把偏低的舒张压盖过去。
   if(dia<60) return {level:'lowdia',text:'低压偏低',cls:'warn'};
+  // 6) 只有收缩压低（如 85/65）：也要提示，不能显示"正常"
+  if(sys<90) return {level:'lowsys',text:'高压偏低',cls:'warn'};
+  // 6) 正常高值：任一值接近阈值
+  if(sys>=130||dia>=80) return {level:'watch',text:'有点高',cls:'warn'};
   return {level:'ok',text:'正常',cls:'ok'};
 }
 /* 家庭自测阈值常量：图表、统计、报告统一引用，避免各处写死不同数字 */
@@ -592,12 +673,171 @@ function toast(msg){
 }
 
 /* ---------- 渲染 ---------- */
+/* ---------- "今天没量"标记 ----------
+   区分两件完全不同的事：
+   A. 今天量了，数值正常
+   B. 今天压根没量
+   现在页面上这两者长得一样，子女看图会把"没量"误读成"正常"。 */
+function markTodaySkipped(){
+  var p=cur();
+  var tk=dayKey();
+  p.skipped=p.skipped||{};
+  if(p.skipped[tk]){ delete p.skipped[tk]; }
+  else { p.skipped[tk]=true; }
+  if(!save()){ 
+    if(p.skipped[tk]) delete p.skipped[tk]; else p.skipped[tk]=true;
+    return;
+  }
+  renderAll();
+  toast(p.skipped[tk]?'已记下：今天没量':'已取消');
+}
+
+/* 今天到底量了没有，用一个函数统一判断 */
+function todayStatus(p){
+  var tk=dayKey();
+  // 用户主动标的"没量"优先级最高：即使今天后来补记了，也以他的标记为准：
+  // 他标"没量"就是想表达"今天这次不算数"。取消标记时再回到正常判断。
+  if(p.skipped && p.skipped[tk]) return 'skipped';
+  var has= (p.records||[]).some(function(r){ return dayKey(new Date(r.ts))===tk; });
+  if(has) return 'measured';
+  return 'none';
+}
+
+/* ---------- 三级就医建议 ----------
+   以前只看"这一次多高"，现在分三种情况：
+   ① 高 + 有症状 → 立即就医（最急）
+   ② 连续几天偏高 → 该复诊了，不要再记
+   ③ 偏低 + 头晕 → 防跌倒
+   —— 这些是"要不要去医院"的判断，比"记了多少次"更重要。 */
+function medicalAdvice(p){
+  var rs=(p.records||[]).slice();
+  if(!rs.length) return null;
+  var today=Date.now();
+
+  // ① 最近一次是否"高且有症状风险"：≥180/110
+  var last=rs[rs.length-1];
+  if(Number(last.sys)>=180||Number(last.dia)>=110){
+    return {level:'urgent',
+      title:'这次高得比较多',
+      text:'安静坐 5 分钟后再量一次。如果还是这么高，或者有头痛、胸口闷、看东西模糊、说话不清，请马上联系家人或去医院。'};
+  }
+
+  // ② 连续 3 天都有偏高的记录 → 建议复诊
+  var byDay={};
+  rs.forEach(function(r){
+    var k=dayKey(new Date(r.ts));
+    if(!byDay[k]) byDay[k]=[];
+    byDay[k].push(r);
+  });
+  var days=Object.keys(byDay).sort();
+  // 必须是真的"连续日历天"：中间有一天没量，就不能算连续。
+  // 原来的写法只看"偏高日"的个数，0/2/4 天前偏高会算成"连着3天"，实际跨了5天。
+  var streak=0, maxStreak=0, prevDay=null;
+  for(var i=days.length-1;i>=0;i--){
+    var hasHigh=byDay[days[i]].some(function(r){ return isHigh(Number(r.sys),Number(r.dia)); });
+    if(!hasHigh) break;
+    if(prevDay!==null){
+      var t1=new Date(days[i]).getTime(), t2=new Date(prevDay).getTime();
+      var gapDays=Math.round((t2-t1)/86400000);
+      if(gapDays!==1) break;   // 断档，连续中断
+    }
+    streak++; if(streak>maxStreak) maxStreak=streak;
+    prevDay=days[i];
+  }
+  if(maxStreak>=5){
+    return {level:'visit',
+      title:'连着 '+maxStreak+' 天偏高了',
+      text:'这几天血压一直偏高。不用慌，但也别再光记了——把这份记录带给医生看看，可能需要调整用药。'};
+  }
+
+  // ③ 最近一次偏低 + 提醒防跌倒
+  var g=grade(Number(last.sys),Number(last.dia));
+  // 只有真正的低血压才提示防跌倒。单纯"低压偏低"（如130/55）是老年人大动脉硬化的表现，
+  // 不是低灌注，提示摔倒反而会误导。
+  if(g.level==='low'||g.level==='lowsys'){
+    return {level:'fall',
+      title:'注意别摔倒',
+      text:'这次血压偏低。起身的时候慢一点，先坐起来停几秒再站，扶着东西走。如果经常头晕，要告诉医生。'};
+  }
+  return null;
+}
+
+/* ---------- 本周小结 ----------
+   把一堆数字变成一句人话，方便发给子女或家人看。 */
+function buildWeeklySummary(){
+  var p=cur();
+  var weekAgo=Date.now()-7*86400000;
+  var rs=(p.records||[]).filter(function(r){ return r.ts>=weekAgo; });
+  var who=p.name||p.label||'';
+  if(!rs.length){
+    return who+' 这周还没有记录血压。';
+  }
+  var n=rs.length, s=0, d=0, over=0;
+  rs.forEach(function(r){ s+=Number(r.sys); d+=Number(r.dia); if(isHigh(Number(r.sys),Number(r.dia))) over++; });
+  var avgS=Math.round(s/n), avgD=Math.round(d/n);
+
+  var lines=[];
+  lines.push(who+' 这周量了 '+n+' 次血压。');
+  lines.push('平均 '+avgS+'/'+avgD+'。');
+  if(over===0) lines.push('都在正常范围，挺稳定的。');
+  else if(over<=2) lines.push('有 '+over+' 次偏高。');
+  else lines.push('有 '+over+' 次偏高，比平时多一些。');
+
+  // 晨起单独提一句（医生最看这个）
+  var morning=rs.filter(function(r){ return r.period==='晨起'; });
+  if(morning.length>=2){
+    var ms=0; morning.forEach(function(r){ ms+=Number(r.sys); });
+    lines.push('晨起平均 '+Math.round(ms/morning.length)+'。');
+  }
+
+  // 有几天没量
+  var byDay={};
+  rs.forEach(function(r){ byDay[dayKey(new Date(r.ts))]=true; });
+  var days=Object.keys(byDay).length;
+  if(days<5) lines.push('这 7 天里有 '+(7-days)+' 天没量。');
+
+  lines.push('（记录仅供参考，要不要调药请听医生的）');
+  return lines.join('\n');   // 换行，发到微信更好读
+}
+
+/* ---------- 语音播报 ----------
+   老花眼看小字费劲，直接读出来更省事。不支持就静默跳过，不报错。 */
+function speakResult(sys,dia,g){
+  try{
+    if(!window.speechSynthesis) return;
+    // 默认关闭：__voiceOff 首次为 undefined 时会误判成"开启"，所以显式判断
+    if(window.__voiceOff !== false) return;
+    if(window.__voiceOff) return;
+    var text='高压 '+sys+'，低压 '+dia+'。'+
+      (g.level==='ok'?'在正常范围。':(''+g.text+'。'));
+    var u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN';
+    u.rate=0.9;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){ /* 读不出来就算了，不影响记录 */ }
+}
+
 function renderSummary(){
   var p=cur(); var rs=p.records; var last=rs.length?rs[rs.length-1]:null;
   var hero=$('heroZone'), adv=$('adviceBox'), advCard=$('adviceCard');
   $('avatarBtn').textContent=(p.name&&p.name.length>=2)?p.name.slice(-2):(p.label||'我').slice(-2);
-  if(!last){
-    hero.innerHTML='<div class="hero-empty">还没有记录<br><span style="font-size:15px;opacity:.75">点下面的按钮，记下今天第一次血压</span></div>';
+  var st=todayStatus(p);
+  // 今天明确标了"没量"：无论有没有历史记录，都要先说清楚"今天没量"，
+  // 否则大字形显示的是昨天的数字，容易被当成今天的。
+  if(st==='skipped' && rs.length){
+    var yest=last;
+    hero.innerHTML='<div class="hero-empty">今天还没量'+
+      '<span style="font-size:15px;opacity:.75;display:block;margin-top:6px">已做记号。上次是 '+fmt(yest.ts)+' 的 '+esc(yest.sys)+'/'+esc(yest.dia)+'</span></div>';
+    if(advCard) advCard.style.display='none';
+  }else if(!last){
+    // 没有历史记录时：如果今天已经标了"没量"，也要显示出来，
+    // 否则老人点了按钮看不到任何变化，会以为没点上。
+    if(st==='skipped'){
+      hero.innerHTML='<div class="hero-empty">今天还没量<span style="font-size:15px;opacity:.75;display:block;margin-top:6px">已做记号。想记的时候随时点下面的按钮</span></div>';
+    }else{
+      hero.innerHTML='<div class="hero-empty">还没有记录<br><span style="font-size:15px;opacity:.75">点下面的按钮，记下今天第一次血压</span></div>';
+    }
     if(advCard) advCard.style.display='none';
   }else{
     var g=grade(last.sys,last.dia);
@@ -606,13 +846,22 @@ function renderSummary(){
       '<div class="hero-reading">'+
         '<span class="val">'+esc(last.sys)+'<small>/</small>'+esc(last.dia)+'</span>'+
         '<span class="unit">mmHg</span>'+
-        '<span class="tag '+g.cls+'">'+esc(g.text)+'</span>'+
+        '<span class="tag '+tagClass(g)+'">'+esc(g.text)+'</span>'+
       '</div>'+
-      '<div class="hero-meta">'+(isToday?'今天 ':'最近一次 · ')+fmt(last.ts)+' · '+esc(last.period)+
+      '<div class="hero-meta">'+gapText(last.ts)+fmt(last.ts)+' · '+esc(last.period)+
         (last.pulse?' · 脉搏 '+esc(last.pulse):'')+'</div>';
     if(advCard){ advCard.style.display=''; }
-    adv.className='warnbar'+(g.level==='danger'?' danger':(g.level==='ish'?' caution':''));
-    adv.innerHTML='<div style="font-weight:700;margin-bottom:4px">'+esc(p.name||p.label||'')+'</div>'+adviceText(g.level);
+    // 优先显示"要不要去医院"的判断，比单纯的判级更有行动指导
+    var ma=medicalAdvice(p);
+    if(ma){
+      var maCls = ma.level==='urgent' ? ' danger' : (ma.level==='visit' ? ' caution' : '');
+      adv.className='warnbar'+maCls;
+      adv.innerHTML='<div style="font-weight:800;margin-bottom:6px;font-size:18px">'+esc(ma.title)+'</div>'+
+                    '<div>'+esc(ma.text)+'</div>';
+    }else{
+      adv.className='warnbar'+(g.level==='danger'?' danger':(g.level==='ish'?' caution':''));
+      adv.innerHTML='<div style="font-weight:700;margin-bottom:4px">'+esc(p.name||p.label||'')+'</div>'+adviceText(g.level);
+    }
   }
   // 标题固定保留产品名：老人第一次打开要知道这是什么
   $('greet').textContent='健康小本子';
@@ -624,10 +873,24 @@ function renderSummary(){
   renderDiet(last?grade(last.sys,last.dia):null);
   renderEmergency(p);
 }
+/* 判级到样式的映射：ish / lowdia 需要单独的配色，不能只靠 ok/warn/bad */
+function tagClass(g){ return g.level==='ish' ? 'ish' : (g.level==='lowdia' ? 'lowdia' : (g.level==='lowsys' ? 'lowsys' : g.cls)); }
+
+/* 显示"距离上次记录过了多久"，提醒老人该量了 */
+function gapText(ts){
+  var days=Math.floor((Date.now()-ts)/86400000);
+  var todayKeyStr=dayKey(new Date(ts))===dayKey();
+  if(todayKeyStr) return '今天 · ';
+  if(days<=1) return '最近一次 · ';
+  if(days<=3) return days+' 天前 · ';
+  return days+' 天前（该量量了） · ';
+}
+
 function adviceText(level){
   if(level==='danger') return '⚠️ 这次高得比较多。请安静坐着休息 5 分钟，再量一次。如果还是这么高，或者头痛、胸口闷、说话不清、看不清，请立刻打电话给家人或去医院。';
   if(level==='ish') return '这次高压高、低压低，两者差得多。这种情况在老年人里很常见，但不是"血压低"。请安静坐 5 分钟后再量一次，并把最近的记录带给医生看，不要因为低压不高就放心。';
   if(level==='high') return '这次偏高（家庭自测 135/85 以上就算高）。请安静坐 5 分钟后再量一次确认。如果连着几天都偏高，记得把记录带给医生看。';
+  if(level==='lowsys') return '这次高压偏低。如果起身头晕、没力气，先坐下或躺一会儿，喝点温水。经常这样请告诉医生。';
   if(level==='low') return '这次偏低。先坐下或躺一会儿，喝一点温水，不要马上去走路。如果复测还是低，或者头晕、没力气、出冷汗，请及时联系家人或就医。';
   if(level==='lowdia') return '这次高压还好，但低压偏低。老年人血管弹性下降后常见这种情况，不用紧张；如果平时容易头晕、起身发黑，请告诉医生。';
   if(level==='watch') return '比理想值高一点点，不用紧张。今天清淡些，晚上睡前再量一次看看。';
@@ -642,6 +905,7 @@ function renderDiet(g){
     ish:'少盐、少吃腌制品。把记录带给医生看看吧。',
     danger:'今天就吃清淡的，不喝咸汤，不吃腌制的东西，安静休息。',
     low:'今天多喝点水，吃饭别太少，起身慢一点。',
+    lowsys:'今天多喝点水，吃饭别太少，起身慢一点。',
     lowdia:'饭菜照常，注意别一下子站起来，起身时扶一下。',
     none:'饭菜少放盐，每天走一走。'
   };
@@ -662,6 +926,80 @@ function renderEmergency(p){
 
 /* ---------- 趋势图 ---------- */
 var rangeDays=7;
+/* ---------- 统计增强：脉压差、达标率、波动幅度 ----------
+   这些都用已有数据算，不需要老人多填任何东西。 */
+function computeExtra(p){
+  var rs=p.records||[];
+  if(rs.length<2) return null;
+  var recent=rs.slice(-30);   // 看最近 30 次，避免陈旧数据拉偏
+  var arrS=recent.map(function(r){ return Number(r.sys); }).filter(function(v){ return isFinite(v); });
+  if(arrS.length<2) return null;
+
+  // 脉压差：最近一次
+  var last=rs[rs.length-1];
+  var pp=Number(last.sys)-Number(last.dia);
+
+  // 波动幅度：最近这些次里最高和最低差多少
+  var maxS=Math.max.apply(null,arrS), minS=Math.min.apply(null,arrS);
+  var range=maxS-minS;
+
+  // 达标率必须按"天"算，不能按"次数"：
+  // 一天量3次全正常、另一天量1次偏高，按次数会算成75%，掩盖了"有一天偏高"。
+  var byDay={}, allByDay={};
+  rs.forEach(function(r){
+    var k=dayKey(new Date(r.ts));
+    (byDay[k]=byDay[k]||[]).push(r);
+  });
+  var dayKeys=Object.keys(byDay);
+  var goodDays=0;
+  dayKeys.forEach(function(k){
+    // 当天只要有偏高，这天就算没达标（宁可严格，别安慰）
+    var bad=byDay[k].some(function(r){ return isHigh(Number(r.sys),Number(r.dia)); });
+    if(!bad) goodDays++;
+  });
+  var rate = dayKeys.length ? Math.round(goodDays/dayKeys.length*100) : 0;
+
+  // 波动用标准差，不用极差：极差会被一次异常读数拉大
+  var n=arrS.length;
+  var mean=arrS.reduce(function(a,b){return a+b;},0)/n;
+  var variance=arrS.reduce(function(a,b){return a+(b-mean)*(b-mean);},0)/n;
+  var sd=Math.sqrt(variance);
+
+  // 脉压差用最近几次的平均，单次不准
+  var ppList=recent.slice(-7).map(function(r){ return Number(r.sys)-Number(r.dia); })
+                        .filter(function(v){ return isFinite(v); });
+  var ppAvg = ppList.length ? Math.round(ppList.reduce(function(a,b){return a+b;},0)/ppList.length) : pp;
+
+  return {pp:ppAvg, ppSingle:pp, range:range, maxS:maxS, minS:minS,
+          sd:Math.round(sd), rate:rate, days:dayKeys.length, n:recent.length,
+          last:last};
+}
+
+/* 用一句人话解释这些数字，避免老人看裸数字焦虑 */
+function extraText(e){
+  if(!e) return '';
+  var parts=[];
+
+  // 脉压差：用最近几次平均，且只在明显偏大时才提；老年人大都有这个情况，不必次次强调
+  if(e.pp>=60) parts.push('高压低压平均相差 <b>'+e.pp+'</b>，复查时让医生看一眼');
+
+  // 波动：用标准差，样本足够才说
+  if(e.n>=7){
+    if(e.sd>=15) parts.push('这几天起伏有点大');
+    else if(e.sd<8) parts.push('这几天比较平稳');
+  }
+
+  // 达标率：按"天"说，不写百分比，避免像在打分
+  if(e.days>=5){
+    if(e.rate>=80) parts.push('最近 '+e.days+' 天，大部分都在正常范围');
+    else if(e.rate>=50) parts.push('最近 '+e.days+' 天，有一半左右在正常范围');
+    else parts.push('最近 '+e.days+' 天，偏高的时候比较多');
+  }else{
+    parts.push('记录还少，先多记几天再看看');
+  }
+  return parts.join(' · ');
+}
+
 function renderChart(){
   var svg=$('chart'), p=cur();
   var W=600,H=300,padL=54,padR=16,padT=18,padB=34;
@@ -730,18 +1068,123 @@ function renderChart(){
   rs.forEach(function(r){ sS+=r.sys; sD+=r.dia; if(isHigh(r.sys,r.dia)) over++; });
   var extra='';
   if(rs.length>=4){
-    var half=Math.floor(n/2)||1;
-    var a=rs.slice(0,half), b=rs.slice(-half);
-    var avg=function(arr,k){ var s=0; arr.forEach(function(r){s+=r[k];}); return s/arr.length; };
-    var d=avg(b,'sys')-avg(a,'sys');
-    extra=Math.abs(d)<4?' · 整体<b>平稳</b>':(d>0?' · 有<b>上升</b>趋势':' · 有<b>下降</b>趋势');
+    // 趋势必须同口径比较：晨起和睡前混在一起算，会得出"上升"这种误导结论。
+    // 优先只用同一种时段比对；找不到足够样本就不给结论。
+    var periods={};
+    rs.forEach(function(r){ (periods[r.period]=periods[r.period]||[]).push(r); });
+    var bestKey=null, bestLen=0;
+    Object.keys(periods).forEach(function(k){ if(periods[k].length>bestLen){ bestLen=periods[k].length; bestKey=k; } });
+    if(bestKey && bestLen>=4){
+      var arr=periods[bestKey];
+      var half=Math.floor(arr.length/2)||1;
+      var a=arr.slice(0,half), b=arr.slice(-half);
+      var avg=function(list,k){ var s=0; list.forEach(function(r){ s+=Number(r[k]); }); return s/list.length; };
+      var d=avg(b,'sys')-avg(a,'sys');
+      var tag=Math.abs(d)<4?'<b>平稳</b>':(d>0?'有<b>上升</b>':('有<b>下降</b>'));
+      extra=' · '+esc(bestKey)+'基本'+tag;
+    }else{
+      // 各时段都凑不够 4 次，不下结论
+      extra=' · 记录还少，先多记几次再看变化';
+    }
   }
   // 去掉百分比和"超标"这种审判式的说法，避免让老人觉得在被打分
   $('statLine').innerHTML='共 '+n+' 次 · 平均 <b>'+Math.round(sS/n)+'/'+Math.round(sD/n)+'</b> · '+
     (over===0?'都还算平稳':('其中 '+over+' 次偏高'))+extra;
+  // 脉压差、波动、达标率：用已有数据算，不需要老人多填
+  var ex=computeExtra(p);
+  var el2=document.getElementById('extraLine');
+  if(el2){ el2.innerHTML = ex ? extraText(ex) : ''; }
 }
 
 /* ---------- 最近记录 ---------- */
+/* 从详情弹窗进入"修改模式"：把数值填回输入框，下次保存时替换这条记录 */
+function startEditRecord(r){
+  editingRid=r.rid;
+  closeModal();
+  $('sys').value=r.sys;
+  $('dia').value=r.dia;
+  $('pulse').value=r.pulse||'';
+  var sel=$('period');
+  if(sel){ for(var i=0;i<sel.options.length;i++){ if(sel.options[i].value===r.period){ sel.selectedIndex=i; break; } } }
+  var whenSel=$('when'); if(whenSel) whenSel.value='0';
+  var rSel=$('rounds');
+  if(rSel && r.rounds){ for(var ri=0;ri<rSel.options.length;ri++){ if(rSel.options[ri].value===String(r.rounds)){ rSel.selectedIndex=ri; break; } } }
+  setEditingMode(true);
+  renderLastHint(); checkHourPeriod();
+  var ec=$('entryCard');
+  if(ec && ec.scrollIntoView) ec.scrollIntoView({behavior:'smooth',block:'center'});
+  toast('改好数字后点保存');
+}
+
+/* 切换标题与按钮文案，让老人清楚现在是"记新的"还是"改旧的" */
+function setEditingMode(on){
+  var t=$('entryTitle'), b=$('saveBtn');
+  if(t) t.textContent = on ? '修改这次记录' : '记一次血压';
+  if(b) b.textContent = on ? '保存修改' : '保存这次记录';
+  var cancel=$('editCancel');
+  if(on && !cancel && b && b.parentNode){
+    var btn=document.createElement('button');
+    btn.id='editCancel'; btn.className='btn-ghost'; btn.type='button';
+    btn.textContent='取消修改';
+    btn.onclick=function(){
+      editingRid=null;
+      $('sys').value=''; $('dia').value=''; $('pulse').value='';
+      setEditingMode(false);
+      toast('已取消，原来的记录没有变');
+    };
+    b.parentNode.insertBefore(btn, b.nextSibling);
+  } else if(!on && cancel){ cancel.parentNode.removeChild(cancel); }
+}
+
+/* 上次数值回显：老人填今天的时候，能看见上次是多少 */
+/* 凌晨选"晨起"时给个提醒：这个点还没到起床时间，多半是记昨晚那次 */
+/* 按当前时间自动选一个合适的时段，避免老人忘了改，
+   导致下午量的被记成"晨起"，污染晨起平均。 */
+function autoPickPeriod(){
+  var sel=document.getElementById('period');
+  // 防御：元素不存在、或者不是真正的 select（options 缺失）时静默跳过，不影响记录
+  if(!sel || !sel.options || !sel.options.length) return;
+  var h=new Date().getHours();
+  var want;
+  if(h>=5 && h<9) want='晨起';
+  else if(h>=9 && h<11) want='早饭后';
+  else if(h>=11 && h<15) want='午间';
+  else if(h>=15 && h<20) want='晚饭后';
+  else want='睡前';            // 20:00 - 04:59 都归到睡前，凌晨不会再误选晨起
+  for(var i=0;i<sel.options.length;i++){
+    if(sel.options[i].value===want){ sel.selectedIndex=i; return; }
+  }
+}
+
+function checkHourPeriod(){
+  var el=$('hourHint');
+  if(!el) return;
+  var h=new Date().getHours();
+  var sel=$('period');
+  var period=sel?sel.value:'';
+  var isSmallHours=h<5;
+  var msg='';
+  if(isSmallHours && (period==='晨起'||period==='早饭后')){
+    msg='现在是凌晨 '+h+' 点。如果记的是昨晚那次，请把时段改成「睡前」。';
+  }
+  if(msg){ el.style.display=''; el.textContent=msg; }
+  else { el.style.display='none'; }
+}
+
+function renderLastHint(){
+  var el=$('lastTimeHint');
+  if(!el) return;
+  var p=cur();
+  if(editingRid){ el.style.display='none'; return; }
+  var rs=p.records;
+  if(!rs.length){ el.style.display='none'; return; }
+  var last=rs[rs.length-1];
+  var isToday=dayKey(new Date(last.ts))===dayKey();
+  var when = isToday ? '今天' : fmt(last.ts);
+  el.style.display='';
+  el.innerHTML='上次是 <b>'+esc(last.sys)+'/'+esc(last.dia)+'</b>（'+when+' '+esc(last.period)+'）';
+}
+
 function renderRecent(){
   var ul=$('recentList'), p=cur();
   ul.innerHTML='';
@@ -750,24 +1193,66 @@ function renderRecent(){
   rs.forEach(function(r){
     var g=grade(r.sys,r.dia);
     var li=document.createElement('li');
-    li.innerHTML='<span><span class="v">'+esc(r.sys)+'/'+esc(r.dia)+'</span><br><span class="t">'+fmt(r.ts)+' '+esc(r.period)+'</span></span>'+
-      '<span class="pill '+g.cls+'">'+g.text+'</span>';
-    li.onclick=function(){
-      showModal('删除这次记录','<div class="hint">'+fmt(r.ts)+'　'+Number(r.sys)+'/'+Number(r.dia)+' mmHg</div>'+
-        '<button class="bigbtn" id="delNo">不删了</button><button class="bigbtn danger-solid" id="delYes">确认删除</button>',
-        function(){});
-      $('delYes').onclick=function(){
-        var key=r.rid||r.ts;
-        var backup=p.records.slice();
-        p.records=p.records.filter(function(x){ return (x.rid||x.ts)!==key; });
-        if(!save()){ p.records=backup; return; }   // 存不进去就撤销删除，弹窗不关以显示失败提示
-        closeModal(); renderAll();
- toast('已删除');
-      };
-      $('delNo').onclick=closeModal;
-    };
+    // 整行不再响应点击：老人手指粗，误触整行就弹删除太危险。
+    // 改为右侧两个独立按钮，"看详情"和"删除"分开。
+    li.innerHTML=
+      '<span class="rec-main">'+
+        '<span class="v">'+esc(r.sys)+'/'+esc(r.dia)+'</span>'+
+        '<span class="t">'+fmt(r.ts)+' '+esc(r.period)+'</span>'+
+      '</span>'+
+      '<span class="pill '+tagClass(g)+'">'+esc(g.text)+'</span>'+
+      '<button class="rec-btn" type="button" data-act="detail">看看</button>'+
+      '<button class="rec-btn del" type="button" data-act="del">删除</button>';
+    // 防御：元素找不到时不要让整个列表渲染中断
+    var dBtn=li.querySelector('[data-act="detail"]');
+    var xBtn=li.querySelector('[data-act="del"]');
+    if(dBtn) dBtn.onclick=function(){ showRecordDetail(r); };
+    if(xBtn) xBtn.onclick=function(){ confirmDeleteRecord(r); };
     ul.appendChild(li);
   });
+}
+
+/* 单条记录详情：可以看到完整信息，并能从这里进入修改 */
+function showRecordDetail(r){
+  var g=grade(r.sys,r.dia);
+  var body=
+    '<div style="text-align:center;margin:8px 0 16px">'+
+      '<div style="font-size:44px;font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums">'+
+        esc(r.sys)+'<span style="color:#93a5a4">/</span>'+esc(r.dia)+
+        '<span style="font-size:16px;font-weight:600;color:#5f7573;margin-left:4px">mmHg</span>'+
+      '</div>'+
+      '<div class="pill '+tagClass(g)+'" style="margin-top:8px">'+esc(g.text)+'</div>'+
+    '</div>'+
+    '<table style="width:100%;font-size:17px;border-collapse:collapse">'+
+      '<tr><td style="padding:7px 0;color:#5f7573">测量时间</td><td style="text-align:right;font-weight:700">'+fmt(r.ts)+'</td></tr>'+
+      '<tr><td style="padding:7px 0;color:#5f7573">测量时段</td><td style="text-align:right;font-weight:700">'+esc(r.period)+'</td></tr>'+
+      (r.rounds?('<tr><td style="padding:7px 0;color:#5f7573">量了几遍</td><td style="text-align:right;font-weight:700">'+esc(r.rounds)+' 遍</td></tr>'):'')+
+      (r.pulse?('<tr><td style="padding:7px 0;color:#5f7573">脉搏</td><td style="text-align:right;font-weight:700">'+esc(r.pulse)+' 次/分</td></tr>'):'')+
+    '</table>'+
+    '<div class="hint" style="margin-top:12px;font-size:16px">'+adviceText(g.level)+'</div>'+
+    '<button class="bigbtn primary" id="detEdit" style="margin-top:18px">改这次的数字</button>'+
+    '<div style="height:28px"></div>'+
+    '<button class="bigbtn danger-ghost" id="detDel">删掉这条</button>';
+  showModal('这次记录', body);
+  $('detEdit').onclick=function(){ startEditRecord(r); };
+  $('detDel').onclick=function(){ confirmDeleteRecord(r); };
+}
+
+/* 删除前确认。存不进去就撤销，弹窗不关，让用户看到失败提示 */
+function confirmDeleteRecord(r){
+  var p=cur();
+  showModal('删除这次记录',
+    '<div class="hint" style="font-size:18px">'+fmt(r.ts)+'　'+Number(r.sys)+'/'+Number(r.dia)+' mmHg</div>'+
+    '<div class="hint" style="margin-top:8px">删掉之后就找不回来了</div>'+
+    '<button class="bigbtn" id="delNo">不删了</button><button class="bigbtn danger-solid" id="delYes">确认删除</button>');
+  $('delNo').onclick=closeModal;
+  $('delYes').onclick=function(){
+    var key=r.rid||r.ts;
+    var backup=p.records.slice();
+    p.records=p.records.filter(function(x){ return (x.rid||x.ts)!==key; });
+    if(!save()){ p.records=backup; return; }
+    closeModal(); renderAll(); toast('已删除');
+  };
 }
 
 /* ---------- 报告 ---------- */
@@ -778,12 +1263,26 @@ function renderReport(){
   if(!rs.length){ h+='<p class="hint">还没有记录，无法生成报告。</p>'; showModal('健康报告',h); return; }
   var last=rs[rs.length-1], over=0, sS=0, sD=0, mx=0;
   rs.forEach(function(r){ sS+=r.sys; sD+=r.dia; if(isHigh(r.sys,r.dia)) over++; if(r.sys>mx) mx=r.sys; });
+  // 按测量时段分别算平均：医生最关心晨起血压（晨峰是高危时段）
+  var byPeriod={};
+  rs.forEach(function(r){
+    var k=r.period||'未记录';
+    if(!byPeriod[k]) byPeriod[k]={n:0,s:0,d:0};
+    byPeriod[k].n++; byPeriod[k].s+=Number(r.sys); byPeriod[k].d+=Number(r.dia);
+  });
+  var periodRows='';
+  ['晨起','睡前','早饭后','午间','晚饭后'].forEach(function(k){
+    var v=byPeriod[k];
+    if(!v||v.n<2) return;   // 少于2次不算平均，避免误导
+    periodRows+=row(k+'平均（'+v.n+'次）',Math.round(v.s/v.n)+'/'+Math.round(v.d/v.n)+' mmHg');
+  });
   h+='<table style="width:100%;margin-top:12px;border-collapse:collapse;font-size:18px">'+
      row('记录次数',rs.length+' 次')+
      row('平均值',Math.round(sS/rs.length)+'/'+Math.round(sD/rs.length)+' mmHg')+
      row('最高收缩压',mx+' mmHg')+
      row('按家庭自测标准超标（≥'+HL_SYS+'/'+HL_DIA+'）',over+' 次')+
      row('最近一次',last.sys+'/'+last.dia+' mmHg（'+fmt(last.ts)+'）')+
+     periodRows+
      '</table><div style="margin-top:16px"><b>详细记录</b></div>'+
      '<table style="width:100%;margin-top:8px;border-collapse:collapse;font-size:16px">';
   rs.slice().reverse().forEach(function(r){
@@ -830,7 +1329,7 @@ function buildBackup(){
   return {app:'family-health',version:2,exportedAt:new Date().toISOString(),
           people:S.people.map(function(p){
             return {label:p.label,name:p.name,age:p.age,kin:p.kin,
-                    records:p.records,meds:p.meds,taken:p.taken};
+                    records:p.records,meds:p.meds,taken:p.taken,skipped:p.skipped||{}};
           })};
 }
 function exportData(){
@@ -853,12 +1352,21 @@ function numOf(el){
   return parseInt(raw,10);
 }
 
-var saving=false;
+/* 防连点。
+   要点：不能因为"手快"就把第二次记录吞掉。
+   只在"80ms 内、且输入内容完全相同"时才算重复点击。
+   老人量完立刻复测（数值不同）或者重新填写，都能正常保存。 */
+var lastSaveAt=0, lastSaveKey='';
 $('saveBtn').onclick=function(){
-  if(saving) return;            // 防连点：连按两次会读到空输入并误报"请填写"
-  saving=true;
-  try{ doSave(); }finally{ setTimeout(function(){ saving=false; },300); }
+  var now=Date.now();
+  var key=[$('sys').value,$('dia').value,$('pulse').value,$('period').value].join('|');
+  if(now-lastSaveAt < 80 && key===lastSaveKey && key!=='|||') return;
+  lastSaveAt=now; lastSaveKey=key;
+  doSave();
 };
+/* 保存逻辑。editingRid 有值时表示"修改已有记录"，否则是新增。 */
+var editingRid=null;
+var doSaveForce=false;   // 用户在凌晨确认"就按这个时间存"时置 true，跳过时段校验
 function doSave(){
   var p=cur();
   var sys=numOf($('sys')), dia=numOf($('dia')), pulse=numOf($('pulse'));
@@ -869,10 +1377,90 @@ function doSave(){
   if(sys<50||sys>260||dia<30||dia>180){ toast('数值看着不太对，再核对一下'); return; }
   if(dia>=sys){ toast('低压不能比高压大，请核对'); return; }
   if(pulse!==null&&(pulse<30||pulse>220)){ toast('脉搏数看着不太对，请核对（或留空）'); return; }
+
   var sel=$('period');
-  var periodVal=safePeriod(sel && sel.value ? sel.value : (sel&&sel.selectedIndex>=0?PERIODS[sel.selectedIndex]:''));
-  var r={ts:Date.now(),sys:sys,dia:dia,pulse:pulse||null,period:periodVal,
-         rid:'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)};
+  var periodVal=safePeriod(sel && sel.value ? sel.value : '');
+
+  /* ---- 修改已有记录 ---- */
+  if(editingRid){
+    var target=null;
+    for(var k=0;k<p.records.length;k++){ if(p.records[k].rid===editingRid){ target=p.records[k]; break; } }
+    if(!target){ editingRid=null; toast('找不到这条记录了'); return; }
+    var backupRec={sys:target.sys,dia:target.dia,pulse:target.pulse,period:target.period};
+    var roundsSel2=$('rounds');
+    var roundsVal2=roundsSel2?(parseInt(roundsSel2.value,10)||2):target.rounds;
+    target.sys=sys; target.dia=dia; target.pulse=pulse||null; target.period=periodVal; target.rounds=roundsVal2;
+    if(!save()){
+      target.sys=backupRec.sys; target.dia=backupRec.dia;
+      target.pulse=backupRec.pulse; target.period=backupRec.period;
+      return;
+    }
+    editingRid=null;
+    $('sys').value=''; $('dia').value=''; $('pulse').value='';
+    $('sys').blur(); $('dia').blur(); $('pulse').blur();
+    setEditingMode(false);
+    renderAll();
+    toast('已修改');
+    return;
+  }
+
+  /* ---- 新增记录 ---- */
+  // 防止记录无限增长：超出上限提示先备份
+  if(p.records.length>=5000){
+    toast('记录已经很多了，请先点一次备份，再清理一部分旧记录');
+    return;
+  }
+  // 支持补记昨天、前天
+  var whenSel=$('when');
+  var dayOffset=whenSel ? parseInt(whenSel.value,10)||0 : 0;
+  // 凌晨补记"今天"时，如果时段还是"晨起/早饭后"，时间和时段会对不上，先提醒用户改
+  var earlyHour=new Date().getHours();
+  if(dayOffset===0 && !doSaveForce && earlyHour<5 && (periodVal==='晨起'||periodVal==='早饭后')){
+    showModal('这个时段好像不太对',
+      '<div class="warnbar caution" style="font-size:17px">现在是凌晨 '+earlyHour+' 点多，还没到起床的时候。<br><br>'+
+      '如果记的是<b>昨晚那一次</b>，请把时段改成「睡前」。<br>'+
+      '如果确实是刚量的，可以继续保存。</div>'+
+      '<button class="bigbtn primary" id="hpFix">改成「睡前」再存</button>'+
+      '<button class="bigbtn" id="hpKeep">就按现在这个时间存</button>');
+    $('hpFix').onclick=function(){
+      var sel2=$('period');
+      if(sel2){ for(var pi=0;pi<sel2.options.length;pi++){ if(sel2.options[pi].value==='睡前'){ sel2.selectedIndex=pi; break; } } }
+      closeModal();
+      toast('已改成睡前，再点一次保存');
+    };
+    $('hpKeep').onclick=function(){
+      closeModal();
+      // 用户确认后按原时段保存，不再拦截
+      doSaveForce=true;
+      doSave();
+      doSaveForce=false;
+    };
+    return;
+  }
+  // 按所选时段推算合理时刻。注意：不能简单用"此刻减N天"，
+  // 否则凌晨补记「昨天晨起」会落成「昨天凌晨1点」，和时段对不上。
+  var hourMap={'晨起':7,'早饭后':9,'午间':12,'晚饭后':19,'睡前':21};
+  var ts;
+  var now=new Date();
+  var isSmallHours = now.getHours()<5;   // 凌晨 0-4 点
+
+  if(dayOffset>0){
+    var base=new Date();
+    base.setDate(base.getDate()-dayOffset);
+    base.setHours(hourMap[periodVal]!=null?hourMap[periodVal]:12, 0, 0, 0);
+    ts=base.getTime();
+  } else if(isSmallHours){
+    // 凌晨补记"今天"：比如半夜两点想补记什么，多半是补昨晚睡前那次。
+    // 不假装成"今天晨起"，而是实打实记成此刻，并把时段改成"睡前"更贴近真实。
+    ts=Date.now();
+  } else {
+    ts=Date.now();
+  }
+
+  var roundsSel=$("rounds");
+  var roundsVal=roundsSel?(parseInt(roundsSel.value,10)||2):2;
+  var r={ts:ts,sys:sys,dia:dia,pulse:pulse||null,period:periodVal,rounds:roundsVal,
+         rid:'r'+ts.toString(36)+Math.random().toString(36).slice(2,5)};
   p.records.push(r); p.records.sort(function(a,b){ return a.ts-b.ts; });
   if(!save()){
     // 存不进去就回滚，避免界面显示已保存但实际没存
@@ -881,16 +1469,21 @@ function doSave(){
   }
   $('sys').value=''; $('dia').value=''; $('pulse').value='';
   $('sys').blur(); $('dia').blur(); $('pulse').blur();
+  if(whenSel) whenSel.value='0';
   renderAll();
   var g=grade(sys,dia);
-  toast(g.level==='ok'?'已记下 · 正常 👍':'已记下 · '+g.text);
+  toast((dayOffset>0?'已补记 · ':'已记下 · ')+(g.level==='ok'?'正常 👍':g.text));
+  speakResult(sys, dia, g);   // 语音播报（默认关闭，可在设置里开）
   if(g.level==='danger'){
-    showModal('请马上注意','<div class="warnbar danger" style="font-size:18px">这次是 '+sys+'/'+dia+'，高得比较多。<br><br>① 安静坐 5 分钟后，再量一次。<br>② 如果还是这么高，或者头痛、胸口闷、说话不清，请立刻打电话给家人或去医院。</div>'+
+    showModal('请马上注意',
+      '<div class="warnbar danger" style="font-size:18px">这次是 '+sys+'/'+dia+'，高得比较多。<br><br>'+
+      '① 安静坐 5 分钟后，再量一次。<br>'+
+      '② 如果还是这么高，或者头痛、胸口闷、说话不清，请立刻打电话给家人或去医院。</div>'+
       '<button class="bigbtn primary" id="ok1">我知道了</button>');
     $('ok1').onclick=closeModal;
   }
-  // 不强制滚回顶部：老人会以为刚填的内容没了；想看结果自己往上滑
-};
+  // 保存后不强制滚回顶部：老人会以为刚填的内容没了
+}
 /* ---------- 拍照参照 ----------
    不做自动识别：这台设备上我无法可靠验证识别准确率，
    而血压数字识别错一次比不识别更危险。
@@ -910,19 +1503,22 @@ $('photoInput').onchange=function(e){
   $('photoOk').onclick=function(){
     closeModal();
     $('sys').focus();
-    setTimeout(function(){ $('entryCard').scrollIntoView({behavior:'smooth',block:'center'}); },80);
+    setTimeout(function(){ var _se_entryCard=document.getElementById('entryCard'); if(_se_entryCard&&_se_entryCard.scrollIntoView) _se_entryCard.scrollIntoView({behavior:'smooth',block:'center'}); },80);
   };
   e.target.value='';
 };
 
 $('quickAdd').onclick=function(){
-  $('entryCard').scrollIntoView({behavior:'smooth',block:'center'});
+  var _se_entryCard=document.getElementById('entryCard'); if(_se_entryCard&&_se_entryCard.scrollIntoView) _se_entryCard.scrollIntoView({behavior:'smooth',block:'center'});
   setTimeout(function(){ $('sys').focus(); },350);
 };
 Array.prototype.forEach.call(document.querySelectorAll('.tabs button'),function(b){
   b.onclick=function(){
     Array.prototype.forEach.call(document.querySelectorAll('.tabs button'),function(x){ x.classList.remove('on'); });
-    b.classList.add('on'); rangeDays=parseInt(b.getAttribute('data-range'),10); renderChart();
+    b.classList.add('on');
+      var rv=b.getAttribute('data-range');
+      rangeDays = rv==='month' ? 365 : parseInt(rv,10);
+      renderChart();
   };
 });
 $('avatarBtn').onclick=function(){
@@ -933,12 +1529,29 @@ $('avatarBtn').onclick=function(){
   showModal('切换记录人',h,null);
   Array.prototype.forEach.call($('modalBody').querySelectorAll('[data-pid]'),function(b){
     b.onclick=function(){
-      S.current=b.getAttribute('data-pid'); save();
-      $('sys').value=''; $('dia').value=''; $('pulse').value=''; $('period').selectedIndex=0;
+      // 切换记录人时必须退出编辑模式，否则 editingRid 会指向另一个人的记录
+      editingRid=null; setEditingMode(false);
+      var prevCur=S.current;
+      S.current=b.getAttribute('data-pid');
+      if(!save()){ S.current=prevCur; return; }
+      $('sys').value=''; $('dia').value=''; $('pulse').value='';
+      $('period').selectedIndex=0; autoPickPeriod();   // 按当前时间选合适时段，避免误记成晨起
       closeModal(); renderAll();
     };
   });
 };
+var periodSel=$('period');
+if(periodSel) periodSel.onchange=checkHourPeriod;
+var wkBtn=$('weeklyBtn');
+if(wkBtn) wkBtn.onclick=function(){ copyText(buildWeeklySummary(),'本周小结已复制，可以发到家庭群了'); };
+var voiceBtnEl=$('voiceBtn');
+if(voiceBtnEl) voiceBtnEl.onclick=function(){
+  window.__voiceOff=!window.__voiceOff;
+  this.textContent='🔊 语音读出结果：'+(window.__voiceOff?'关闭':'开启');
+  toast(window.__voiceOff?'已关闭语音':'已开启语音，记完会读出来');
+};
+var skipBtnEl=$('skipBtn');
+if(skipBtnEl) skipBtnEl.onclick=markTodaySkipped;
 $('reportBtn').onclick=renderReport;
 /* 换一条：绑定放在顶层，只绑定一次 */
 var tipNextBtn=document.getElementById('tipNext');
@@ -990,7 +1603,7 @@ function applyBackup(o){
         S.current=tgt.id;
       }else{
         var np={id:uid(),label:String(pp.label||'恢复的人'),name:String(pp.name||''),age:String(pp.age||''),kin:String(pp.kin||''),
-          records:recs,meds:meds,taken:(pp.taken&&typeof pp.taken==='object')?pp.taken:{}};
+          records:recs,meds:meds,taken:(pp.taken&&typeof pp.taken==='object')?pp.taken:{},skipped:(pp.skipped&&typeof pp.skipped==='object')?pp.skipped:{}};
         S.people.push(np);
         S.current=np.id;
       }
@@ -1026,15 +1639,37 @@ $('importFile').onchange=function(e){
 };
 $('clearBtn').onclick=function(){
   var p=cur();
-  showModal('清空记录','<div class="warnbar danger">会删掉「'+esc(p.name||p.label)+'」的全部 '+p.records.length+' 条记录，删了找不回来。</div>'+
-    '<button class="bigbtn" id="clrNo">不删了</button><button class="bigbtn danger-solid" id="clrYes">我确定，清空</button>');
-  $('clrYes').onclick=function(){
-    var recBackup=p.records.slice(), takenBackup=JSON.parse(JSON.stringify(p.taken));
-    p.records=[]; p.taken={};
-    if(!save()){ p.records=recBackup; p.taken=takenBackup; return; }
-    closeModal(); renderAll(); toast('已清空');
-  };
+  var n=p.records.length;
+  if(!n){ toast('还没有记录'); return; }
+  showModal('清空记录',
+    '<div class="warnbar danger">会删掉「'+esc(p.name||p.label)+'」的全部 <b>'+n+'</b> 条记录，删了找不回来。</div>'+
+    '<div class="hint" style="margin-top:10px">建议先点「复制备份文字」存一份，再清空。</div>'+
+    '<button class="bigbtn primary" id="clrBackupFirst">先备份一下</button>'+
+    '<button class="bigbtn danger-solid" id="clrStep1">我要清空</button>'+
+    '<button class="bigbtn" id="clrNo">不删了</button>');
   $('clrNo').onclick=closeModal;
+  $('clrBackupFirst').onclick=function(){
+    // 复用备份逻辑，复制完再回来
+    var data=buildBackup();
+    copyText(JSON.stringify(data),'备份已复制，现在可以放心清空了');
+  };
+  // 第一次点只是"预确认"，按钮变成二次确认，防止手滑一下全没了
+  $('clrStep1').onclick=function(){
+    var btn=$('clrStep1');
+    btn.textContent='再点一次，确认全部删除';
+    btn.disabled=true;
+    btn.onclick=null;
+    setTimeout(function(){
+      btn.disabled=false;
+      btn.textContent='好，我确定，清空';
+      btn.onclick=function(){
+        var recBackup=p.records.slice(), takenBackup=JSON.parse(JSON.stringify(p.taken));
+        p.records=[]; p.taken={};
+        if(!save()){ p.records=recBackup; p.taken=takenBackup; return; }
+        closeModal(); renderAll(); toast('已清空');
+      };
+    },1200);
+  };
 };
 $('nameInput').onchange=function(){ cur().name=this.value.trim().slice(0,10); this.value=cur().name; save(); renderSummary(); };
 $('ageInput').onchange=function(){
@@ -1179,9 +1814,10 @@ function checkBackupAge(){
 function renderAll(){
   var p=cur();
   $('nameInput').value=p.name||''; $('ageInput').value=p.age||''; $('kinInput').value=p.kin||'';
-  renderSummary(); renderChart(); renderRecent(); renderTip(); checkBackupAge();
+  renderSummary(); renderChart(); renderRecent(); renderTip(); checkBackupAge(); renderLastHint();
 }
 renderAll();
+autoPickPeriod();   // 首次打开按当前时间预选时段，避免误记成"晨起"
 
 /* 多标签页保护：另一个标签写入时，本页重新读取，避免整份覆盖 */
 window.addEventListener('storage',function(e){
