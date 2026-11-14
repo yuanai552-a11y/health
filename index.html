@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<title>我的健康小本子</title>
+<style>
+:root{
+  /* 主色：沉稳墨绿；强调色：只给"记录"这个动作用的暖橙 */
+  --bg:#eef2f1; --bg2:#f7faf9; --card:#ffffff;
+  --ink:#132523; --ink2:#2c4442; --sub:#5f7573; --line:#e3ebe9;
+  --ok:#0b7a52; --warn:#a8690a; --bad:#c33b31;
+  --brand:#0d5f57; --brand2:#08433d; --brand3:#12756b;
+  --accent:#e2632c; --accent2:#c94a18;
+  --radius:24px; --radius-sm:16px;
+  --shadow:0 1px 2px rgba(16,50,45,.04), 0 8px 24px -12px rgba(16,50,45,.16);
+  --shadow-lift:0 2px 4px rgba(16,50,45,.05), 0 16px 36px -16px rgba(16,50,45,.22);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:radial-gradient(120% 80% at 50% 0%, var(--bg2) 0%, var(--bg) 55%) fixed;
+  color:var(--ink);font-size:20px;line-height:1.55;letter-spacing:.01em;
+  padding-bottom:calc(140px + constant(safe-area-inset-bottom));padding-bottom:calc(140px + env(safe-area-inset-bottom));
+  -webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:640px;margin:0 auto;padding:0 15px}
+/* 顶部：深墨绿渐变 + 大字号读数，让"今天多少"成为第一眼焦点 */
+header.top{
+  position:relative;overflow:hidden;
+  background:linear-gradient(155deg,#10564f 0%,var(--brand) 42%,var(--brand2) 100%);
+  color:#fff;
+  padding:calc(18px + constant(safe-area-inset-top)) 20px 22px;padding:calc(18px + env(safe-area-inset-top)) 20px 22px;
+  border-radius:0 0 30px 30px;
+  box-shadow:0 10px 30px -12px rgba(8,60,55,.45);
+}
+/* 顶部一层极淡的径向高光，避免纯平色显得廉价 */
+header.top::before{
+  content:"";position:absolute;inset:-40% -20% auto auto;width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.14) 0%,rgba(255,255,255,0) 68%);
+  pointer-events:none;
+}
+header .toprow{position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;max-width:640px;margin:0 auto}
+header h1{margin:0;font-size:25px;font-weight:800;letter-spacing:.4px;line-height:1.25}
+header .sub{margin-top:5px;font-size:16px;opacity:.92;letter-spacing:.2px}
+.avatar{
+  width:58px;height:58px;border-radius:50%;flex:0 0 auto;
+  background:rgba(255,255,255,.16);
+  border:1.5px solid rgba(255,255,255,.38);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;
+  font-size:21px;font-weight:800;color:#fff;cursor:pointer;
+  transition:transform .15s, background .15s;
+}
+.avatar:active{transform:scale(.94);background:rgba(255,255,255,.26)}
+/* 顶部大读数：血压是主角 */
+.hero-reading{
+  position:relative;margin-top:20px;display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;
+}
+.hero-reading .val{
+  font-size:62px;font-weight:800;line-height:.95;letter-spacing:-2.5px;
+  font-variant-numeric:tabular-nums;
+  text-shadow:0 2px 12px rgba(0,0,0,.14);
+}
+.hero-reading .val small{font-size:20px;font-weight:600;letter-spacing:0;opacity:.75;margin-left:4px}
+.hero-reading .unit{font-size:16px;opacity:.7;font-weight:600;letter-spacing:.5px;margin-bottom:8px}
+.hero-reading .tag{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:999px;font-size:16px;font-weight:800;
+  background:rgba(255,255,255,.9);color:var(--brand2);margin-bottom:10px;
+}
+.hero-reading .tag.ok{background:#d9f5e8;color:#0a6b48}
+.hero-reading .tag.warn{background:#fdefd6;color:#8a5707}
+.hero-reading .tag.bad{background:#fde2de;color:#a8302a}
+.hero-meta{position:relative;margin-top:12px;font-size:16px;opacity:.9;letter-spacing:.2px}
+.hero-empty{position:relative;margin-top:18px;font-size:18px;opacity:.9;line-height:1.6}
+.card{
+  background:var(--card);border-radius:var(--radius);padding:20px 18px;margin:16px 0;
+  box-shadow:var(--shadow);border:1px solid rgba(227,235,233,.9);
+}
+.card h2{
+  margin:0 0 14px;font-size:20px;font-weight:800;letter-spacing:.3px;
+  display:flex;align-items:center;gap:9px;color:var(--ink);
+}
+/* 标题前的小竖条，替代emoji，显得克制 */
+.card h2::before{
+  content:"";width:4px;height:18px;border-radius:2px;
+  background:linear-gradient(180deg,var(--brand3),var(--brand));flex:0 0 auto;
+}
+.hint{color:var(--sub);font-size:18px;line-height:1.6}
+.row{display:flex;gap:10px;margin-top:12px}
+.row>*{flex:1}
+.row:first-child{margin-top:0}
+label.field{display:block;font-size:16px;color:var(--sub);margin-bottom:7px;font-weight:600;letter-spacing:.2px}
+input,select{
+  width:100%;font-size:32px;font-weight:700;padding:15px 12px;border-radius:18px;
+  border:1.5px solid var(--line);background:#f8fbfa;color:var(--ink);text-align:center;
+  font-family:inherit;font-variant-numeric:tabular-nums;
+  transition:border-color .15s, background .15s, box-shadow .15s;
+  -webkit-appearance:none;appearance:none;
+}
+input[type=text]{font-size:23px;font-weight:600}
+input[type=time],select{font-size:19px;font-weight:600;padding:13px}
+input::placeholder{color:#8497a4;font-weight:600}
+input:focus,select:focus{
+  outline:none;border-color:var(--brand3);background:#fff;
+  box-shadow:0 0 0 4px rgba(18,117,107,.10);
+}
+select{background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f7573' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;background-size:18px;padding-right:36px}
+button{font-family:inherit;cursor:pointer;border:none;border-radius:18px;font-weight:700}
+.btn-main{
+  width:100%;margin-top:18px;padding:19px;font-size:24px;color:#fff;letter-spacing:.5px;
+  background:linear-gradient(160deg,var(--brand3) 0%,var(--brand) 60%,var(--brand2) 100%);
+  box-shadow:0 8px 22px -8px rgba(13,95,87,.55), inset 0 1px 0 rgba(255,255,255,.14);
+  transition:transform .1s, box-shadow .15s;
+}
+.btn-main:active{transform:scale(.985);box-shadow:0 4px 12px -6px rgba(13,95,87,.5)}
+.btn-ghost{
+  background:#f1f6f5;color:var(--brand2);padding:15px 16px;font-size:18px;
+  width:100%;margin-top:10px;text-align:center;font-weight:700;
+  border:1px solid rgba(227,235,233,.9);transition:background .15s;
+}
+.btn-ghost:active{background:#e6efed}
+.btn-ghost.danger{background:#fdf0ee;color:var(--bad);border-color:#f6dcd8}
+.pill{display:inline-block;padding:5px 13px;border-radius:999px;font-size:15px;font-weight:800;white-space:nowrap;letter-spacing:.2px}
+.pill.ok{background:#dcf4e6;color:var(--ok)}
+.pill.warn{background:#fdefd6;color:var(--warn)}
+.pill.bad{background:#fde3df;color:var(--bad)}
+.pill.none{background:#edf2f1;color:var(--sub)}
+.reading{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.reading .num{font-size:52px;font-weight:800;letter-spacing:-1.5px;line-height:1.1;font-variant-numeric:tabular-nums}
+.list{margin:0;padding:0;list-style:none}
+.list li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid var(--line);font-size:19px}
+.list li:last-child{border-bottom:none}
+.list .t{color:var(--sub);font-size:16px;letter-spacing:.2px}
+.list .v{font-weight:800;font-size:22px;font-variant-numeric:tabular-nums;letter-spacing:-.3px}
+.meal{display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}
+.meal:last-child{border-bottom:none}
+.meal .name{font-weight:800;min-width:48px;font-size:19px}
+.meal .time{flex:1}
+.chk{
+  width:58px;height:58px;border-radius:50%;border:2px solid var(--line);
+  background:#f8fbfa;display:flex;align-items:center;justify-content:center;
+  font-size:26px;color:#c2d0ce;flex:0 0 auto;transition:all .18s;
+}
+.chk.done{
+  background:linear-gradient(160deg,#12a06b,var(--ok));border-color:transparent;color:#fff;
+  box-shadow:0 4px 12px -4px rgba(11,122,82,.5);
+}
+/* 图表：淡渐变底，替代纯白 */
+.chart-shell{
+  background:linear-gradient(180deg,#fbfdfc 0%,#f5faf8 100%);
+  border-radius:18px;padding:8px 4px 4px;margin:2px 0 4px;
+}
+svg.chart{width:100%;height:auto;display:block;overflow:visible}
+.legend{display:flex;gap:10px 16px;flex-wrap:wrap;font-size:16px;color:#4a6160;margin-top:12px;line-height:1.7}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:0}
+.tabs{display:flex;gap:8px;margin:0 0 16px;background:#f0f5f4;padding:4px;border-radius:16px}
+.tabs button{
+  flex:1;padding:11px;font-size:17px;background:transparent;color:var(--sub);
+  border-radius:12px;transition:all .18s;font-weight:700;
+}
+.tabs button.on{
+  background:#fff;color:var(--brand2);
+  box-shadow:0 2px 8px -2px rgba(16,50,45,.18);
+}
+/* 底部操作条：去掉整条白底，改成悬浮胶囊 */
+.fab{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  padding:12px 18px calc(14px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,rgba(238,242,241,0) 0%,rgba(238,242,241,.9) 38%,var(--bg) 100%);
+  pointer-events:none;
+}
+.fab button{
+  pointer-events:auto;width:100%;max-width:560px;margin:0 auto;display:block;
+  padding:18px;font-size:23px;color:#fff;letter-spacing:.6px;
+  background:linear-gradient(160deg,var(--accent) 0%,var(--accent2) 100%);
+  box-shadow:0 10px 26px -10px rgba(201,74,24,.65), inset 0 1px 0 rgba(255,255,255,.2);
+  transition:transform .1s;
+}
+.fab button:active{transform:scale(.98)}
+.toast{
+  position:fixed;left:50%;bottom:140px;transform:translateX(-50%) translateY(16px) scale(.96);
+  background:rgba(19,37,35,.96);color:#fff;padding:14px 26px;border-radius:16px;
+  font-size:18px;font-weight:700;opacity:0;pointer-events:none;
+  transition:opacity .22s, transform .22s;z-index:99;max-width:88%;text-align:center;
+  box-shadow:0 12px 32px -12px rgba(0,0,0,.5);letter-spacing:.2px;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+.warnbar{
+  background:#fffaf0;border:1px solid #f2e0bd;color:#7d5307;
+  border-radius:16px;padding:14px 16px;font-size:17px;line-height:1.6;margin-top:12px;
+}
+.warnbar.danger{background:#fdf1ef;border-color:#f5cdc7;color:#9b2b22}
+.warnbar.caution{background:#fff8ec;border-color:#f0dcb8;color:#7d5307}
+.footnote{text-align:center;color:#556a68;font-size:16px;margin:26px 0 14px;line-height:1.8;letter-spacing:.2px}
+.modal{
+  position:fixed;inset:0;background:rgba(9,32,29,.5);display:none;z-index:200;
+  align-items:flex-end;justify-content:center;
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+}
+.modal.open{display:flex}
+body.modal-open{overflow:hidden}
+.modal .sheet{
+  background:#fff;width:100%;max-width:640px;
+  border-radius:26px 26px 0 0;max-height:88vh;overflow:auto;padding:0 0 calc(22px + env(safe-area-inset-bottom));
+  box-shadow:0 -12px 40px -16px rgba(0,0,0,.4);
+  animation:sheetUp .26s cubic-bezier(.22,1,.36,1);
+}
+@keyframes sheetUp{from{transform:translateY(24px);opacity:.6}to{transform:translateY(0);opacity:1}}
+.modal .head{
+  position:sticky;top:0;z-index:2;
+  background:linear-gradient(155deg,#10564f,var(--brand) 70%,var(--brand2));
+  color:#fff;padding:18px 20px;font-size:20px;font-weight:800;letter-spacing:.3px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.modal .head button{
+  background:rgba(255,255,255,.16);color:#fff;font-size:22px;line-height:1;
+  width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+}
+.modal .body{padding:18px 20px}
+.bigbtn{
+  width:100%;padding:17px;font-size:19px;background:#f2f7f6;color:var(--ink);
+  margin-top:10px;text-align:center;font-weight:700;border-radius:16px;
+  border:1px solid rgba(227,235,233,.9);transition:background .15s;
+}
+.bigbtn:active{background:#e8f0ee}
+.bigbtn.primary{
+  background:linear-gradient(160deg,var(--brand3),var(--brand2));color:#fff;border-color:transparent;
+  box-shadow:0 8px 20px -10px rgba(13,95,87,.6);
+}
+.bigbtn.danger-solid{
+  background:linear-gradient(160deg,#d0483c,var(--bad));color:#fff;border-color:transparent;
+  box-shadow:0 8px 20px -10px rgba(195,59,49,.55);
+}
+/* 尊重系统的"减少动态效果"设置 */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+@media print{
+  body{padding:0;background:#fff;font-size:15px}
+  .fab,.toast,.no-print{display:none!important}
+  /* 打印时只输出报告弹窗内容，隐藏页面主体 */
+  body.printing .wrap,body.printing header.top{display:none!important}
+  body.printing .modal{display:block!important;position:static;background:#fff}
+  body.printing .modal .sheet{max-height:none;border-radius:0;box-shadow:none;max-width:100%}
+  body.printing .modal .head{position:static;background:#fff;color:#000;border-bottom:2px solid #000}
+  body.printing .modal .head button{display:none}
+  body.printing .bigbtn{display:none!important}
+  .card{box-shadow:none;border:1px solid #bbb;break-inside:avoid;margin:10px 0}
+  header.top{background:#fff;color:#000;border-radius:0;box-shadow:none;border-bottom:2px solid #000;padding:0 0 10px}
+  header.top h1{font-size:20px}
+  header .sub{font-size:13px;color:#333}
+}
+</style>
+</head>
+<body>
+
+<header class="top no-print">
+  <div class="toprow">
+    <div>
+      <h1 id="greet">我的健康小本子</h1>
+      <div class="sub" id="todayLine">今天</div>
+    </div>
+    <button class="avatar" id="avatarBtn" type="button" aria-label="切换记录的人">爸</button>
+  </div>
+  <div id="heroZone"></div>
+</header>
+
+<main class="wrap">
+  <section class="card" id="adviceCard" style="display:none">
+    <div class="warnbar" id="adviceBox"></div>
+  </section>
+
+  <section class="card no-print" id="entryCard">
+    <h2>记一次血压</h2>
+    <div class="row">
+      <div><label class="field" for="sys">高压（收缩压）</label><input type="text" id="sys" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="---"></div>
+      <div><label class="field" for="dia">低压（舒张压）</label><input type="text" id="dia" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="---"></div>
+    </div>
+    <div class="row">
+      <div><label class="field" for="pulse">脉搏（可留空）</label><input type="text" id="pulse" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="---"></div>
+      <div><label class="field" for="period">测量时段</label>
+        <select id="period">
+          <option value="晨起">晨起</option><option value="早饭后">早饭后</option>
+          <option value="午间">午间</option><option value="晚饭后">晚饭后</option><option value="睡前">睡前</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-main" id="saveBtn">保存这次记录</button>
+    <button class="btn-ghost" id="photoBtn" style="text-align:center;margin-top:12px">📷 拍血压计屏幕，放大照着填</button>
+    <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none">
+    <div class="hint" style="margin-top:10px">量之前先坐 5 分钟，不说话，胳膊放在桌上与心脏同高。</div>
+  </section>
+
+  <section class="card">
+    <h2>最近的变化</h2>
+    <div class="tabs no-print">
+      <button data-range="7" class="on">近7天</button>
+      <button data-range="30">近30天</button>
+      <button data-range="90">近3个月</button>
+    </div>
+    <div class="chart-shell"><svg class="chart" id="chart" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet"></svg></div>
+    <div class="legend">
+      <span><i style="background:#0f766e"></i>高压</span>
+      <span><i style="background:#e0632f"></i>低压</span>
+      <span><i style="background:#f0c9c6"></i>高压超标区（≥135）</span>
+      <span><i style="background:#c0392f"></i>那次偏高</span>
+      <span style="color:#8a5a00">低压超过 85 也会标红</span>
+    </div>
+    <div id="statLine" class="hint" style="margin-top:12px"></div>
+  </section>
+
+  <section class="card no-print" id="tipCard">
+    <h2>今天的小知识</h2>
+    <div id="tipBox" class="hint" style="font-size:18px;line-height:1.7"></div>
+    <button class="btn-ghost" id="tipNext" style="margin-top:12px">换一条</button>
+  </section>
+
+
+  <section class="card" id="dietCard">
+    <h2>今天怎么吃</h2>
+    <div id="dietBox" class="hint"></div>
+  </section>
+
+  <section class="card" id="emergencyCard">
+    <h2>紧急情况怎么办</h2>
+    <div class="hint" id="emNote">如果出现下面这些情况，不要等，立刻打电话叫救护车或去医院：</div>
+    <ul class="list" style="margin-top:8px">
+      <li><span>说话不清、嘴角歪、一侧手脚没力气</span></li>
+      <li><span>突然剧烈头痛、看东西不清楚</span></li>
+      <li><span>胸口闷痛、喘不上气</span></li>
+      <li><span>突然眼前发黑、站不稳、快要晕倒</span></li>
+    </ul>
+    <div class="hint" style="margin-top:10px" id="callLine"></div>
+  </section>
+
+  <section class="card no-print">
+    <h2>设置</h2>
+    <div class="row">
+      <div><label class="field" for="nameInput">姓名</label><input type="text" id="nameInput" placeholder="例如：张德福"></div>
+      <div><label class="field" for="ageInput">年龄</label><input type="text" id="ageInput" inputmode="numeric" maxlength="3" placeholder="例如：68"></div>
+    </div>
+    <div class="row">
+      <div><label class="field" for="kinInput">家人电话（紧急时拨打）</label><input type="text" id="kinInput" inputmode="tel" placeholder="留空就不显示"></div>
+    </div>
+    <div class="hint" style="margin-top:8px">所有记录只存在这台手机上，不会传到任何网站。</div>
+    <button class="btn-ghost" id="reportBtn">📄 生成报告给医生看</button>
+    <button class="btn-ghost" id="exportBtn">💾 备份数据（换手机用）</button>
+    <div class="warnbar caution" id="backupWarn" style="display:none;margin-bottom:10px"></div>
+    <button class="btn-ghost" id="copyBackupBtn">📋 复制备份文字（微信里用这个）</button>
+    <button class="btn-ghost" id="importBtn">📥 从备份恢复</button>
+    <div class="hint" style="margin-top:8px;color:#8a5a00">微信清理缓存可能会清掉记录，建议每月点一次备份。</div>
+    <input type="file" id="importFile" accept=".json,application/json" style="display:none">
+    <button class="btn-ghost danger" id="clearBtn">🗑️ 清空这个人的全部记录</button>
+  </section>
+
+  <section class="card">
+    <h2>最近记录</h2>
+    <div class="hint" style="margin-bottom:6px">点一下某条记录可以删除，删除时会再问一次。</div>
+    <ul class="list" id="recentList"></ul>
+  </section>
+
+
+  <div class="footnote">
+    本页面只作日常记录和趋势参考，<br>不能替代医生诊断和处方。不舒服请及时就医。<br>
+    <span style="font-size:13px">数据保存在本机 · 不联网</span>
+  </div>
+</main>
+
+<div class="fab no-print"><button id="quickAdd">＋ 马上记一次血压</button></div>
+<div class="toast" id="toast"></div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="sheet">
+    <div class="head"><span id="modalTitle">提示</span><button id="modalClose" type="button" aria-label="关闭">×</button></div>
+    <div class="body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var ROOT='family-health-v2';
+var LAST_BACKUP_KEY='family-health-last-backup';
+var DEFAULT_MEDS=[{id:'m1',name:'早上',time:'08:00'},{id:'m2',name:'中午',time:'12:30'},{id:'m3',name:'晚上',time:'19:00'}];
+
+/* 测量时段只允许固定几个值，防止旧数据或恶意备份里塞入 HTML */
+var PERIODS=['晨起','早饭后','午间','晚饭后','睡前'];
+function safePeriod(p){
+  p=String(p==null?'':p);
+  return PERIODS.indexOf(p)>=0 ? p : '未记录';
+}
+
+var S=loadState();
+function uid(){ return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
+function loadState(){
+  var o=null;
+  try{ var raw=localStorage.getItem(ROOT); if(raw) o=JSON.parse(raw); }catch(e){}
+  if(o&&Array.isArray(o.people)&&o.people.length){
+    o.people.forEach(function(p){
+      p.records=sanitizeRecords(p.records);   // 旧数据同样清洗：字段合法、period 白名单、补 rid
+      p.taken=(p.taken&&typeof p.taken==='object')?p.taken:{};
+      p.meds=sanitizeMeds(p.meds);
+      p.label=String(p.label||''); p.name=String(p.name||''); p.age=String(p.age||''); p.kin=String(p.kin||'');
+    });
+    if(!o.current||!o.people.some(function(p){return p.id===o.current;})) o.current=o.people[0].id;
+    return o;
+  }
+  // 兼容 v1（单人）
+  var v1=null;
+  try{ var r1=localStorage.getItem('family-health-v1'); if(r1) v1=JSON.parse(r1); }catch(e){}
+  var p={
+    id:'p1',label:'爸爸',name:(v1&&v1.name)||'',age:(v1&&v1.age)||'',kin:(v1&&v1.kin)||'',
+    records:Array.isArray(v1&&v1.records)?v1.records:[],
+    meds:defaultMeds(),
+    taken:(v1&&v1.taken)||{}
+  };
+  // v1 的老数据也要清洗：补 rid、period 走白名单、按时间排序。
+  // 否则这些记录以后导出再导入时 rid 全是 undefined，去重会失效。
+  p.records=sanitizeRecords(p.records);
+  return {people:[p,{id:'p2',label:'妈妈',name:'',age:'',kin:'',records:[],meds:defaultMeds(),taken:{}}],current:p.id};
+}
+/* 清洗外部导入的记录：字段合法 + 按时间升序，避免图表折线错乱和"最近记录"取错 */
+function sanitizeRecords(arr){
+  if(!Array.isArray(arr)) return [];
+  var out=[];
+  arr.forEach(function(r){
+    if(!r) return;
+    var ts=Number(r.ts), sys=Number(r.sys), dia=Number(r.dia), pulse=r.pulse==null?null:Number(r.pulse);
+    if(!isFinite(ts)||!isFinite(sys)||!isFinite(dia)) return;
+    if(sys<50||sys>260||dia<30||dia>180||dia>=sys) return;
+    if(pulse!=null&&(pulse<30||pulse>220)) pulse=null;
+    // rid 必须稳定：同一份备份重复导入要得到同一个 id，否则按 rid 去重会失效。
+    // 优先沿用原 rid，没有就用内容指纹（时间+三个数值）生成。
+    var rid=r.rid?String(r.rid):('f'+ts.toString(36)+'_'+sys+'_'+dia+'_'+(pulse==null?'x':pulse));
+    out.push({ts:ts,sys:sys,dia:dia,pulse:pulse,period:safePeriod(r.period),rid:rid});
+  });
+  out.sort(function(a,b){ return a.ts-b.ts; });
+  return out;
+}
+/* 保存。返回是否成功 —— 调用方必须据返回值决定提示，
+   否则会出现"界面显示已保存、刷新后记录没了"或"删掉了、刷新后复活"。
+   常见触发：手机存储已满、iOS 隐私模式、微信内置浏览器禁用存储。 */
+function save(){
+  try{
+    localStorage.setItem(ROOT,JSON.stringify(S));
+    return true;
+  }catch(e){
+    showSaveFailure();
+    return false;
+  }
+}
+var saveFailureShown=false;
+function showSaveFailure(){
+  if(saveFailureShown) return;      // 避免连续失败时弹窗套弹窗
+  saveFailureShown=true;
+  showModal('没能保存',
+    '<div class="warnbar danger">这次没能存进手机，关掉页面后可能会丢失。'+
+    '常见原因：手机存储空间不足、或是在“无痕/隐私模式”下打开。</div>'+
+    '<div class="hint" style="margin-top:10px">可以先到「设置」里点「复制备份文字」，把数据存到微信里保管。</div>'+
+    '<button class="bigbtn primary" id="saveFailOk" style="margin-top:12px">我知道了</button>',
+    function(){ saveFailureShown=false; });
+  var b=$('saveFailOk'); if(b) b.onclick=closeModal;
+}
+function cur(){ for(var i=0;i<S.people.length;i++) if(S.people[i].id===S.current) return S.people[i]; return S.people[0]; }
+
+function $(id){ return document.getElementById(id); }
+function pad(n){ return n<10?'0'+n:''+n; }
+/* 校验 HH:MM 格式，防止导入数据里塞入非法值 */
+/* 药品列表清洗：id、名称、时间都要合法；三处导入/加载共用同一份逻辑 */
+/* 默认药品必须深拷贝：浅拷贝会让爸爸和妈妈共享同一批对象，
+   改一个人的药时间，另一个人的也跟着变。 */
+function defaultMeds(){
+  return DEFAULT_MEDS.map(function(m){ return {id:m.id,name:m.name,time:m.time}; });
+}
+function sanitizeMeds(list){
+  if(!Array.isArray(list)||!list.length) return defaultMeds();
+  return list.map(function(m){
+    return {id:String(m&&m.id||uid()),name:String((m&&m.name)||'药').slice(0,12),time:safeTime(m&&m.time)};
+  });
+}
+function safeTime(t){
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(t||'')) ? String(t) : '08:00';
+}
+function dayKey(d){ d=d||new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function fmt(ts){ var d=new Date(ts); return (d.getMonth()+1)+'月'+d.getDate()+'日 '+pad(d.getHours())+':'+pad(d.getMinutes()); }
+
+/* 家庭自测判级：先判高、后判低。
+   家庭自测标准 ≥135/85 即为升高（不同于诊室 140/90）。
+   老年人单纯收缩期高血压（收缩压高 + 舒张压低）单独识别，不可判为"偏低"。 */
+function grade(sys,dia){
+  if(!sys||!dia) return {level:'none',text:'—',cls:'none'};
+  // 1) 高危先判
+  if(sys>=180||dia>=110) return {level:'danger',text:'明显偏高',cls:'bad'};
+  // 2) 单纯收缩期高血压：收缩压已高、舒张压反而低。必须排在"偏高/偏低"之前，
+  //    否则老年人常见的 150/55 会被误报为"偏低"，掩盖收缩压升高的风险。
+  //    也排在 160 之前，让这类读数都能拿到"脉压差大、血管偏硬"的专门说明。
+  if(sys>=HL_SYS&&dia<60) return {level:'ish',text:'收缩压高·舒张压低',cls:'bad'};
+  if(sys>=160||dia>=100) return {level:'high',text:'高',cls:'bad'};
+  // 3) 家庭自测标准下的升高
+  if(sys>=HL_SYS||dia>=HL_DIA) return {level:'high',text:'偏高',cls:'bad'};
+  // 4) 正常高值：任一值接近阈值
+  if(sys>=130||dia>=80) return {level:'watch',text:'有点高',cls:'warn'};
+  // 5) 偏低：收缩压与舒张压两者同时偏低
+  if(sys<90&&dia<60) return {level:'low',text:'偏低',cls:'warn'};
+  // 6) 舒张压单独偏低（如 125/50）：不能显示成"正常"
+  if(dia<60) return {level:'lowdia',text:'低压偏低',cls:'warn'};
+  return {level:'ok',text:'正常',cls:'ok'};
+}
+/* 家庭自测阈值常量：图表、统计、报告统一引用，避免各处写死不同数字 */
+var HL_SYS=135, HL_DIA=85;
+function isHigh(sys,dia){ return sys>=HL_SYS||dia>=HL_DIA; }
+
+/* ---------- 弹窗 ---------- */
+var modalCbs={};
+function showModal(title,html,onClose){
+  $('modalTitle').textContent=title; $('modalBody').innerHTML=html;
+  // 先执行上一个弹窗未消费的清理回调，避免资源（如照片 URL）泄漏
+  if(modalCbs.close){ var prev=modalCbs.close; modalCbs.close=null; try{ prev(); }catch(e){} }
+  modalCbs.close=onClose||null;
+  $('modal').classList.add('open');
+  document.body.classList.add('modal-open');   // 锁定背景滚动
+  var closeBtn=document.querySelector('.modal .head button');
+  if(closeBtn) closeBtn.setAttribute('aria-label','关闭');
+}
+function closeModal(){
+  $('modal').classList.remove('open');
+  document.body.classList.remove('modal-open');
+  if(modalCbs.close){ var c=modalCbs.close; modalCbs.close=null; c(); }
+}
+// Esc 关闭弹窗
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape' && $('modal') && $('modal').classList.contains('open')) closeModal();
+});
+$('modalClose').onclick=closeModal;
+$('modal').onclick=function(e){ if(e.target===$('modal')) closeModal(); };
+
+/* HTML 转义：所有拼进 innerHTML 的用户数据必须先经过这里 */
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+var IS_WECHAT=/MicroMessenger/i.test(navigator.userAgent||'');
+
+/* 复制文本：微信内 navigator.clipboard 常被禁，用 textarea + execCommand 兜底 */
+function copyText(text, okMsg){
+  var done=function(){ toast(okMsg||'已复制'); };
+  if(navigator.clipboard&&navigator.clipboard.writeText&&!IS_WECHAT){
+    navigator.clipboard.writeText(text).then(done).catch(function(){ fallback(); });
+    return;
+  }
+  fallback();
+  function fallback(){
+    try{
+      var ta=document.createElement('textarea');
+      ta.value=text;
+      ta.setAttribute('readonly','readonly');
+      // 放在视口内但透明：iOS 对离屏元素执行 execCommand('copy') 常常失败
+      ta.style.position='fixed'; ta.style.left='0'; ta.style.top='0';
+      ta.style.width='1px'; ta.style.height='1px'; ta.style.opacity='0';
+      ta.style.border='none'; ta.style.padding='0';
+      document.body.appendChild(ta); ta.focus();
+      try{ ta.setSelectionRange(0, ta.value.length); }catch(err){}
+      var ok=document.execCommand('copy');
+      document.body.removeChild(ta);
+      if(ok) done();
+      else showCopyFallback(text);
+    }catch(e){ showCopyFallback(text); }
+  }
+}
+
+/* 自动复制失败时的兜底：把内容放进可全选的文本框，而不是只说一句"复制失败" */
+function showCopyFallback(text){
+  showModal('请手动复制',
+    '<div class="hint">这台手机不允许自动复制。请长按下面的框，全选后点“复制”：</div>'+
+    '<textarea readonly id="fallbackBox" style="width:100%;height:200px;font-size:14px;margin-top:10px;padding:10px;border:2px solid #dde8e7;border-radius:12px">'+esc(text)+'</textarea>'+
+    '<button class="bigbtn primary" id="fallbackOk" style="margin-top:10px">我知道了</button>');
+  var box=$('fallbackBox');
+  if(box){ box.focus(); try{ box.select(); }catch(e){} }
+  var ok=$('fallbackOk'); if(ok) ok.onclick=closeModal;
+}
+
+function toast(msg){
+  var t=$('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._h); t._h=setTimeout(function(){ t.classList.remove('show'); },2400);
+}
+
+/* ---------- 渲染 ---------- */
+function renderSummary(){
+  var p=cur(); var rs=p.records; var last=rs.length?rs[rs.length-1]:null;
+  var hero=$('heroZone'), adv=$('adviceBox'), advCard=$('adviceCard');
+  $('avatarBtn').textContent=(p.name&&p.name.length>=2)?p.name.slice(-2):(p.label||'我').slice(-2);
+  if(!last){
+    hero.innerHTML='<div class="hero-empty">还没有记录<br><span style="font-size:15px;opacity:.75">点下面的按钮，记下今天第一次血压</span></div>';
+    if(advCard) advCard.style.display='none';
+  }else{
+    var g=grade(last.sys,last.dia);
+    var isToday=dayKey(new Date(last.ts))===dayKey();
+    hero.innerHTML=
+      '<div class="hero-reading">'+
+        '<span class="val">'+esc(last.sys)+'<small>/</small>'+esc(last.dia)+'</span>'+
+        '<span class="unit">mmHg</span>'+
+        '<span class="tag '+g.cls+'">'+esc(g.text)+'</span>'+
+      '</div>'+
+      '<div class="hero-meta">'+(isToday?'今天 ':'最近一次 · ')+fmt(last.ts)+' · '+esc(last.period)+
+        (last.pulse?' · 脉搏 '+esc(last.pulse):'')+'</div>';
+    if(advCard){ advCard.style.display=''; }
+    adv.className='warnbar'+(g.level==='danger'?' danger':(g.level==='ish'?' caution':''));
+    adv.innerHTML='<div style="font-weight:700;margin-bottom:4px">'+esc(p.name||p.label||'')+'</div>'+adviceText(g.level);
+  }
+  // 标题固定保留产品名：老人第一次打开要知道这是什么
+  $('greet').textContent='健康小本子';
+  var h=new Date().getHours();
+  var hello=h<11?'早上好':h<14?'中午好':h<18?'下午好':'晚上好';
+  var d=new Date();
+  var wd=['日','一','二','三','四','五','六'][d.getDay()];
+  $('todayLine').textContent=hello+' · '+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+wd;
+  renderDiet(last?grade(last.sys,last.dia):null);
+  renderEmergency(p);
+}
+function adviceText(level){
+  if(level==='danger') return '⚠️ 这次高得比较多。请安静坐着休息 5 分钟，再量一次。如果还是这么高，或者头痛、胸口闷、说话不清、看不清，请立刻打电话给家人或去医院。';
+  if(level==='ish') return '这次高压高、低压低，两者差得多。这种情况在老年人里很常见，但不是"血压低"。请安静坐 5 分钟后再量一次，并把最近的记录带给医生看，不要因为低压不高就放心。';
+  if(level==='high') return '这次偏高（家庭自测 135/85 以上就算高）。请安静坐 5 分钟后再量一次确认。如果连着几天都偏高，记得把记录带给医生看。';
+  if(level==='low') return '这次偏低。先坐下或躺一会儿，喝一点温水，不要马上去走路。如果复测还是低，或者头晕、没力气、出冷汗，请及时联系家人或就医。';
+  if(level==='lowdia') return '这次高压还好，但低压偏低。老年人血管弹性下降后常见这种情况，不用紧张；如果平时容易头晕、起身发黑，请告诉医生。';
+  if(level==='watch') return '比理想值高一点点，不用紧张。今天清淡些，晚上睡前再量一次看看。';
+  return '这次在正常范围，保持得很好。👍';
+}
+function renderDiet(g){
+  var level=g?g.level:'none';
+  var lines={
+    ok:'保持这样就好：饭菜少放盐，每天走一走；如有医生开的降压药，请按时服用。',
+    watch:'今天少放半勺盐，别吃咸菜、腊肉、方便面，多吃些新鲜青菜。',
+    high:'今天饭菜清淡些，少吃咸菜、腊肉、咸汤；作息规律，不要熬夜。',
+    ish:'少盐、少吃腌制品。把记录带给医生看看吧。',
+    danger:'今天就吃清淡的，不喝咸汤，不吃腌制的东西，安静休息。',
+    low:'今天多喝点水，吃饭别太少，起身慢一点。',
+    lowdia:'饭菜照常，注意别一下子站起来，起身时扶一下。',
+    none:'饭菜少放盐，每天走一走。'
+  };
+  var tip=lines[level]||lines.none;
+  $('dietBox').innerHTML='<div style="font-size:18px;line-height:1.6">'+tip+'</div>'+
+    '<div style="font-size:16px;color:#4a6160;margin-top:8px">每天吃盐最好不超过 5 克，大约一平勺。'+
+    '有肾病、或不确定自己该吃什么药的，先问问医生。</div>';
+}
+function renderEmergency(p){
+  var telRaw=String(p.kin||'').replace(/[^0-9+]/g,'');
+  if(telRaw.length>=3){
+    var tel=telRaw;
+    $('callLine').innerHTML='家人电话：<a href="tel:'+encodeURI(tel)+'" style="font-size:22px;font-weight:800;color:#0f766e">'+esc(p.kin)+'</a>（点一下就能拨打）<br><span style="font-size:16px">急救电话：120</span>';
+  }else{
+    $('callLine').innerHTML='急救电话：<a href="tel:120" style="font-size:22px;font-weight:800;color:#c33b31">120</a>（点一下就能拨打）　<span style="font-size:15px">在设置里填上家人电话，这里还会出现家人的一键拨打</span>';
+  }
+}
+
+/* ---------- 趋势图 ---------- */
+var rangeDays=7;
+function renderChart(){
+  var svg=$('chart'), p=cur();
+  var W=600,H=300,padL=54,padR=16,padT=18,padB=34;
+  var now=Date.now(), from=now-rangeDays*86400000;
+  var rs=p.records.filter(function(r){ return r.ts>=from; });
+  // 下界要跟着数据走：低压可能低到 30-49，固定 50 会把点画到坐标轴外
+  var yMin=50,yMax=200;
+  if(rs.length){
+    var mx=0, mn=999;
+    rs.forEach(function(r){
+      if(r.sys>mx) mx=r.sys;
+      if(r.dia<mn) mn=r.dia;
+      if(r.sys<mn) mn=r.sys;
+    });
+    yMin=Math.max(20, Math.min(50, mn-10));
+    yMax=Math.max(180,Math.min(230,mx+15));
+    yMax=Math.max(yMax,Math.min(260,mx+10));
+  }
+  function X(t){ return padL+(W-padL-padR)*((t-from)/(now-from)); }
+  function Y(v){ return padT+(H-padT-padB)*(1-(v-yMin)/(yMax-yMin)); }
+  var g='';
+  // 超标区：从粉红逐渐淡出，避免整块死板的色块
+  g+='<defs><linearGradient id="overGrad" x1="0" y1="0" x2="0" y2="1">'+
+      '<stop offset="0%" stop-color="#f6d3cf" stop-opacity="0.75"/>'+
+      '<stop offset="100%" stop-color="#f6d3cf" stop-opacity="0.18"/></linearGradient></defs>';
+  g+='<rect x="'+padL+'" y="'+Y(yMax)+'" width="'+(W-padL-padR)+'" height="'+(Y(HL_SYS)-Y(yMax))+'" fill="url(#overGrad)" rx="6"/>';
+  var gridVals=[40,60,80,100,120,HL_SYS,160,180].filter(function(v){ return v>yMin; });
+  gridVals.forEach(function(v){
+    if(v<yMin||v>yMax) return;
+    var isRef=(v===HL_SYS);
+    g+='<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="'+(isRef?'#d98b84':'#eef4f2')+'" stroke-width="1"'+(isRef?' stroke-dasharray="5 6"':'')+'/>';
+    g+='<text x="'+(padL-10)+'" y="'+(Y(v)+5)+'" text-anchor="end" font-size="15" fill="#5f7573" font-weight="600">'+v+'</text>';
+  });
+  g+='<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+(H-padB)+'" y2="'+(H-padB)+'" stroke="#c9d7d6"/>';
+  var ticks=6;
+  for(var i=0;i<=ticks;i++){
+    var t=from+(now-from)*i/ticks, d=new Date(t), x=padL+(W-padL-padR)*i/ticks;
+    g+='<text x="'+x+'" y="'+(H-padB+22)+'" text-anchor="middle" font-size="15" fill="#5f7573" font-weight="600">'+(d.getMonth()+1)+'/'+d.getDate()+'</text>';
+  }
+  if(!rs.length){
+    g+='<g opacity="0.5"><rect x="'+(W/2-46)+'" y="'+(H/2-46)+'" width="92" height="66" rx="10" fill="none" stroke="#b9cbc8" stroke-width="2"/>'+
+        '<polyline points="'+(W/2-34)+','+(H/2-8)+' '+(W/2-16)+','+(H/2-24)+' '+(W/2+2)+','+(H/2-4)+' '+(W/2+20)+','+(H/2-20)+' '+(W/2+34)+','+(H/2-6)+'" fill="none" stroke="#b9cbc8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>';
+    g+='<text x="'+(W/2)+'" y="'+(H/2+44)+'" text-anchor="middle" font-size="16" fill="#8ba09e">这段时间还没有记录</text>';
+    svg.innerHTML=g; $('statLine').textContent=''; return;
+  }
+  function series(key,color,limit){
+    var s='';
+    if(rs.length>1){ s+='<polyline points="'+rs.map(function(r){return X(r.ts).toFixed(1)+','+Y(r[key]).toFixed(1);}).join(' ')+'" fill="none" stroke="'+color+'" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" opacity="0.9"/>'; }
+    rs.forEach(function(r){
+      var over=r[key]>=limit;
+      if(over){ s+='<circle cx="'+X(r.ts).toFixed(1)+'" cy="'+Y(r[key]).toFixed(1)+'" r="9" fill="#c33b31" opacity="0.14"/>'; }
+      s+='<circle cx="'+X(r.ts).toFixed(1)+'" cy="'+Y(r[key]).toFixed(1)+'" r="'+(over?5.5:4)+'" fill="'+(over?'#c33b31':color)+'" stroke="#fff" stroke-width="2"/>';
+    });
+    return s;
+  }
+  g+=series('sys','#0d5f57',HL_SYS);
+  g+=series('dia','#e2632c',HL_DIA);
+  var last=rs[rs.length-1];
+  // 最新值标签加底色，避免压在网格线上
+  var lx=X(last.ts).toFixed(1), ly=Y(last.sys);
+  g+='<rect x="'+(lx-16)+'" y="'+(ly-26)+'" width="32" height="19" rx="6" fill="#0d5f57"/>';
+  g+='<text x="'+lx+'" y="'+(ly-12)+'" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">'+last.sys+'</text>';
+  svg.innerHTML=g;
+
+  var n=rs.length,sS=0,sD=0,over=0;
+  rs.forEach(function(r){ sS+=r.sys; sD+=r.dia; if(isHigh(r.sys,r.dia)) over++; });
+  var extra='';
+  if(rs.length>=4){
+    var half=Math.floor(n/2)||1;
+    var a=rs.slice(0,half), b=rs.slice(-half);
+    var avg=function(arr,k){ var s=0; arr.forEach(function(r){s+=r[k];}); return s/arr.length; };
+    var d=avg(b,'sys')-avg(a,'sys');
+    extra=Math.abs(d)<4?' · 整体<b>平稳</b>':(d>0?' · 有<b>上升</b>趋势':' · 有<b>下降</b>趋势');
+  }
+  // 去掉百分比和"超标"这种审判式的说法，避免让老人觉得在被打分
+  $('statLine').innerHTML='共 '+n+' 次 · 平均 <b>'+Math.round(sS/n)+'/'+Math.round(sD/n)+'</b> · '+
+    (over===0?'都还算平稳':('其中 '+over+' 次偏高'))+extra;
+}
+
+/* ---------- 最近记录 ---------- */
+function renderRecent(){
+  var ul=$('recentList'), p=cur();
+  ul.innerHTML='';
+  var rs=p.records.slice(-10).reverse();
+  if(!rs.length){ ul.innerHTML='<li><span class="t">还没有记录</span></li>'; return; }
+  rs.forEach(function(r){
+    var g=grade(r.sys,r.dia);
+    var li=document.createElement('li');
+    li.innerHTML='<span><span class="v">'+esc(r.sys)+'/'+esc(r.dia)+'</span><br><span class="t">'+fmt(r.ts)+' '+esc(r.period)+'</span></span>'+
+      '<span class="pill '+g.cls+'">'+g.text+'</span>';
+    li.onclick=function(){
+      showModal('删除这次记录','<div class="hint">'+fmt(r.ts)+'　'+Number(r.sys)+'/'+Number(r.dia)+' mmHg</div>'+
+        '<button class="bigbtn" id="delNo">不删了</button><button class="bigbtn danger-solid" id="delYes">确认删除</button>',
+        function(){});
+      $('delYes').onclick=function(){
+        var key=r.rid||r.ts;
+        var backup=p.records.slice();
+        p.records=p.records.filter(function(x){ return (x.rid||x.ts)!==key; });
+        if(!save()){ p.records=backup; return; }   // 存不进去就撤销删除，弹窗不关以显示失败提示
+        closeModal(); renderAll();
+ toast('已删除');
+      };
+      $('delNo').onclick=closeModal;
+    };
+    ul.appendChild(li);
+  });
+}
+
+/* ---------- 报告 ---------- */
+function renderReport(){
+  var p=cur(), rs=p.records.slice(-30);
+  var h='<div style="font-size:20px"><b>'+esc(p.name||p.label||'未填姓名')+'</b>'+(p.age?('，'+esc(p.age)+' 岁'):'')+'　'+
+    (new Date().getFullYear())+'年'+(new Date().getMonth()+1)+'月'+(new Date().getDate())+'日</div>';
+  if(!rs.length){ h+='<p class="hint">还没有记录，无法生成报告。</p>'; showModal('健康报告',h); return; }
+  var last=rs[rs.length-1], over=0, sS=0, sD=0, mx=0;
+  rs.forEach(function(r){ sS+=r.sys; sD+=r.dia; if(isHigh(r.sys,r.dia)) over++; if(r.sys>mx) mx=r.sys; });
+  h+='<table style="width:100%;margin-top:12px;border-collapse:collapse;font-size:18px">'+
+     row('记录次数',rs.length+' 次')+
+     row('平均值',Math.round(sS/rs.length)+'/'+Math.round(sD/rs.length)+' mmHg')+
+     row('最高收缩压',mx+' mmHg')+
+     row('按家庭自测标准超标（≥'+HL_SYS+'/'+HL_DIA+'）',over+' 次')+
+     row('最近一次',last.sys+'/'+last.dia+' mmHg（'+fmt(last.ts)+'）')+
+     '</table><div style="margin-top:16px"><b>详细记录</b></div>'+
+     '<table style="width:100%;margin-top:8px;border-collapse:collapse;font-size:16px">';
+  rs.slice().reverse().forEach(function(r){
+    var g=grade(r.sys,r.dia);
+    h+='<tr><td style="padding:5px 0;border-bottom:1px solid #eee">'+fmt(r.ts)+' '+esc(r.period)+'</td>'+
+       '<td style="text-align:right;font-weight:700;border-bottom:1px solid #eee">'+esc(r.sys)+'/'+esc(r.dia)+(r.pulse?'（'+esc(r.pulse)+'）':'')+'</td>'+
+       '<td style="text-align:right;color:'+(g.cls==='ok'?'#0f7a53':g.cls==='warn'?'#b8730a':'#c0392f')+';border-bottom:1px solid #eee">'+g.text+'</td></tr>';
+  });
+  var total=p.records.length, shown=rs.length;
+  h+='</table><p style="font-size:15px;color:#5a6f6d;margin-top:14px">'+
+       (total>shown?('本报告只列最近 '+shown+' 次记录（共 '+total+' 次，更早的未列出）。'):('共 '+total+' 次记录，已全部列出。'))+
+       '<br>以上为家中自测记录，供医生参考。家庭自测标准为 ≥'+HL_SYS+'/'+HL_DIA+'，与医院的 140/90 不同。</p>'+
+     '<button class="bigbtn primary" id="copyReportBtn">📋 复制成文字（微信发给医生/家人）</button>'+
+     '<button class="bigbtn" id="printBtn">🖨️ 打印或存成 PDF</button>'+
+     (IS_WECHAT?'<div class="hint" style="margin-top:8px">微信里不能直接打印。要打印请点右上角“···”，选择“在浏览器打开”。</div>':'');
+  showModal('健康报告',h);
+  $('copyReportBtn').onclick=function(){
+    var lines=['健康记录报告'];
+    lines.push((p.name||p.label||'')+(p.age?('，'+p.age+'岁'):''));
+    lines.push('记录次数：'+rs.length+' 次');
+    lines.push('平均值：'+Math.round(sS/rs.length)+'/'+Math.round(sD/rs.length)+' mmHg');
+    lines.push('最高收缩压：'+mx+' mmHg');
+    lines.push('家庭自测超标次数（≥'+HL_SYS+'/'+HL_DIA+'）：'+over+' 次');
+    lines.push('---- 详细记录 ----');
+    rs.slice().reverse().forEach(function(r){
+      lines.push(fmt(r.ts)+' '+r.period+'  '+r.sys+'/'+r.dia+(r.pulse?('（脉搏'+r.pulse+'）'):''));  // 纯文本输出，无需转义
+    });
+    copyText(lines.join('\n'),'报告文字已复制，可以粘贴到微信里');
+  };
+  $('printBtn').onclick=function(){
+    document.body.classList.add('printing');
+    var done=function(){ document.body.classList.remove('printing'); window.removeEventListener('afterprint',done); };
+    window.addEventListener('afterprint',done);
+    setTimeout(function(){ try{ window.print(); }catch(e){ toast('这台设备的浏览器不支持打印'); } setTimeout(done,1500); },60);
+  };
+}
+function row(k,v){ return '<tr><td style="padding:8px 0;color:#5b6f6e">'+k+'</td><td style="text-align:right;font-weight:800">'+v+'</td></tr>'; }
+
+/* ---------- 导入导出 ---------- */
+/* 备份必须包含所有人。只导出当前人会让人在换手机时
+   静默丢掉另一个人的全部记录 —— 这是最危险的数据丢失路径。 */
+function buildBackup(){
+  try{ localStorage.setItem(LAST_BACKUP_KEY, String(Date.now())); }catch(e){}
+  return {app:'family-health',version:2,exportedAt:new Date().toISOString(),
+          people:S.people.map(function(p){
+            return {label:p.label,name:p.name,age:p.age,kin:p.kin,
+                    records:p.records,meds:p.meds,taken:p.taken};
+          })};
+}
+function exportData(){
+  var data=buildBackup();
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='健康记录备份-'+dayKey()+'.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(a.href); },2000);
+  toast('备份文件已保存');
+}
+
+/* ---------- 事件 ---------- */
+/* 只接受纯整数。小数、字母、符号一律视为未填，避免 13.5 被静默拼成 135。 */
+function numOf(el){
+  var raw=String(el.value).trim();
+  if(raw==='') return null;
+  if(!/^[0-9]{1,3}$/.test(raw)) return NaN;   // NaN 表示"格式不对"，与"未填"区分
+  return parseInt(raw,10);
+}
+
+var saving=false;
+$('saveBtn').onclick=function(){
+  if(saving) return;            // 防连点：连按两次会读到空输入并误报"请填写"
+  saving=true;
+  try{ doSave(); }finally{ setTimeout(function(){ saving=false; },300); }
+};
+function doSave(){
+  var p=cur();
+  var sys=numOf($('sys')), dia=numOf($('dia')), pulse=numOf($('pulse'));
+  if(sys!==null&&isNaN(sys)||dia!==null&&isNaN(dia)||pulse!==null&&isNaN(pulse)){
+    toast('请只填整数，比如 128'); return;
+  }
+  if(sys===null||dia===null){ toast('请填写高压和低压两个数'); return; }
+  if(sys<50||sys>260||dia<30||dia>180){ toast('数值看着不太对，再核对一下'); return; }
+  if(dia>=sys){ toast('低压不能比高压大，请核对'); return; }
+  if(pulse!==null&&(pulse<30||pulse>220)){ toast('脉搏数看着不太对，请核对（或留空）'); return; }
+  var sel=$('period');
+  var periodVal=safePeriod(sel && sel.value ? sel.value : (sel&&sel.selectedIndex>=0?PERIODS[sel.selectedIndex]:''));
+  var r={ts:Date.now(),sys:sys,dia:dia,pulse:pulse||null,period:periodVal,
+         rid:'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)};
+  p.records.push(r); p.records.sort(function(a,b){ return a.ts-b.ts; });
+  if(!save()){
+    // 存不进去就回滚，避免界面显示已保存但实际没存
+    p.records=p.records.filter(function(x){ return x.rid!==r.rid; });
+    return;
+  }
+  $('sys').value=''; $('dia').value=''; $('pulse').value='';
+  $('sys').blur(); $('dia').blur(); $('pulse').blur();
+  renderAll();
+  var g=grade(sys,dia);
+  toast(g.level==='ok'?'已记下 · 正常 👍':'已记下 · '+g.text);
+  if(g.level==='danger'){
+    showModal('请马上注意','<div class="warnbar danger" style="font-size:18px">这次是 '+sys+'/'+dia+'，高得比较多。<br><br>① 安静坐 5 分钟后，再量一次。<br>② 如果还是这么高，或者头痛、胸口闷、说话不清，请立刻打电话给家人或去医院。</div>'+
+      '<button class="bigbtn primary" id="ok1">我知道了</button>');
+    $('ok1').onclick=closeModal;
+  }
+  // 不强制滚回顶部：老人会以为刚填的内容没了；想看结果自己往上滑
+};
+/* ---------- 拍照参照 ----------
+   不做自动识别：这台设备上我无法可靠验证识别准确率，
+   而血压数字识别错一次比不识别更危险。
+   改为把照片放大显示、可缩放，让用户照着填——屏幕上的数字比血压计小屏幕好读得多。 */
+$('photoBtn').onclick=function(){ $('photoInput').click(); };
+$('photoInput').onchange=function(e){
+  var f=e.target.files&&e.target.files[0];
+  if(!f) return;
+  var url=URL.createObjectURL(f);
+  showModal('照着照片填',
+    '<div class="hint">把照片放大看清楚，再点“好，去填写”照抄三个数字。看不清可以双指放大。</div>'+
+    '<div style="margin-top:12px;text-align:center;overflow:auto;background:#111;border-radius:16px">'+
+      '<img id="photoView" src="'+url+'" style="max-width:100%;max-height:60vh;display:block;margin:0 auto;touch-action:manipulation" alt="血压计照片">'+
+    '</div>'+
+    '<button class="bigbtn primary" id="photoOk" style="margin-top:14px">好，去填写</button>',
+    function(){ try{ URL.revokeObjectURL(url); }catch(err){} });
+  $('photoOk').onclick=function(){
+    closeModal();
+    $('sys').focus();
+    setTimeout(function(){ $('entryCard').scrollIntoView({behavior:'smooth',block:'center'}); },80);
+  };
+  e.target.value='';
+};
+
+$('quickAdd').onclick=function(){
+  $('entryCard').scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(function(){ $('sys').focus(); },350);
+};
+Array.prototype.forEach.call(document.querySelectorAll('.tabs button'),function(b){
+  b.onclick=function(){
+    Array.prototype.forEach.call(document.querySelectorAll('.tabs button'),function(x){ x.classList.remove('on'); });
+    b.classList.add('on'); rangeDays=parseInt(b.getAttribute('data-range'),10); renderChart();
+  };
+});
+$('avatarBtn').onclick=function(){
+  var p=cur(), h='<div class="hint">选择要记录的人：</div>';
+  S.people.forEach(function(pp){
+    h+='<button class="bigbtn'+(pp.id===p.id?' primary':'')+'" data-pid="'+esc(pp.id)+'">'+esc(pp.label||'')+(pp.name?(' · '+esc(pp.name)):'')+'</button>';
+  });
+  showModal('切换记录人',h,null);
+  Array.prototype.forEach.call($('modalBody').querySelectorAll('[data-pid]'),function(b){
+    b.onclick=function(){
+      S.current=b.getAttribute('data-pid'); save();
+      $('sys').value=''; $('dia').value=''; $('pulse').value=''; $('period').selectedIndex=0;
+      closeModal(); renderAll();
+    };
+  });
+};
+$('reportBtn').onclick=renderReport;
+/* 换一条：绑定放在顶层，只绑定一次 */
+var tipNextBtn=document.getElementById('tipNext');
+if(tipNextBtn) tipNextBtn.onclick=function(){ renderTip(true); };
+$('exportBtn').onclick=exportData;
+$('copyBackupBtn').onclick=function(){
+  var n=S.people.length, c=S.people.reduce(function(a,p){return a+p.records.length;},0);
+  copyText(JSON.stringify(buildBackup()),
+    '已复制 '+n+' 个人的 '+c+' 条记录，请发到微信收藏或文件传输助手');
+};
+$('importBtn').onclick=function(){
+  showModal('从备份恢复',
+    '<div class="hint">方式一：选择备份文件（用系统浏览器打开本页时可用）</div>'+
+    '<button class="bigbtn primary" id="pickFile">📁 选择备份文件</button>'+
+    '<div class="hint" style="margin-top:16px">方式二：把之前“复制备份文字”的内容粘进来（微信里用这个）</div>'+
+    '<textarea id="pasteBox" placeholder="在这里长按粘贴备份内容" style="width:100%;height:140px;font-size:15px;margin-top:8px;padding:10px;border:2px solid #dde8e7;border-radius:12px;font-family:inherit"></textarea>'+
+    '<button class="bigbtn primary" id="pasteOk" style="margin-top:10px">从粘贴内容恢复</button>');
+  var pf=$('pickFile'); if(pf) pf.onclick=function(){ closeModal(); $('importFile').click(); };
+  var po=$('pasteOk'); if(po) po.onclick=function(){
+    var txt=$('pasteBox').value.trim();
+    if(!txt){ toast('还没粘贴内容'); return; }
+    try{ applyBackup(JSON.parse(txt)); }catch(e){ toast('内容读不出来，请检查是否复制完整'); }
+  };
+};
+
+/* 统一的恢复入口：校验结构后合并 */
+function applyBackup(o){
+  var arr=null;
+  if(o&&Array.isArray(o.people)) arr=o.people;
+  else if(o&&Array.isArray(o.records)) arr=[{label:'恢复的人',records:o.records,name:o.name,age:o.age,meds:o.meds,taken:o.taken}];
+  if(!arr){ toast('这不是本页面的备份'); return; }
+  var existing={};
+  S.people.forEach(function(p){ existing[p.name||p.label]=p; });
+  var dupes=arr.filter(function(pp){ return existing[pp.name||pp.label||'恢复的人']; });
+  var proceed=function(mode){
+    var total=0, merged=0;
+    var peopleBackup=JSON.parse(JSON.stringify(S.people)), curBackup=S.current;
+    arr.forEach(function(pp){
+      var key=pp.name||pp.label||'恢复的人';
+      var recs=sanitizeRecords(pp.records);
+      total+=recs.length;
+      var meds=sanitizeMeds(pp.meds);
+      if(mode==='merge'&&existing[key]){
+        var tgt=existing[key];
+        var have=Object.create(null);
+        tgt.records.forEach(function(r){ have[r.rid]=true; });
+        recs.forEach(function(r){ if(!have[r.rid]){ tgt.records.push(r); have[r.rid]=true; merged++; } });
+        tgt.records.sort(function(a,b){ return a.ts-b.ts; });
+        S.current=tgt.id;
+      }else{
+        var np={id:uid(),label:String(pp.label||'恢复的人'),name:String(pp.name||''),age:String(pp.age||''),kin:String(pp.kin||''),
+          records:recs,meds:meds,taken:(pp.taken&&typeof pp.taken==='object')?pp.taken:{}};
+        S.people.push(np);
+        S.current=np.id;
+      }
+    });
+    if(!save()){ S.people=peopleBackup; S.current=curBackup; return; }
+    closeModal(); renderAll();
+    toast(mode==='merge'?('已合并 '+merged+' 条记录'):('已恢复 '+total+' 条记录'));
+  };
+  if(dupes.length){
+    showModal('已经有这个人了',
+      '<div class="warnbar">备份里「'+esc(dupes.map(function(d){return d.name||d.label;}).join('、'))+'」'+
+      '和现在页面上的人同名。要合并到原来那个人，还是单独新建一份？</div>'+
+      '<button class="bigbtn primary" id="mergeYes" style="margin-top:12px">合并到原来那个人</button>'+
+      '<button class="bigbtn" id="mergeNo">单独新建一份</button>');
+    $('mergeYes').onclick=function(){ proceed('merge'); };
+    $('mergeNo').onclick=function(){ proceed('new'); };
+    return;
+  }
+  proceed('new');
+}
+$('importFile').onchange=function(e){
+  var f=e.target.files[0];
+  if(!f) return;
+  var fr=new FileReader();
+  fr.onload=function(){
+    var o=null;
+    try{ o=JSON.parse(fr.result); }
+    catch(err){ toast('这个文件读不出来'); e.target.value=''; return; }
+    applyBackup(o);
+  };
+  fr.readAsText(f);
+  e.target.value='';
+};
+$('clearBtn').onclick=function(){
+  var p=cur();
+  showModal('清空记录','<div class="warnbar danger">会删掉「'+esc(p.name||p.label)+'」的全部 '+p.records.length+' 条记录，删了找不回来。</div>'+
+    '<button class="bigbtn" id="clrNo">不删了</button><button class="bigbtn danger-solid" id="clrYes">我确定，清空</button>');
+  $('clrYes').onclick=function(){
+    var recBackup=p.records.slice(), takenBackup=JSON.parse(JSON.stringify(p.taken));
+    p.records=[]; p.taken={};
+    if(!save()){ p.records=recBackup; p.taken=takenBackup; return; }
+    closeModal(); renderAll(); toast('已清空');
+  };
+  $('clrNo').onclick=closeModal;
+};
+$('nameInput').onchange=function(){ cur().name=this.value.trim().slice(0,10); this.value=cur().name; save(); renderSummary(); };
+$('ageInput').onchange=function(){
+  var v=this.value.replace(/[^0-9]/g,'').slice(0,3);
+  if(v===''||Number(v)===0){ cur().age=''; }
+  else if(Number(v)>120){ cur().age=''; toast('年龄看着不太对，请核对'); }
+  else { cur().age=v; }
+  this.value=cur().age; save();
+};
+$('kinInput').onchange=function(){ cur().kin=this.value.trim().slice(0,20); this.value=cur().kin; save(); renderEmergency(cur()); };
+
+/* ---------- 健康小知识 ----------
+   同一天固定显示同一条，第二天自动换，让老人有机会反复看到同一条。
+   内容依据：《中国高血压防治指南（2024年修订版）》生活方式干预、
+   《中国居民膳食指南（2022）》、上海市卫健委老年防跌倒科普、华山医院老年医学科。
+   只讲生活常识与测量方法，不含诊断结论和用药剂量。 */
+var TIPS=[
+  /* ---- 量血压的方法（10条）---- */
+  {t:'量血压前先坐 5 分钟',d:'刚走完路、刚吃完饭、刚生完气，量出来都会偏高。坐下来安静 5 分钟再量，数字才准。'},
+  {t:'量的时候不要说话',d:'说话会让血压升高几个点。量的时候别聊天，别翘腿，安静坐着。'},
+  {t:'胳膊要和心脏一样高',d:'胳膊放太低，量出来偏高；放太高，偏低。把胳膊平放在桌上，大约与心脏齐平。'},
+  {t:'用上臂式的电子血压计',d:'夹在手腕上的那种不太准。指南推荐用经过验证的上臂式电子血压计，袖带缠在胳膊上。'},
+  {t:'袖带别缠太紧也别太松',d:'缠好之后，能塞进一根手指头就是合适的。太紧偏高，太松偏低。'},
+  {t:'每次量两遍，取平均',d:'连着量两遍，中间隔一分钟，取两次的平均值，比只看一次准。'},
+  {t:'早上和晚上各量一次',d:'早上起来上完厕所、吃早饭和吃药之前量一次，晚上睡前再量一次，就够了。'},
+  {t:'量之前先去趟厕所',d:'憋着尿量，血压会偏高。先上个厕所再量。'},
+  {t:'抽烟喝浓茶后等一会儿',d:'抽过烟、喝过浓茶咖啡，隔半小时再量，不然数字会偏高。'},
+  {t:'新买的血压计校对一次',d:'新买的或者用了一年以上的，可以带到医院和医生的量一次做对照。'},
+
+  /* ---- 吃药（6条）---- */
+  {t:'别自己停药',d:'血压降下来了，是药在起作用，不是病好了。觉得不舒服要找医生说，不要自己少吃或者停掉。'},
+  {t:'降压药要慢慢降',d:'血压不是降得越快越好。降太猛会头晕，甚至更危险。听医生的节奏来。'},
+  {t:'没有不舒服也要吃药',d:'高血压往往没感觉，但不代表没危害。等出了问题再吃就晚了。'},
+  {t:'忘记吃药，别自己拿主意',d:'漏了一次药，不要一次补两倍。更不要自己决定怎么补，打电话问问医生或家里人。'},
+  {t:'有些药会影响血压',d:'感冒药、止痛药、激素类药可能让血压升高。看病时告诉医生你在吃什么降压药。'},
+  {t:'换药要问医生',d:'别人吃着好的药，不一定适合你。换药、加量都要问医生，别听邻居的。'},
+
+  /* ---- 吃盐与饮食（8条）---- */
+  {t:'每天吃盐别超过 5 克',d:'大约是一个啤酒瓶盖抹平的量，用限量的小盐勺最准。咸菜、腊肉、酱油、味精里都有盐，汤里也有。'},
+  {t:'看不见的盐最要小心',d:'挂面、面包、火腿肠、豆干、话梅里都有不少盐，吃着不咸不等于没盐。'},
+  {t:'低钠盐能帮降压，但不是人人都合适',d:'指南说低钠富钾盐对降压有帮助。但有肾病、或者在吃保钾类药的，用之前一定要问医生。'},
+  {t:'多吃新鲜蔬菜',d:'每天一斤蔬菜、半斤水果，对控制血压有好处。菠菜、蘑菇、豆类、香蕉里钾比较多。肾功能不好或者吃保钾药的，高钾的东西要问医生。'},
+  {t:'少吃肥肉和油炸的',d:'油每天 25 到 30 克左右就够了。少吃肥肉、动物油、油炸的东西。'},
+  {t:'主食里掺点粗粮',d:'白米白面里加一点燕麦、玉米、红薯，比全是精米白面好。'},
+  {t:'少喝酒',d:'喝酒会让血压升高。能不喝就不喝，要喝也要少。'},
+  {t:'饭吃到七八分饱',d:'别吃太撑。慢慢吃，细嚼慢咽，体重也更容易控制。'},
+
+  /* ---- 体重与运动（5条）---- */
+  {t:'减重对降压很有帮助',d:'体重每减 1 公斤，血压大约能降 1 毫米汞柱，减 10 公斤大约降 10。腰围是个参考：男的不超过 90 厘米，女的不超过 85 厘米。'},
+  {t:'每天走一走',d:'走上 30 分钟左右，走到微微出汗、能说话但有点喘，这样的强度正好。可分两三次走完。'},
+  {t:'搬重物别硬憋气',d:'使劲憋气会让血压一下子冲上去。血压稳定的人适度活动没问题，但搬重物、使劲用力这类动作量力而行，血压没控制好时先别做。'},
+  {t:'别久坐',d:'坐一小时起来活动几分钟。不光对血压好，腿也不容易肿。'},
+  {t:'运动前后量一下血压',d:'运动前如果血压明显偏高，先别运动，问问医生。运动后休息 10 分钟再量。运动时胸闷头晕要停下来。'},
+
+  /* ---- 防跌倒（6条）---- */
+  {t:'起身慢一点',d:'躺或坐久了突然站起来会头晕。先坐起来停几秒，再扶着东西站起来。'},
+  {t:'家里装个夜灯',d:'起夜看不到路最容易摔倒。床边、走廊、卫生间装个小夜灯，床头放个手电筒。'},
+  {t:'卫生间装扶手',d:'浴室、厕所、楼梯装上稳固的扶手，洗澡时铺个防滑垫。'},
+  {t:'别穿拖鞋在家里走',d:'在家要穿合脚、防滑的鞋。拖鞋和高跟鞋都容易滑。'},
+  {t:'地上有水马上擦干',d:'地砖、地毯边角、电线都是绊倒的隐患。走路的地方别堆东西。'},
+  {t:'爬高的事交给年轻人',d:'换灯泡、取柜子顶上的东西，不要自己踩凳子。'},
+
+  /* ---- 睡眠与情绪（4条）---- */
+  {t:'睡不好，血压也会乱',d:'打呼噜憋气、夜里老是醒，都会影响血压。可以跟医生提一句。'},
+  {t:'生完气别马上量',d:'生气、着急的时候量，数字会吓人一跳。等心平气和了再量。'},
+  {t:'找点事做，别太闷',d:'听听戏、养养花、和人聊聊天。心情松快，血压也容易稳。'},
+  {t:'深呼吸可以缓一缓',d:'觉得烦躁时，慢慢吸气 4 秒、停一下、再慢慢呼出来，做几遍人会松下来。'},
+
+  /* ---- 天气与环境（4条）---- */
+  {t:'天冷时血压容易偏高',d:'冬天血管收缩，比夏天高一些很常见。注意保暖，尤其是头和脚。但如果高得明显、或者连着几天都高，还是要找医生。'},
+  {t:'洗澡水别太烫',d:'水太烫、洗太久容易头晕。浴室别关得太严，洗澡时间控制一下。'},
+  {t:'换季要留意血压变化',d:'天气突变的时候，血压容易波动，这时候多量几次，及时告诉医生。'},
+  {t:'别在很冷的地方待太久',d:'天冷出门戴好帽子围巾。从暖和的屋里一下到很冷的地方，血压会往上窜。'},
+
+  /* ---- 就医与记录（5条）---- */
+  {t:'记下来比记住好',d:'人记不住几周前的数字。随手记一下，去看医生时带上，医生一看就明白。'},
+  {t:'看医生时带上记录',d:'医生最想知道的是最近一段时间的波动，不是某一次的数值。'},
+  {t:'有这几种感觉，不管血压多少都要马上去医院',d:'头晕得厉害、胸口闷痛、看东西模糊、突然说话不利索、一侧手脚没劲。出现这些，别等、别硬扛，马上联系家人或打120。只是数字偏高、没有这些感觉，休息后复测，连着几天高再找医生。'},
+  {t:'每年查一次身体',d:'除了血压，血糖、血脂、尿常规也一起查查。高血压常常和这些一起出现。'},
+  {t:'告诉家人你的血压情况',d:'让家里人知道你在吃什么药、平时多少，万一有事他们能帮上忙。'},
+
+  /* ---- 喝水与其他（2条）---- */
+  {t:'喝水别太少，但有人要限水',d:'大多数老人不渴也该喝几杯，一次别灌太多。但如果有心衰、肾病，医生嘱咐过少喝水的，就按医生说的量来。'},
+  {t:'别用力排便',d:'便秘时用力会突然升高血压。多吃蔬菜水果，保持通畅，必要时问医生用药。'}
+];
+function todayTipIndex(){
+  // 用"距 1970 年的天数"做索引：每天严格 +1，保证 50 条都能轮到。
+  // 不要用 年月日拼数字再取模——那样年、月的部分会被 TIPS.length 整除掉，
+  // 索引退化成一个月的几号，导致大部分条目永远出不来。
+  var d=new Date();
+  var days=Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000);
+  return days % TIPS.length;
+}
+function renderTip(next){
+  var box=document.getElementById('tipBox');
+  if(!box) return;
+  var idx;
+  if(next){
+    var prevIdx = box.getAttribute('data-idx');
+    prevIdx = (prevIdx===null||prevIdx==='') ? -1 : Number(prevIdx);
+    // 随机换，但保证不会换到当前这一条
+    var choices=[];
+    for(var i=0;i<TIPS.length;i++){ if(i!==prevIdx) choices.push(i); }
+    idx=choices[Math.floor(Math.random()*choices.length)];
+  }else{
+    var saved=box.getAttribute('data-idx');
+    var savedDay=box.getAttribute('data-day');
+    var today=dayKey();
+    // 只有"今天选的"才沿用；过了零点就回到当天固定的那条
+    idx=(savedDay===today && saved!==null && saved!=='') ? Number(saved) : todayTipIndex();
+  }
+  box.setAttribute('data-idx', idx);
+  box.setAttribute('data-day', dayKey());
+  var tip=TIPS[idx];
+  box.innerHTML='<div style="font-weight:800;font-size:19px;margin-bottom:6px;color:#0d5f57">'+tip.t+'</div>'+
+                '<div>'+tip.d+'</div>';
+}
+
+/* ---------- 启动 ---------- */
+/* 太久没备份就提醒。安卓浏览器清缓存会丢数据，养成备份习惯能救回来。 */
+function checkBackupAge(){
+  var el=document.getElementById('backupWarn');
+  if(!el) return;
+  var last=null;
+  try{ last=localStorage.getItem(LAST_BACKUP_KEY); }catch(e){}
+  var hasData = S.people.some(function(p){ return p.records && p.records.length>0; });
+  if(!hasData){ el.style.display='none'; return; }
+  var days;
+  if(!last){ days=-1; }
+  else { days=Math.floor((Date.now()-Number(last))/86400000); }
+  if(days<0){
+    el.style.display='';
+    el.innerHTML='还没有备份过。手机清了缓存记录会丢掉，建议现在点下面的「复制备份文字」存一份。';
+  }else if(days>=30){
+    el.style.display='';
+    el.innerHTML='已经 <b>'+days+'</b> 天没备份了。手机清了缓存记录会丢掉，建议点下面的「复制备份文字」存一份。';
+  }else{
+    el.style.display='none';
+  }
+}
+
+function renderAll(){
+  var p=cur();
+  $('nameInput').value=p.name||''; $('ageInput').value=p.age||''; $('kinInput').value=p.kin||'';
+  renderSummary(); renderChart(); renderRecent(); renderTip(); checkBackupAge();
+}
+renderAll();
+
+/* 多标签页保护：另一个标签写入时，本页重新读取，避免整份覆盖 */
+window.addEventListener('storage',function(e){
+  if(e && e.key===ROOT){
+    S=loadState();
+    renderAll();
+    toast('检测到另一个页面改了数据，已同步刷新');
+  }
+});
+
+document.addEventListener('visibilitychange',function(){ if(!document.hidden) renderAll(); });
+})();
+</script>
+</body>
+</html>
