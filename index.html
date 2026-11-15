@@ -182,6 +182,45 @@ body{padding-bottom:calc(190px + constant(safe-area-inset-bottom));padding-botto
 /* 正在填血压时把悬浮条收起来——那时不需要它，还会挡住保存按钮 */
 body.editing .fab{display:none}
 .fab button:active{transform:scale(.99);background:var(--accent2)}
+/* ---------- 底部选项卡 ----------
+   4 个格子等高，选中变深色。放在最下层，z-index 低于弹窗与 toast。
+   页面按 data-tab 切换显示：只有当前页的 .page 可见，其余 display:none。 */
+.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;display:grid;grid-template-columns:repeat(4,1fr);
+  background:rgba(255,255,255,.97);border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom);
+  box-shadow:0 -2px 12px -6px rgba(20,24,28,.14);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+}
+.tabbar button{
+  background:none;border:none;border-radius:0;padding:9px 2px 8px;display:flex;flex-direction:column;
+  align-items:center;gap:3px;color:#949a9f;font-size:15px;font-weight:700;letter-spacing:.2px;
+  transition:color .15s;
+}
+.tabbar button .tb-ico{font-size:22px;line-height:1;filter:grayscale(1);opacity:.62;transition:opacity .15s,filter .15s}
+.tabbar button.on{color:var(--ink)}
+.tabbar button.on .tb-ico{filter:none;opacity:1}
+.tabbar button:active{background:#f4f5f6}
+/* 分页容器：默认只显示记录页 */
+.page{display:none}
+.page.on{display:block}
+/* 底栏占了位置，页面底部要留够，否则最后一张卡被盖住 */
+body{padding-bottom:calc(96px + constant(safe-area-inset-bottom));padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+/* 记录页里的「马上记一次」条：原来悬浮，现在贴着内容走 */
+.rec-actions{position:sticky;bottom:calc(78px + env(safe-area-inset-bottom));z-index:40;margin:16px 0 4px}
+.rec-actions button{
+  width:100%;padding:17px;border-radius:14px;font-size:21px;color:#fff;letter-spacing:.6px;
+  background:var(--accent);box-shadow:0 8px 20px -10px rgba(201,74,24,.6);
+}
+.rec-actions button:active{background:var(--accent2)}
+/* 记录页顶部的紧急直达：不显眼，但一直在 */
+.sos-link{
+  display:block;width:100%;text-align:center;margin:0 0 10px;padding:9px;
+  background:#fdf3f1;border:1px solid #f4dcd7;border-radius:11px;
+  font-size:16px;font-weight:700;color:#a8302a;
+}
+.sos-link:active{background:#fbe9e5}
+@media print{.tabbar,.rec-actions,.sos-link{display:none!important}}
 .toast{
   position:fixed;left:50%;bottom:140px;transform:translateX(-50%) translateY(16px) scale(.96);
   background:rgba(19,37,35,.96);color:#fff;padding:14px 26px;border-radius:16px;
@@ -395,6 +434,58 @@ body.modal-open{overflow:hidden}
 .wx-tip{font-size:17px;line-height:1.65;color:#6b4a12;margin-top:12px;padding:10px 12px;background:#fdf6e9;border:1px solid #f3e4c8;border-radius:10px}
 .wx-get{width:100%;padding:14px;font-size:18px;font-weight:700;color:var(--ink);background:#fff;border:1px solid #d8dcdf;border-radius:10px}
 .wx-get:active{background:#eff1f2}
+/* 腿肿分级记录：等级用大按钮选，选完立刻存 */
+.sw-hint{font-size:17px;line-height:1.6;color:var(--sub);margin-bottom:12px}
+.sw-opts{display:flex;flex-direction:column;gap:10px}
+.sw-opt{
+  width:100%;text-align:left;display:flex;align-items:center;gap:12px;
+  padding:15px 16px;border-radius:12px;border:1.5px solid var(--line);background:#fff;
+  font-size:19px;font-weight:700;color:var(--ink);transition:border-color .15s,background .15s;
+}
+.sw-opt:active{background:#f2f4f4}
+.sw-opt .sw-dot{width:22px;height:22px;border-radius:50%;border:2px solid #cfd6d9;flex:0 0 auto}
+.sw-opt .sw-txt{flex:1;line-height:1.4}
+.sw-opt .sw-sub{display:block;font-size:15px;font-weight:600;color:var(--sub);margin-top:3px}
+.sw-opt.on{border-color:var(--ink2);background:#f4f7f8}
+.sw-opt.on .sw-dot{border-color:var(--ink2);background:var(--ink2);box-shadow:inset 0 0 0 3px #fff}
+.sw-rows{margin-top:16px}
+.sw-row{display:flex;align-items:center;gap:12px;margin-top:10px}
+.sw-lbl{font-size:17px;font-weight:700;color:var(--sub);flex:0 0 auto;min-width:66px}
+.sw-seg{display:flex;gap:8px;flex:1}
+.sw-seg button{
+  flex:1;padding:12px 8px;font-size:17px;font-weight:700;color:var(--ink);
+  background:#fff;border:1.5px solid var(--line);border-radius:11px;
+}
+.sw-seg button.on{background:var(--ink2);border-color:var(--ink2);color:#fff}
+.sw-warn{font-size:17px;line-height:1.65;margin-top:14px;padding:12px 14px;border-radius:11px;
+  background:#fdeeea;border:1px solid #f5cfc7;color:#8f2a1c}
+.sw-log{font-size:16px;line-height:1.7;color:var(--sub);margin-top:14px}
+.sw-log b{color:var(--ink)}
+.sw-log .sw-days{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.sw-log .sw-day{padding:5px 11px;border-radius:999px;background:#eef1f2;font-size:15px;font-weight:700;color:var(--ink2)}
+.sw-log .sw-day.lv0{background:#e6f5ec;color:#0d6b47}
+.sw-log .sw-day.lv1{background:#eef6e0;color:#4d6b0d}
+.sw-log .sw-day.lv2{background:#fdefd2;color:#8a5707}
+.sw-log .sw-day.lv3{background:#fce4d4;color:#93430e}
+.sw-log .sw-day.lv4{background:#fde2dd;color:#a8302a}
+/* 每日热点：标题列表，来源和时间用小字 */
+.hot-tabs{display:flex;gap:8px;margin:0 0 14px;background:#eff1f2;padding:4px;border-radius:12px}
+.hot-tabs button{
+  flex:1;padding:10px 4px;font-size:16px;font-weight:700;color:var(--sub);
+  background:none;border-radius:9px;transition:background .15s,color .15s;
+}
+.hot-tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(20,24,28,.08)}
+.hot-list{display:flex;flex-direction:column}
+.hot-item{
+  display:block;padding:13px 0;border-bottom:1px solid var(--line);text-decoration:none;color:inherit;
+}
+.hot-item:last-child{border-bottom:none}
+.hot-item:active{background:#f7f8f8}
+.hot-t{font-size:18px;font-weight:700;line-height:1.5;color:var(--ink)}
+.hot-m{font-size:14px;color:#949a9f;margin-top:4px;letter-spacing:.2px}
+.hot-foot{font-size:15px;color:#949a9f;margin-top:12px;line-height:1.6}
+.hot-empty{font-size:17px;color:var(--sub);line-height:1.7;padding:10px 0}
+.hot-note{font-size:14px;color:#a0a6ab;margin-top:12px;line-height:1.6}
 /* 吃药打卡：一行一顿药，右边一个大勾 */
 .med-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .med-head h2{margin-bottom:0}
@@ -453,6 +544,9 @@ body.modal-open{overflow:hidden}
     <div class="warnbar" id="adviceBox"></div>
   </section>
 
+  <div class="page on" id="page-rec">
+  <button class="sos-link" id="sosLink" type="button">🆘 紧急情况怎么办（点这里）</button>
+
   <section class="card no-print" id="weatherCard" style="display:none">
     <div class="wx-top"><h2>郑州天气</h2><span class="wx-city" id="wxUpdated"></span></div>
     <div class="wx-now"><span class="wx-temp" id="wxTemp">--</span><span class="wx-desc" id="wxDesc"></span></div>
@@ -504,6 +598,24 @@ body.modal-open{overflow:hidden}
     <div class="hint" style="margin-top:10px">量之前先坐 5 分钟，不说话，胳膊放在桌上与心脏同高。</div>
   </section>
 
+  <section class="card no-print" id="swellCard">
+    <h2>今天腿肿了吗</h2>
+    <div class="sw-hint" id="swHint">按一下小腿前面那块骨头旁边的肉，按 5 秒再松手，看有没有坑。</div>
+    <div class="sw-opts" id="swOpts"></div>
+    <div class="sw-rows">
+      <div class="sw-row">
+        <span class="sw-lbl">哪条腿</span>
+        <div class="sw-seg" id="swSide">
+          <button type="button" data-side="both" class="on">两条都肿</button>
+          <button type="button" data-side="left">只有左腿</button>
+          <button type="button" data-side="right">只有右腿</button>
+        </div>
+      </div>
+    </div>
+    <div class="sw-warn" id="swWarn" style="display:none"></div>
+    <div class="sw-log" id="swLog"></div>
+  </section>
+
   <section class="card no-print" id="medCard">
     <div class="med-head">
       <h2>今天的药</h2>
@@ -517,6 +629,10 @@ body.modal-open{overflow:hidden}
     <div class="med-warn" id="medWarn" style="display:none">关闭会清掉已打的勾，不能恢复。</div>
   </section>
 
+  <div class="rec-actions no-print"><button id="quickAdd" type="button">＋ 马上记一次血压</button></div>
+  </div><!-- /page-rec -->
+
+  <div class="page" id="page-trend">
   <section class="card">
     <h2>最近的变化</h2>
     <div class="tabs no-print">
@@ -537,13 +653,14 @@ body.modal-open{overflow:hidden}
     <div id="extraLine" class="hint" style="margin-top:8px;color:#4a5056"></div>
   </section>
 
-  <section class="card no-print" id="tipCard">
-    <h2>今天的小知识</h2>
-    <div id="tipBox" class="hint" style="font-size:18px;line-height:1.7"></div>
-    <button class="btn-ghost" id="tipNext" style="margin-top:12px">换一条</button>
+  <section class="card">
+    <h2>最近记录</h2>
+    <div class="hint" style="margin-bottom:6px">点一下某条记录可以删除，删除时会再问一次。</div>
+    <ul class="list" id="recentList"></ul>
   </section>
+  </div><!-- /page-trend -->
 
-
+  <div class="page" id="page-ask">
   <section class="card no-print" id="voiceCard">
     <h2>问问小安（医学 AI）</h2>
     <div class="vb-intro" id="vbCardState">说不清、拿不准的时候，按住下面的「按住说话」大按钮，把话直接说出来问它。</div>
@@ -553,8 +670,30 @@ body.modal-open{overflow:hidden}
       <button class="vb-quick" type="button" data-vbq="今天忘了吃药，现在要不要补？">忘了吃药怎么办？</button>
       <button class="vb-quick" type="button" data-vbq="这段时间血压忽高忽低，是什么原因？">忽高忽低怎么回事？</button>
     </div>
-    <button class="btn-ghost" id="vbOpen" type="button" style="margin-top:12px">💬 打开对话窗口</button>
+    <button class="btn-ghost" id="vbOpen" type="button" style="margin-top:12px">💬 开始对话</button>
     <div class="vb-note">小安讲的是通用的健康知识，不能代替医生看病开药。真不舒服请按上面的「紧急情况怎么办」处理。</div>
+  </section>
+  </div><!-- /page-ask -->
+
+  <div class="page" id="page-more">
+  <section class="card no-print" id="hotCard">
+    <h2>今天的大事</h2>
+    <div class="hot-tabs" id="hotTabs">
+      <button type="button" data-hot="top" class="on">头条</button>
+      <button type="button" data-hot="world">国际</button>
+      <button type="button" data-hot="soc">国内</button>
+      <button type="button" data-hot="fin">财经</button>
+    </div>
+    <div class="hot-list" id="hotList"></div>
+    <div class="hot-foot" id="hotFoot"></div>
+    <button class="btn-ghost" id="hotRefresh" type="button">刷新一下</button>
+    <div class="hot-note">新闻来自中新网和人民网，点标题看原文。断网时这一栏不显示，不影响记录。</div>
+  </section>
+
+  <section class="card no-print" id="tipCard">
+    <h2>今天的小知识</h2>
+    <div id="tipBox" class="hint" style="font-size:18px;line-height:1.7"></div>
+    <button class="btn-ghost" id="tipNext" style="margin-top:12px">换一条</button>
   </section>
 
   <section class="card" id="dietCard">
@@ -597,24 +736,21 @@ body.modal-open{overflow:hidden}
     <button class="btn-ghost danger" id="clearBtn">🗑️ 清空这个人的全部记录</button>
   </section>
 
-  <section class="card">
-    <h2>最近记录</h2>
-    <div class="hint" style="margin-bottom:6px">点一下某条记录可以删除，删除时会再问一次。</div>
-    <ul class="list" id="recentList"></ul>
-  </section>
-
-
   <div class="footnote">
     本页面只作日常记录和趋势参考，<br>不能替代医生诊断和处方。不舒服请及时就医。<br>
     <span style="font-size:13px">记录保存在本机 · 只有问小安时才联网</span>
   </div>
+  </div><!-- /page-more -->
 </main>
 
-<div class="fab no-print"><button id="quickAdd">＋ 马上记一次血压</button></div>
+<nav class="tabbar no-print" id="tabbar" role="tablist" aria-label="页面切换">
+  <button type="button" class="on" data-tab="rec" role="tab" aria-selected="true"><span class="tb-ico">✏️</span>记录</button>
+  <button type="button" data-tab="trend" role="tab" aria-selected="false"><span class="tb-ico">📈</span>趋势</button>
+  <button type="button" data-tab="ask" role="tab" aria-selected="false"><span class="tb-ico">💬</span>小安</button>
+  <button type="button" data-tab="more" role="tab" aria-selected="false"><span class="tb-ico">⋯</span>更多</button>
+</nav>
+
 <div class="toast" id="toast"></div>
-<button class="vb-fab no-print" id="vbFab" type="button" aria-label="问小安">
-  <span class="vb-fab-t">问小安</span><span class="vb-fab-s">语音</span>
-</button>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="sheet">
@@ -667,6 +803,7 @@ function loadState(){
       p.taken=(p.taken&&typeof p.taken==='object')?p.taken:{};
       p.skipped=(p.skipped&&typeof p.skipped==='object')?p.skipped:{};
       p.meds=sanitizeMeds(p.meds);
+      p.swell=sanitizeSwell(p.swell);         // 腿肿记录：只留合法的等级与日期键
       p.label=String(p.label||''); p.name=String(p.name||''); p.age=String(p.age||''); p.kin=String(p.kin||'');
     });
     if(!o.current||!o.people.some(function(p){return p.id===o.current;})) o.current=o.people[0].id;
@@ -685,6 +822,27 @@ function loadState(){
   // 否则这些记录以后导出再导入时 rid 全是 undefined，去重会失效。
   p.records=sanitizeRecords(p.records);
   return {people:[p,{id:'p2',label:'妈妈',name:'',age:'',kin:'',records:[],meds:defaultMeds(),taken:{}}],current:p.id};
+}
+/* 腿肿记录清洗：日期键必须是 YYYY-MM-DD，等级必须是 0-4 的整数，side 走白名单。
+   导入别人的备份也要过这一关，否则脏数据会让统计和提示错乱。 */
+function sanitizeSwell(o){
+  var out={};
+  if(!o || typeof o!=='object' || Array.isArray(o)) return out;
+  Object.keys(o).forEach(function(k){
+    // 只校验格式不够：2026-13-99 也能通过 \d{2}，但它是假日期。
+    // 必须用 Date 反算回来比对，否则脏数据会一路流到渲染，统计也跟着错。
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
+    var y=Number(k.slice(0,4)), mo=Number(k.slice(5,7)), dd=Number(k.slice(8,10));
+    if(mo<1||mo>12||dd<1||dd>31) return;
+    var probe=new Date(y,mo-1,dd);
+    if(probe.getFullYear()!==y || probe.getMonth()!==mo-1 || probe.getDate()!==dd) return;
+    var v=o[k];
+    if(!v || typeof v!=='object') return;
+    var lv=Number(v.lv);
+    if(!isFinite(lv) || lv<0 || lv>4 || Math.floor(lv)!==lv) return;
+    out[k]={lv:lv, side:(v.side==='left'||v.side==='right')?v.side:'both', ts:Number(v.ts)||0};
+  });
+  return out;
 }
 /* 清洗外部导入的记录：字段合法 + 按时间升序，避免图表折线错乱和"最近记录"取错 */
 function sanitizeRecords(arr){
@@ -1304,6 +1462,227 @@ function toggleMed(id){
   renderMeds();
 }
 
+/* ---------- 每日热点 ----------
+   为什么走中转：中新网、人民网都发 RSS，但都不给 Access-Control-Allow-Origin，
+   浏览器直连会被 CORS 拦掉。实测 api.rss2json.com 会回来源域名的 ACAO 头，能直接用。
+   免费额度 60 次/IP/小时，缓存 30 分钟，一个人一小时最多 4-6 次，够用。
+   断网或中转挂了：只显示一句"没取到"，绝不影响记录与其它功能。 */
+/* 2026-11-16 实测：人民网军事 RSS 最新一条是 2025-06-05，早已停更，
+   拿去显示等于给老人看一年前的旧闻，所以不采用。中新网没有独立的军事频道 RSS，
+   军事类改由"头条"覆盖（重大军事消息本身会进头条）。这里换成财经，实测是实时的。 */
+var HOT_FEEDS=[
+  {id:'top',  name:'头条', url:'https://www.chinanews.com.cn/rss/scroll-news.xml'},
+  {id:'world',name:'国际', url:'https://www.chinanews.com.cn/rss/world.xml'},
+  {id:'soc',  name:'国内', url:'https://www.chinanews.com.cn/rss/society.xml'},
+  {id:'fin',  name:'财经', url:'https://www.chinanews.com.cn/rss/finance.xml'}
+];
+var HOT_CACHE_MS=30*60*1000;
+var hotCur='top';
+function hotCacheKey(id){ return 'family-health-hot-'+id; }
+function hotFeed(id){
+  for(var i=0;i<HOT_FEEDS.length;i++) if(HOT_FEEDS[i].id===id) return HOT_FEEDS[i];
+  return HOT_FEEDS[0];
+}
+function feedNameOf(id){ return hotFeed(id).name; }
+/* 标题可能带 HTML 实体，先转成纯文本，防止把 < 之类塞进 DOM */
+function hotUnescape(s){
+  return String(s==null?'':s)
+    .replace(/&lt;/g,'<').replace(/&gt;/g,'>')
+    .replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&apos;/g,"'")
+    .replace(/&nbsp;/g,' ').replace(/&amp;/g,'&');
+}
+/* 只允许 http/https 进 href，防止备份或接口里混进 javascript: */
+function hotSafeUrl(u){
+  u=String(u||'').trim();
+  if(/^https?:\/\//i.test(u)) return u;
+  return '';
+}
+/* 时间显示：今天/昨天/月日；超过 7 天额外标"旧闻"。
+   为什么要标：新闻源可能停更，不标的话老人会把一年前的事当成今天发生。 */
+function hotTime(d){
+  var s=String(d||''), m=s.match(/(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/);
+  if(!m) return '';
+  var y=Number(m[1]), mo=Number(m[2]), dd=Number(m[3]);
+  var that=new Date(y,mo-1,dd);
+  var now=new Date();
+  var today0=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  var days=Math.round((today0-that)/86400000);
+  var md=mo+'月'+dd+'日';
+  if(days===0) return '今天 '+(m[4][0]==='0'?m[4].slice(1):m[4])+':'+m[5];
+  if(days===1) return '昨天 '+m[4]+':'+m[5];
+  if(days>7 || days<0) return md+'（旧闻）';
+  return md;
+}
+function renderHot(items, whenTxt, feedName){
+  var box=$('hotList'), foot=$('hotFoot');
+  if(!box) return;
+  if(!items || !items.length){
+    box.innerHTML='<div class="hot-empty">这会儿没取到新闻。可能是没联网，过一会儿再点「刷新一下」。</div>';
+    if(foot) foot.textContent='';
+    return;
+  }
+  var h='';
+  items.slice(0,10).forEach(function(it){
+    var t=hotUnescape(it.title).replace(/\s+/g,' ').trim();
+    var u=hotSafeUrl(it.link);
+    if(!t) return;
+    var meta=[hotTime(it.pubDate), feedName||''].filter(function(x){return !!x;}).join(' · ');
+    if(u){
+      h+='<a class="hot-item" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+
+         '<div class="hot-t">'+esc(t)+'</div><div class="hot-m">'+esc(meta)+'</div></a>';
+    }else{
+      h+='<div class="hot-item"><div class="hot-t">'+esc(t)+'</div><div class="hot-m">'+esc(meta)+'</div></div>';
+    }
+  });
+  box.innerHTML=h||'<div class="hot-empty">这会儿没取到新闻。</div>';
+  if(foot) foot.textContent=whenTxt||'';
+  // 点标题跳外部：file:// 下 target=_blank 正常，http(s) 下也一样。不用 JS 跳转，避免弹窗被拦。
+}
+function loadHot(force){
+  var box=$('hotList');
+  if(!box) return;
+  var key=hotCacheKey(hotCur);
+  if(!force){
+    try{
+      var raw=localStorage.getItem(key);
+      if(raw){
+        var c=JSON.parse(raw);
+        if(c && c.t && (Date.now()-c.t)<HOT_CACHE_MS && c.items){
+          renderHot(c.items, '更新于 '+fmt(c.t), feedNameOf(hotCur));
+          return;
+        }
+      }
+    }catch(e){}
+  }
+  if(typeof fetch!=='function'){ renderHot([], ''); return; }
+  box.innerHTML='<div class="hot-empty">正在取新闻…</div>';
+  var feed=hotFeed(hotCur);
+  var api='https://api.rss2json.com/v1/api.json?count=10&rss_url='+encodeURIComponent(feed.url);
+  fetch(api).then(function(r){ return r.json(); }).then(function(j){
+    if(!j || j.status!=='ok' || !j.items || !j.items.length){ throw new Error('bad'); }
+    var items=j.items.map(function(it){ return {title:it.title, link:it.link, pubDate:it.pubDate}; });
+    renderHot(items, '更新于 '+fmt(Date.now()), feed.name);
+    try{ localStorage.setItem(key, JSON.stringify({t:Date.now(), items:items})); }catch(e){}
+  }).catch(function(){
+    renderHot([], '');
+  });
+}
+/* 高亮单独抽出来：切页返回「更多」时也要同步，否则会出现
+   "看着头条高亮、实际显示国际"这种内容与标签对不上的情况。 */
+function hotMarkTabs(){
+  Array.prototype.forEach.call(document.querySelectorAll('#hotTabs [data-hot]'),function(b){
+    b.className=(b.getAttribute('data-hot')===hotCur)?'on':'';
+  });
+}
+function switchHot(id){
+  hotCur=id;
+  hotMarkTabs();
+  loadHot(false);
+}
+
+/* ---------- 腿肿分级记录 ----------
+   用临床常用的凹性水肿 1-4 级做选项（按 5 秒松手看坑），再加"哪条腿"。
+   只记录，不判病。唯一会主动提示的是"单侧肿"——那条要排除血栓，不能自己抬腿观察。
+   数据存在 p.swell = { '2026-11-16': {lv:2, side:'both', ts:...}, ... } */
+var SW_LEVELS=[
+  {lv:0,t:'不肿',s:'按下去没有坑，松开就平'},
+  {lv:1,t:'有点肿，按下去有浅坑',s:'坑很浅，很快就平回去'},
+  {lv:2,t:'明显肿，坑留得住',s:'一按一个坑，几秒才平'},
+  {lv:3,t:'肿得厉害，坑很深',s:'坑深，要十来秒才慢慢平'},
+  {lv:4,t:'肿得发亮，按下去几乎不回弹',s:'皮肤绷紧发亮，坑很久不平'}
+];
+var SW_KEEP_DAYS=90;
+function swellMap(p){
+  if(!p.swell || typeof p.swell!=='object') p.swell={};
+  return p.swell;
+}
+function swellToday(p){
+  var m=swellMap(p), v=m[dayKey()];
+  if(!v || typeof v!=='object') return null;
+  var lv=Number(v.lv);
+  if(!isFinite(lv) || lv<0 || lv>4) return null;
+  return {lv:lv, side:(v.side==='left'||v.side==='right')?v.side:'both', ts:Number(v.ts)||0};
+}
+/* 只保留最近 90 天，避免 localStorage 无限增长 */
+function swellPrune(p){
+  var m=swellMap(p);
+  var from=dayKey(new Date(Date.now()-SW_KEEP_DAYS*86400000));
+  var cut={};
+  Object.keys(m).forEach(function(k){ if(k>=from) cut[k]=m[k]; });
+  p.swell=cut;
+}
+function swellSet(lv, side){
+  var p=cur();
+  var prev=p.swell ? JSON.parse(JSON.stringify(p.swell)) : {};
+  var m=swellMap(p);
+  var key=dayKey();
+  var old=m[key]||{};
+  m[key]={lv:lv, side:(side==='left'||side==='right')?side:'both', ts:old.ts||Date.now()};
+  swellPrune(p);
+  if(!save()){ p.swell=prev; renderSwell(); toast('没能保存，请再点一次'); return; }
+  renderSwell();
+}
+function swellSetSide(side){
+  var p=cur(), t=swellToday(p);
+  if(!t){ toast('先选一下肿到几分'); return; }
+  swellSet(t.lv, side);
+}
+function renderSwell(){
+  var p=cur(), box=$('swOpts');
+  if(!box) return;
+  var t=swellToday(p);
+  var curLv = t ? t.lv : -1;
+  var html='';
+  SW_LEVELS.forEach(function(o){
+    html+='<button class="sw-opt'+(o.lv===curLv?' on':'')+'" type="button" data-swlv="'+o.lv+'">'+
+      '<span class="sw-dot"></span>'+
+      '<span class="sw-txt">'+esc(o.t)+'<span class="sw-sub">'+esc(o.s)+'</span></span>'+
+      '</button>';
+  });
+  box.innerHTML=html;
+  Array.prototype.forEach.call(box.querySelectorAll('[data-swlv]'),function(b){
+    b.onclick=function(){ swellSet(Number(b.getAttribute('data-swlv'))); };
+  });
+  // 哪条腿：没记录时先不亮，避免误导
+  var side = t ? t.side : '';
+  Array.prototype.forEach.call(document.querySelectorAll('#swSide [data-side]'),function(b){
+    var on = (b.getAttribute('data-side')===side);
+    b.className = on?'on':'';
+    b.onclick=function(){ swellSetSide(b.getAttribute('data-side')); };
+  });
+  // 单侧肿：提示要排除血栓，这条不能省
+  var warn=$('swWarn');
+  if(warn){
+    if(t && (t.side==='left'||t.side==='right')){
+      warn.style.display='';
+      warn.innerHTML='只有一条腿肿，别当成久站。先看医生，排除血栓之前不要揉、不要按、不要热敷。';
+    }else{
+      warn.style.display='none'; warn.textContent='';
+    }
+  }
+  renderSwellLog(p);
+}
+/* 最近记录：按天倒序列出，让"肿了几天"一眼可见 */
+function renderSwellLog(p){
+  var box=$('swLog');
+  if(!box) return;
+  var m=swellMap(p);
+  var keys=Object.keys(m).filter(function(k){
+    var v=m[k]; var lv=Number(v&&v.lv);
+    return isFinite(lv)&&lv>=0&&lv<=4;
+  }).sort().reverse().slice(0,14);
+  if(!keys.length){ box.innerHTML=''; return; }
+  var days='';
+  keys.forEach(function(k){
+    var lv=Number(m[k].lv);
+    days+='<span class="sw-day lv'+lv+'">'+(Number(k.slice(8)))+'日 '+SW_LEVELS[lv].t.split('，')[0]+'</span>';
+  });
+  var hi=keys.filter(function(k){ return Number(m[k].lv)>=3; }).length;
+  var line='最近 '+keys.length+' 天记了 '+keys.length+' 次';
+  if(hi) line+='，其中 <b>'+hi+' 天肿到 3 分以上</b>';
+  box.innerHTML=line+'<div class="sw-days">'+days+'</div>';
+}
+
 /* 吃药栏是可选的：老人没在吃药就不该看到它。
    开启状态按人单独记在 p.medOn 里；没设置过时，有打卡记录就当作已开启。 */
 function medOn(p){
@@ -1587,6 +1966,8 @@ function startEditRecord(r){
   var rSel=$('rounds');
   if(rSel && r.rounds){ for(var ri=0;ri<rSel.options.length;ri++){ if(rSel.options[ri].value===String(r.rounds)){ rSel.selectedIndex=ri; break; } } }
   setEditingMode(true);
+  // 记录在「趋势」页，输入框在「记录」页：不切回去，老人会以为点了没反应
+  showTab('rec');
   renderLastHint(); checkHourPeriod();
   var ec=$('entryCard');
   if(ec && ec.scrollIntoView) ec.scrollIntoView({behavior:'smooth',block:'center'});
@@ -1807,13 +2188,18 @@ function buildBackup(){
   try{ localStorage.setItem(LAST_BACKUP_KEY, String(Date.now())); }catch(e){}
   return {app:'family-health',version:2,exportedAt:new Date().toISOString(),
           people:S.people.map(function(p){
+            // swell 必须一起导出：腿肿是"这几天肿没肿"的趋势数据，
+            // 漏掉它，换手机或复制备份文字恢复后腿肿记录会静默消失，事前毫无提示。
             return {label:p.label,name:p.name,age:p.age,kin:p.kin,
-                    records:p.records,meds:p.meds,taken:p.taken,skipped:p.skipped||{}};
+                    records:p.records,meds:p.meds,taken:p.taken,skipped:p.skipped||{},
+                    swell:p.swell||{}};
           })};
 }
 function exportData(){
   var data=buildBackup();
-  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  // charset=utf-8 必须显式写：只写 application/json 时，部分浏览器/系统会按本地
+  // 默认编码（如 GBK）解释文件，导致备份里的中文变成乱码。这是实际的乱码来源。
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'});
   var a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   a.download='健康记录备份-'+dayKey()+'.json';
@@ -1987,7 +2373,56 @@ $('photoInput').onchange=function(e){
   e.target.value='';
 };
 
+/* ---------- 底部选项卡切换 ----------
+   用 data-tab 标记：rec / trend / ask / more。
+   切换时只改显示，不再往页面上叠内容；切换后滚到顶，老人不会「停在半空」。 */
+var TABS=['rec','trend','ask','more'];
+var TITLE_OF={rec:'记录',trend:'趋势',ask:'小安',more:'更多'};
+function showTab(name){
+  if(TABS.indexOf(name)<0) name='rec';
+  TABS.forEach(function(t){
+    var pg=document.getElementById('page-'+t);
+    if(pg) pg.className='page'+(t===name?' on':'');
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#tabbar [data-tab]'),function(b){
+    var on=(b.getAttribute('data-tab')===name);
+    b.className=on?'on':'';
+    b.setAttribute('aria-selected', on?'true':'false');
+  });
+  // 切到趋势页要重画一次：隐藏时算出来的 svg 尺寸是 0
+  if(name==='trend'){ try{ renderChart(); }catch(e){} }
+  if(name==='rec'){ try{ renderSwell(); renderMedPanel(); }catch(e){} }
+  // 新闻只在真的打开「更多」时取一次，不预加载
+  if(name==='more'){
+    try{ hotMarkTabs(); }catch(e){}     // 每次进来都对齐高亮，不只在第一次
+    if(!_hotLoaded){ _hotLoaded=true; try{ loadHot(false); }catch(e){} }
+  }
+  // 小安页只有一张卡，进去就开对话，少一次点击；关闭弹窗仍停在选项卡上
+  if(name==='ask'){ try{ openAssistant(''); }catch(e){} }
+  try{ window.scrollTo(0,0); }catch(e){}
+  try{ localStorage.setItem('family-health-tab', name); }catch(e){}
+}
+Array.prototype.forEach.call(document.querySelectorAll('#tabbar [data-tab]'),function(b){
+  b.onclick=function(){ showTab(b.getAttribute('data-tab')); };
+});
+// 记录页顶部的紧急直达：跳到「更多」页并滚到那栏
+var _sos=$('sosLink');
+if(_sos) _sos.onclick=function(){
+  showTab('more');
+  var el=document.getElementById('emergencyCard');
+  if(el&&el.scrollIntoView) setTimeout(function(){ el.scrollIntoView({behavior:'smooth',block:'center'}); },80);
+};
+
+/* 热点：切分类 + 刷新。首次进「更多」页才联网，不拖慢记录页 */
+var _hotLoaded=false;
+Array.prototype.forEach.call(document.querySelectorAll('#hotTabs [data-hot]'),function(b){
+  b.onclick=function(){ switchHot(b.getAttribute('data-hot')); _hotLoaded=true; };
+});
+var _hotRefresh=$('hotRefresh');
+if(_hotRefresh) _hotRefresh.onclick=function(){ loadHot(true); };
+
 $('quickAdd').onclick=function(){
+  showTab('rec');
   var _se_entryCard=document.getElementById('entryCard'); if(_se_entryCard&&_se_entryCard.scrollIntoView) _se_entryCard.scrollIntoView({behavior:'smooth',block:'center'});
   setTimeout(function(){ $('sys').focus(); },350);
 };
@@ -2016,6 +2451,7 @@ $('avatarBtn').onclick=function(){
       $('sys').value=''; $('dia').value=''; $('pulse').value='';
       $('period').selectedIndex=0; autoPickPeriod();   // 按当前时间选合适时段，避免误记成晨起
       closeModal(); renderAll();
+      showTab('rec');   // 切换人之后直接回到要填的那一页，不把人留在别的页上
     };
   });
 };
@@ -2079,10 +2515,16 @@ function applyBackup(o){
         tgt.records.forEach(function(r){ have[r.rid]=true; });
         recs.forEach(function(r){ if(!have[r.rid]){ tgt.records.push(r); have[r.rid]=true; merged++; } });
         tgt.records.sort(function(a,b){ return a.ts-b.ts; });
+        // 腿肿按天合并：已存在的日子以本机为准，不会把本机改过的等级覆盖掉
+        if(!tgt.swell || typeof tgt.swell!=='object') tgt.swell={};
+        var inSwell=sanitizeSwell(pp.swell);
+        Object.keys(inSwell).forEach(function(k){ if(!tgt.swell[k]) tgt.swell[k]=inSwell[k]; });
+        swellPrune(tgt);
         S.current=tgt.id;
       }else{
         var np={id:uid(),label:String(pp.label||'恢复的人'),name:String(pp.name||''),age:String(pp.age||''),kin:String(pp.kin||''),
-          records:recs,meds:meds,taken:(pp.taken&&typeof pp.taken==='object')?pp.taken:{},skipped:(pp.skipped&&typeof pp.skipped==='object')?pp.skipped:{}};
+          records:recs,meds:meds,taken:(pp.taken&&typeof pp.taken==='object')?pp.taken:{},skipped:(pp.skipped&&typeof pp.skipped==='object')?pp.skipped:{},
+          swell:sanitizeSwell(pp.swell)};
         S.people.push(np);
         S.current=np.id;
       }
@@ -2113,7 +2555,9 @@ $('importFile').onchange=function(e){
     catch(err){ toast('这个文件读不出来'); e.target.value=''; return; }
     applyBackup(o);
   };
-  fr.readAsText(f);
+  // 必须显式指定 utf-8：不给编码时 FileReader 按浏览器默认编码解释（中文环境下
+  // 常是 GBK），导出文件里的中文会读成乱码，JSON.parse 直接失败或字段变成乱码。
+  fr.readAsText(f,'utf-8');
   e.target.value='';
 };
 $('clearBtn').onclick=function(){
@@ -2232,10 +2676,30 @@ var TIPS=[
 
   /* ---- 喝水与其他（2条）---- */
   {t:'喝水别太少，但有人要限水',d:'大多数老人不渴也该喝几杯，一次别灌太多。但如果有心衰、肾病，医生嘱咐过少喝水的，就按医生说的量来。'},
-  {t:'别用力排便',d:'便秘时用力会突然升高血压。多吃蔬菜水果，保持通畅，必要时问医生用药。'}
+  {t:'别用力排便',d:'便秘时用力会突然升高血压。多吃蔬菜水果，保持通畅，必要时问医生用药。'},
+
+  /* ---- 腿肿与静脉曲张（14条）----
+     依据：《老年人慢性静脉疾病诊治中国专家共识》（中国普通外科杂志 2025）、
+     《外周血管疾病压力治疗中国指南（2026版）》。
+     只讲生活护理与自查方法，不给诊断，不推荐具体产品。 */
+  {t:'久站久坐最容易腿肿',d:'双腿长期下垂不动，血往回走费劲，水就往脚踝沉。站或坐 30 到 40 分钟，就起身走几步，或者原地踮脚 10 下。'},
+  {t:'站着不动比走动更伤腿',d:'走动时小腿肌肉一收一放，像泵一样把血往上挤。站着不动这个泵就停了，所以站久了要动，比站着一动不动强得多。'},
+  {t:'抬腿要躺下垫高，不能只是坐着翘脚',d:'躺平后把腿垫到比心脏高，每次 15 到 20 分钟，一天做几次。坐在小板凳上把脚搁着没用，腿还是低于心脏。'},
+  {t:'腿肿别用热水泡脚',d:'热水让血管扩张，渗出来的水更多，肿反而加重。温热的水洗澡没问题，但别专门长时间泡脚，也别拿热水袋焐腿。'},
+  {t:'别用力揉搓肿起来的腿',d:'既然医生判断是久站引起，轻柔按一按没问题。但如果腿突然变粗、发烫、发红、一按就疼，先别揉别按，去看医生——那种情况揉压是危险的。'},
+  {t:'两条腿都肿和一条腿肿，意思不一样',d:'两条腿同时肿、按下去有个浅坑、躺一夜早上轻一些，多和久站、久坐有关。只有一条腿突然肿起来，要先当心血栓，尽快看医生。'},
+  {t:'按一下看有没有坑，能看出肿到几分',d:'用手指在小腿骨头上方按 5 秒再松开。没坑是一级，浅坑很快平是二级，坑明显是三级，坑深、好一会儿才平是四级。记下来，比只说"有点肿"有用。'},
+  {t:'早上量腿围最准',d:'早上下床前量小腿最粗那一圈，位置每次都一样，记下数字。晚上肿起来再量会偏大，两个时间混着比看不出真实变化。'},
+  {t:'腿肿的人要留个心：体重涨得快',d:'几天里体重涨两三斤、腿又肿、还觉得喘，这不是久站能解释的，要尽快看医生，查查心脏和肾。'},
+  {t:'腿上的青筋凸起来是什么',d:'那是静脉曲张。静脉里的瓣膜关不严，血往回倒，血管被撑粗。久站的人常见，不疼不痒可以先观察，别自己拿针挑、别用偏方敷。'},
+  {t:'静脉曲张破了出血怎么办',d:'曲张的血管壁薄，磕破了会出不少血。立刻躺下把腿抬高、用干净布用力压住伤口，压 10 分钟别松手，还止不住就去医院。'},
+  {t:'腿肿的时候，盐要少吃一点',d:'盐吃多了身体存水，肿会更明显。做菜少放盐、少喝咸汤，咸菜腊肉更要注意。'},
+  {t:'别一直穿太紧的袜子和裤腰',d:'袜口勒出一圈印、裤腰勒得紧，都会挡住血往回走。穿宽松一点的袜子和裤子，比什么都管用。'},
+  {t:'这些情况不要当"久站肿"处理',d:'只有一条腿肿、腿发烫发红一按就疼、走几步就喘躺下更喘、尿量明显变少、腿肿到皮肤发亮裂口——出现任何一条，都要去医院，不要在家抬腿观察。'}
 ];
 function todayTipIndex(){
-  // 用"距 1970 年的天数"做索引：每天严格 +1，保证 50 条都能轮到。
+  // 用"距 1970 年的天数"做索引：每天严格 +1，保证 TIPS.length 条都能均匀轮到。
+  // （条数会随着内容增加而变化，这里不要写死具体数字。）
   // 不要用 年月日拼数字再取模——那样年、月的部分会被 TIPS.length 整除掉，
   // 索引退化成一个月的几号，导致大部分条目永远出不来。
   var d=new Date();
@@ -3046,7 +3510,7 @@ function checkBackupAge(){
 function renderAll(){
   var p=cur();
   $('nameInput').value=p.name||''; $('ageInput').value=p.age||''; $('kinInput').value=p.kin||'';
-  renderSummary(); renderChart(); renderRecent(); renderTip(); checkBackupAge(); renderLastHint(); renderAskCard(); renderMedPanel();
+  renderSummary(); renderChart(); renderRecent(); renderTip(); checkBackupAge(); renderLastHint(); renderAskCard(); renderMedPanel(); renderSwell();
 }
 
 /* ---------- 小安的入口绑定 ----------
@@ -3054,8 +3518,9 @@ function renderAll(){
    用可选绑定：元素缺失时不能抛错，否则后面的启动代码全都跑不到。 */
 loadAskLog();
 (function bindAskEntries(){
-  var tops=[$('vbHero'),$('vbFab'),$('vbOpen')];
-  tops.forEach(function(b){ if(b) b.onclick=function(){ openAssistant(''); }; });
+  /* 2026-11-16 起小安是底部「小安」选项卡；入口只负责切页，不再弹窗 */
+  var tops=[$('vbHero'),$('vbOpen')];
+  tops.forEach(function(b){ if(b) b.onclick=function(){ showTab('ask'); }; });
   Array.prototype.forEach.call(document.querySelectorAll('[data-vbq]'),function(b){
     b.onclick=function(){ openAssistant(b.getAttribute('data-vbq')||''); };
   });
@@ -3067,6 +3532,11 @@ loadAskLog();
 renderAll();
 autoPickPeriod();   // 首次打开按当前时间预选时段，避免误记成"晨起"
 loadWeather();      // 只读本机缓存；没缓存就显示一个按钮，不自动联网
+/* 恢复上次停留的标签页；没记录过就停在「记录」，跟以前一样 */
+try{
+  var _lastTab=localStorage.getItem('family-health-tab');
+  showTab(_lastTab||'rec');
+}catch(e){ showTab('rec'); }
 
 /* 多标签页保护：另一个标签写入时，本页重新读取，避免整份覆盖 */
 window.addEventListener('storage',function(e){
