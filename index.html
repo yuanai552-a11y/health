@@ -1082,9 +1082,18 @@ function markDead(rid){
    另一个标签页还留着旧数据时不能把它补回来，否则会出现「关掉了又自己打上勾」。 */
 var DEAD_TAKEN=Object.create(null);
 var _deadTakenOrder=[];
-function markDeadTaken(k){
-  if(!k || DEAD_TAKEN[k]) return;
-  DEAD_TAKEN[k]=1; _deadTakenOrder.push(k);
+/* 打卡墓碑的键必须带人：`medKey` 只返回「天|顿」，爸爸和妈妈同一天同一顿的键完全一样。
+   不带人的话，爸爸关一次吃药栏，会把妈妈那天打的勾一起拦掉——在她看来就是「勾又没了」。
+   旧墓碑（只有「天|顿」）继续兼容：判断时两种都查，登记时一律写带人前缀的新键。 */
+function takenTombKey(pid,k){ return String(pid||'')+'|'+String(k||''); }
+function isDeadTaken(pid,k){
+  return !!(DEAD_TAKEN[takenTombKey(pid,k)] || DEAD_TAKEN[k]);
+}
+function markDeadTaken(k,pid){
+  if(!k) return;
+  var key=takenTombKey(pid,k);
+  if(DEAD_TAKEN[key]) return;
+  DEAD_TAKEN[key]=1; _deadTakenOrder.push(key);
   if(_deadTakenOrder.length>5000){
     var dropT=_deadTakenOrder.length-5000;
     _deadTakenOrder.slice(0,dropT).forEach(function(x){ delete DEAD_TAKEN[x]; });
@@ -1095,10 +1104,12 @@ function markDeadTaken(k){
 /* 撤回打卡墓碑：与 unmarkDead 同样的规矩——键和顺序表一起清。
    只删键的话，_deadTakenOrder 会被原样落盘，刷新后复活成墓碑，
    那几顿本来还能勾的药就被永久挡住了。 */
-function unmarkDeadTaken(k){
-  if(!k || !DEAD_TAKEN[k]) return;
-  delete DEAD_TAKEN[k];
-  _deadTakenOrder=_deadTakenOrder.filter(function(x){ return x!==k; });
+function unmarkDeadTaken(k,pid){
+  var key=takenTombKey(pid,k);
+  var target = DEAD_TAKEN[key] ? key : (DEAD_TAKEN[k] ? k : null);
+  if(!target) return;
+  delete DEAD_TAKEN[target];
+  _deadTakenOrder=_deadTakenOrder.filter(function(x){ return x!==target; });
   persistTombstones();
 }
 /* 把「别的标签页刚写的内容」并入当前 S（原地修改，不替换对象引用）。
@@ -1139,7 +1150,7 @@ function mergeIncoming(raw){
     if(op.taken && typeof op.taken==='object'){
       if(!tgt.taken || typeof tgt.taken!=='object') tgt.taken={};
       Object.keys(op.taken).forEach(function(k){
-        if(DEAD_TAKEN[k]) return;                 // 本页刚清掉打勾：不补回来
+        if(isDeadTaken(tgt.pid||tgt.id, k)) return;   // 本页刚清掉这个人的这一顿：不补回来
         if(!(k in tgt.taken)) tgt.taken[k]=op.taken[k];
       });
     }
@@ -2251,12 +2262,14 @@ function toggleMedPanel(){
     // 关掉就清掉打卡，免得下次开启时冒出旧数据。
     // 被清掉的键要登记墓碑，否则另一个标签页一保存就把勾补回来了。
     clearedKeys=Object.keys(p.taken||{});
-    clearedKeys.forEach(markDeadTaken);
+    // 带上这个人：打卡墓碑按「人|天|顿」记，否则爸爸关一次会拦掉妈妈那天的勾
+    var curPid=(p.pid||p.id);
+    clearedKeys.forEach(function(k){ markDeadTaken(k, curPid); });
     p.taken={};
   }
   if(!save()){                         // 存不下就还原，别让界面跟存储对不上
     p.medOn=prevOn; p.taken=prevTaken;
-    clearedKeys.forEach(unmarkDeadTaken);
+    clearedKeys.forEach(function(k){ unmarkDeadTaken(k, curPid); });
     renderMedPanel();
     return;
   }
@@ -2472,6 +2485,21 @@ function showWxAsk(){
   var b=document.querySelector('#weatherCard .wx-get');
   if(b){ b.style.display=''; b.disabled=false; b.textContent='看看'+WX_CITY+'今天冷不冷'; b.onclick=fetchWeather; }
 }
+/* 带超时的取数：天气接口偶尔会卡住或断一下（实测过一次 ECONNRESET），
+   没有超时的话按钮会一直停在「正在查天气…」。超时自己先放弃，界面才能恢复。 */
+function wxFetchJson(url, ms){
+  if(typeof fetch!=='function') return Promise.reject(new Error('nofetch'));
+  var ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
+  var opts=ctrl?{signal:ctrl.signal}:{};
+  var timer=null;
+  var timeout=new Promise(function(_,rej){
+    timer=setTimeout(function(){ if(ctrl){ try{ ctrl.abort(); }catch(e){} } rej(new Error('timeout')); }, ms||12000);
+  });
+  return Promise.race([
+    fetch(url,opts).then(function(r){ return r.json(); }),
+    timeout
+  ]).then(function(v){ clearTimeout(timer); return v; },function(e){ clearTimeout(timer); throw e; });
+}
 function fetchWeather(){
   var btn=document.querySelector('#weatherCard .wx-get');
   if(btn){ btn.disabled=true; btn.textContent='正在查天气…'; }
@@ -2482,18 +2510,43 @@ function fetchWeather(){
   var aqiUrl='https://air-quality-api.open-meteo.com/v1/air-quality?latitude='+WX_LAT+'&longitude='+WX_LON+'&current=us_aqi,pm2_5';
   if(typeof fetch!=='function'){ showWxAsk(); return; }
   // 天气和空气质量分开取：一个失败不影响另一个
-  Promise.all([
-    fetch(base).then(function(r){ return r.json(); }),
-    fetch(aqiUrl).then(function(r){ return r.json(); }).catch(function(){ return null; })
-  ]).then(function(list){
-    var d=list[0], a=list[1];
-    if(!d||!d.daily) throw new Error('bad');
-    if(a&&a.current) d._aqi=a.current;
+  function once(){
+    return Promise.all([
+      wxFetchJson(base,12000),
+      wxFetchJson(aqiUrl,12000).catch(function(){ return null; })
+    ]).then(function(list){
+      var d=list[0], a=list[1];
+      if(!d||!d.daily) throw new Error('bad');
+      if(a&&a.current) d._aqi=a.current;
+      return d;
+    });
+  }
+  /* 失败自动重试一次：天气接口偶尔断一下（实测碰到过 ECONNRESET），
+     网络抖动时多试一次往往就好了，省得老人再点一遍。 */
+  once().catch(function(){ return new Promise(function(res){ setTimeout(res,800); }).then(once); })
+  .then(function(d){
     wxRender(d);
     try{ localStorage.setItem(wxCacheKey(),JSON.stringify({t:Date.now(),d:d})); }catch(e){}
+    /* 成功后按钮要复原：原来成功路径里没写，按钮会一直停在
+       「正在查天气…」并保持 disabled，用户以为还在转。 */
+    if(btn){ btn.disabled=false; btn.textContent='刷新天气'; }
   }).catch(function(){
+    /* 两次都失败：如果本机还存着上次的数据，就先用旧的顶上并注明时间，
+       总比整张卡空着强。没有旧数据才提示。 */
+    var usedOld=false;
+    try{
+      var raw=localStorage.getItem(wxCacheKey());
+      if(raw){
+        var c=JSON.parse(raw);
+        if(c&&c.d){ wxRender(c.d); usedOld=true; }
+      }
+    }catch(e){}
     var tip=$('wxTip');
-    if(tip) tip.textContent='这会儿查不到天气，可能是没联网。血压照常记就行。';
+    if(tip){
+      tip.textContent = usedOld
+        ? '这会儿连不上天气，上面是上次查到的结果。血压照常记就行。'
+        : '这会儿查不到天气，可能是没联网。血压照常记就行。';
+    }
     if(btn){ btn.disabled=false; btn.textContent='再试一次'; }
   });
 }
@@ -3197,6 +3250,9 @@ $('importBtn').onclick=function(){
 };
 
 /* 统一的恢复入口：校验结构后合并 */
+/* 导入合并时撤销过的墓碑：导入失败要能还原，见 applyBackup 的回滚分支 */
+var REVIVED_TOMBSTONES=[];
+var REVIVED_TOMBSTONES_TAKEN=[];
 function applyBackup(o){
   /* 损坏状态下导出的「原始数据」文件：rawText 里是损坏前的原文。
      先试着把它当普通备份解析一次——如果原文其实是合法的（结构不对而已），就有救。 */
@@ -3249,6 +3305,8 @@ function applyBackup(o){
   };
   var dupes=arr.filter(function(pp){ return !!findExist(pp); });
   var proceed=function(mode){
+    REVIVED_TOMBSTONES.length=0;        // 每次导入重新收集，失败时只还原这一次撤销的
+    REVIVED_TOMBSTONES_TAKEN.length=0;
     var total=0, merged=0, dropped=0;
     // 导入前用户正在看的人：合并完成后要保持不变，否则恢复完"自己跑到别人页面上去了"
     var curBefore=S.current;
@@ -3273,7 +3331,7 @@ function applyBackup(o){
            用户主动导入＝他要的就是这些记录，所以把它们从墓碑里撤销并收下。 */
         recs.forEach(function(r){
           if(!have[r.rid]){ tgt.records.push(r); have[r.rid]=true; merged++; }
-          if(DEAD_RIDS[r.rid]) unmarkDead(r.rid);
+          if(DEAD_RIDS[r.rid]){ REVIVED_TOMBSTONES.push(r.rid); unmarkDead(r.rid); }
         });
         tgt.records.sort(function(a,b){ return a.ts-b.ts; });
         // 腿肿按天合并：已存在的日子以本机为准，不会把本机改过的等级覆盖掉
@@ -3288,9 +3346,15 @@ function applyBackup(o){
            换手机后吃的药一勾都没了，老人会以为系统没记住。键是「天|顿」，以本机已有的为准。 */
         if(pp.taken && typeof pp.taken==='object'){
           if(!tgt.taken || typeof tgt.taken!=='object') tgt.taken={};
+          /* 和记录墓碑同一条原则：墓碑只防「另一个标签页把已删的东西写回来」，
+             用户自己点「从备份恢复」是主动动作，应当让位并把这些墓碑撤销——
+             否则「清空 → 恢复」之后记录回来了、吃的药一个勾都没有。 */
           Object.keys(pp.taken).forEach(function(k){
-            if(DEAD_TAKEN[k]) return;      // 本页刚清掉的打卡也不能被导入复活
             if(!(k in tgt.taken)) tgt.taken[k]=pp.taken[k];
+            if(isDeadTaken(tgt.pid||tgt.id, k)){
+              REVIVED_TOMBSTONES_TAKEN.push({pid:(tgt.pid||tgt.id), k:k});
+              unmarkDeadTaken(k, tgt.pid||tgt.id);
+            }
           });
         }
         if(pp.skipped && typeof pp.skipped==='object'){
@@ -3363,6 +3427,12 @@ function applyBackup(o){
       // 回滚到导入前，并把损坏标志还原成导入前的值：
       // 正常状态下导入失败不能把用户锁进「先恢复备份」的状态。
       S.people=peopleBackup; S.current=curBackup; LOAD_BROKEN=wasBroken;
+      /* 合并分支为了「用户主动导入优先」，会把同 rid 的墓碑撤销掉。
+         导入失败时这个副作用也要撤回来，否则那批记录永久失去墓碑保护。 */
+      REVIVED_TOMBSTONES.forEach(function(rid){ markDead(rid); });
+      REVIVED_TOMBSTONES.length=0;
+      REVIVED_TOMBSTONES_TAKEN.forEach(function(it){ markDeadTaken(it.k, it.pid); });
+      REVIVED_TOMBSTONES_TAKEN.length=0;
       // 归档要还原成 -corrupt：导入失败时那份原始数据必须还在原位
       try{
         if(wasBroken){
@@ -3377,6 +3447,9 @@ function applyBackup(o){
       toast('这次没能存进手机，恢复没有完成，请再试一次');
       return;
     }
+    // 导入成功：这次撤销的墓碑已经确定要保留撤销，清掉收集列表，避免残留到下一次
+    REVIVED_TOMBSTONES.length=0;
+    REVIVED_TOMBSTONES_TAKEN.length=0;
     closeModal(); renderAll();
     // 有记录被丢弃时必须说出来，不能让人以为全都恢复了
     if(dropped>0){
@@ -3458,15 +3531,16 @@ $('clearBtn').onclick=function(){
           if(x&&x.rid&&!DEAD_RIDS[x.rid]){ markDead(x.rid); newlyDead.push(x.rid); }
           else if(x&&x.rid){ markDead(x.rid); }
         });
+        var clearPid=(p.pid||p.id);
         Object.keys(takenBackup||{}).forEach(function(k){
-          if(!DEAD_TAKEN[k]){ markDeadTaken(k); newlyDeadTaken.push(k); }
+          if(!isDeadTaken(clearPid, k)){ markDeadTaken(k, clearPid); newlyDeadTaken.push(k); }
         });
         p.records=[]; p.taken={};
         if(!save()){
           p.records=recBackup; p.taken=takenBackup;
           // 只撤本次新登记的那批
           newlyDead.forEach(function(r){ unmarkDead(r); });
-          newlyDeadTaken.forEach(function(k){ unmarkDeadTaken(k); });
+          newlyDeadTaken.forEach(function(k){ unmarkDeadTaken(k, clearPid); });
           return;
         }
         closeModal(); renderAll(); toast('已清空');
