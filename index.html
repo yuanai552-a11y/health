@@ -9,8 +9,9 @@
 :root{
   /* 简约配色：中性灰白打底 + 顶栏深墨蓝灰 + 唯一的橙色点缀（只给"记录"这个动作） */
   --bg:#f7f6f3; --bg2:#fbfaf7; --card:#ffffff;
-  --ink:#23282d; --ink2:#41474d; --sub:#6d7278; --line:#e8e6e1;
-  --ok:#14855a; --warn:#b06f00; --bad:#d23b2f;
+  --ink:#23282d; --ink2:#41474d; --sub:#5f666c; --line:#e8e6e1;
+  /* --warn 与页面实际使用的琥珀色对齐（原来的 #b06f00 白字只有 4.1:1，当底色会出事） */
+  --ok:#14855a; --warn:#8a5707; --bad:#a8302a;
   --brand:#2b3238; --brand2:#1c2227; --brand3:#3d454d;
   --accent:#e8662f; --accent2:#cf4d17;
   --radius:14px; --radius-sm:11px;
@@ -36,7 +37,7 @@ header.top{
   position:relative;overflow:hidden;
   background:#fff;
   color:var(--ink);
-  padding:calc(18px + constant(safe-area-inset-top)) 20px 20px;padding:calc(18px + env(safe-area-inset-top)) 20px 20px;
+  padding:calc(18px + constant(safe-area-inset-top)) 33px 20px;padding:calc(18px + env(safe-area-inset-top)) 33px 20px;
   border-bottom:1px solid var(--line);
   border-radius:0 0 16px 16px;
   box-shadow:none;
@@ -63,7 +64,11 @@ header .sub{margin-top:5px;font-size:16px;opacity:.92;letter-spacing:.2px}
   font-variant-numeric:tabular-nums;
 }
 .hero-reading .val small{font-size:20px;font-weight:600;letter-spacing:0;opacity:.75;margin-left:4px}
-.hero-reading .unit{font-size:16px;opacity:.7;font-weight:600;letter-spacing:.5px;margin-bottom:8px}
+.hero-reading .unit{font-size:18px;opacity:.85;font-weight:600;letter-spacing:.5px;margin-bottom:8px}
+/* 顶部「正在看谁的记录」：两位老人共用一部手机时，减少记串的可能 */
+#whoLine{display:inline-block;margin-top:6px;padding:3px 11px;border-radius:999px;
+  background:#e4f0fb;color:#1f5d8c;font-size:16px;font-weight:800;letter-spacing:.2px;opacity:1}
+#whoLine:empty{display:none}
 .hero-reading .tag{
   display:inline-flex;align-items:center;gap:6px;
   padding:7px 14px;border-radius:999px;font-size:16px;font-weight:800;
@@ -72,8 +77,8 @@ header .sub{margin-top:5px;font-size:16px;opacity:.92;letter-spacing:.2px}
 .hero-reading .tag.ok{background:#d9f5e8;color:#0a6b48}
 .hero-reading .tag.warn{background:#fdefd6;color:#8a5707}
 .hero-reading .tag.bad{background:#fde2de;color:#a8302a}
-.hero-meta{position:relative;margin-top:12px;font-size:16px;opacity:.9;letter-spacing:.2px}
-.hero-empty{position:relative;margin-top:18px;font-size:18px;opacity:.9;line-height:1.6}
+.hero-meta{position:relative;margin-top:12px;font-size:18px;color:var(--sub);letter-spacing:.2px}
+.hero-empty{position:relative;margin-top:18px;font-size:18px;line-height:1.6}
 .card{
   background:var(--card);border-radius:var(--radius);padding:20px 18px;margin:14px 0;
   box-shadow:var(--shadow);border:1px solid #ece9e3;
@@ -83,19 +88,26 @@ header .sub{margin-top:5px;font-size:16px;opacity:.92;letter-spacing:.2px}
   display:flex;align-items:center;gap:9px;color:var(--ink);
 }
 /* 标题前的小竖条，替代emoji，显得克制 */
+/* 用同族暖灰而不是橙色：橙色只留给「记录」这个动作，8 张卡 8 根橙条会把它稀释掉。
+   标题本身的 800 字重已经够显眼，这里只做分隔。 */
 .card h2::before{
-  content:"";width:4px;height:18px;border-radius:2px;
-  background:var(--ink2);flex:0 0 auto;
+  content:"";width:3px;height:20px;border-radius:1.5px;
+  background:#a9b2b9;flex:0 0 auto;
 }
 .hint{color:var(--sub);font-size:18px;line-height:1.6}
+/* 提示行里的小按钮：高度要到 48px 才好点，视觉上不能抢主按钮 */
+.hint-edit{display:inline-flex;align-items:center;min-height:44px;padding:6px 16px;margin-left:8px;
+  font-size:17px;font-weight:700;color:#2f6f8f;background:#eef6fa;
+  border:1.5px solid #cfe3ee;border-radius:12px}
+.hint-edit:active{background:#dcecf5}
 .row{display:flex;gap:10px;margin-top:12px}
 .row>*{flex:1}
 .row:first-child{margin-top:0}
 label.field{display:block;font-size:16px;color:var(--sub);margin-bottom:7px;font-weight:600;letter-spacing:.2px}
 input,select{
   width:100%;font-size:32px;font-weight:700;padding:15px 12px;border-radius:var(--radius-sm);
-  border:1.5px solid var(--line);background:#f8fbfa;color:var(--ink);text-align:center;
-  font-family:inherit;font-variant-numeric:tabular-nums;
+  border:1.5px solid #a9b2b9;background:#fff;color:var(--ink);text-align:center;
+  font-family:inherit;font-variant-numeric:tabular-nums;caret-color:#2f6f8f;
   transition:border-color .15s, background .15s, box-shadow .15s;
   -webkit-appearance:none;appearance:none;
 }
@@ -103,14 +115,19 @@ input,select{
 #sys,#dia,#pulse{font-size:32px;font-weight:700}
 input[type=text]{font-size:23px;font-weight:600}
 input[type=time],select{font-size:19px;font-weight:600;padding:13px}
-input::placeholder{color:#8497a4;font-weight:600}
+input::placeholder{color:#5f6d78;font-weight:600}
 input:focus,select:focus{
   outline:none;border-color:var(--ink2);background:#fff;
+  border-width:2px;
   box-shadow:0 0 0 4px rgba(20,24,28,.07);
 }
 select{background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f7573' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 12px center;background-size:18px;padding-right:36px}
-button{font-family:inherit;cursor:pointer;border:none;border-radius:18px;font-weight:700}
+/* 圆角收敛成三档：卡片/大按钮 14、小控件 10-12、胶囊 999。
+   原来的 18px 只出现在主按钮上，与相邻的 14/12/11 明显不齐，看起来像没对齐。 */
+button{font-family:inherit;cursor:pointer;border:none;border-radius:14px;font-weight:700}
+/* 按钮 emoji 与文字统一收 1px 间距：emoji 自带尾部空白，各按钮会差半格 */
+.btn-ghost,.btn-main,.bigbtn,.wx-get,.btn-ghost.danger{word-spacing:-1px}
 .btn-main{
   width:100%;margin-top:18px;padding:19px;font-size:24px;color:#fff;letter-spacing:.5px;
   background:#2f6f8f;box-shadow:none;
@@ -120,14 +137,15 @@ button{font-family:inherit;cursor:pointer;border:none;border-radius:18px;font-we
 .btn-ghost{
   background:#fff;color:var(--ink);padding:15px 16px;font-size:18px;
   width:100%;margin-top:10px;text-align:center;font-weight:700;
-  border:1px solid #d8dcdf;transition:background .15s;
+  border:1.5px solid #a9b2b9;transition:background .15s;
 }
 .btn-ghost:active{background:#eff1f2}
 .btn-ghost.danger{background:#fdf0ee;color:var(--bad);border-color:#f6dcd8}
-.pill{display:inline-block;padding:5px 13px;border-radius:999px;font-size:15px;font-weight:800;white-space:nowrap;letter-spacing:.2px}
-.pill.ok{background:#dcf6e8;color:#0d6b47}
-.pill.warn{background:#fdefd2;color:#9a5f00}
-.pill.bad{background:#fde2dd;color:#b02e23}
+.pill{display:inline-block;padding:8px 14px;border-radius:999px;font-size:17px;font-weight:800;white-space:nowrap;letter-spacing:.2px;line-height:1.3}
+/* 与顶栏 .tag 用同一组色值：两套差 5% 的颜色在老人眼里就是「印不准」 */
+.pill.ok{background:#d9f5e8;color:#0a6b48}
+.pill.warn{background:#fdefd6;color:#8a5707}
+.pill.bad{background:#fde2de;color:#a8302a}
 .pill.none{background:#edf2f1;color:var(--sub)}
 .reading{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
 .reading .num{font-size:52px;font-weight:800;letter-spacing:-1.5px;line-height:1.1;font-variant-numeric:tabular-nums}
@@ -141,47 +159,39 @@ button{font-family:inherit;cursor:pointer;border:none;border-radius:18px;font-we
 .meal .name{font-weight:800;min-width:48px;font-size:19px}
 .meal .time{flex:1}
 .chk{
-  width:58px;height:58px;border-radius:50%;border:2px solid var(--line);
-  background:#f8fbfa;display:flex;align-items:center;justify-content:center;
-  font-size:26px;color:#c2d0ce;flex:0 0 auto;transition:all .18s;
+  width:56px;height:56px;border-radius:50%;border:2px solid #b6bcc1;
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:26px;color:#6a7076;flex:0 0 auto;transition:all .18s;
 }
+/* 按下反馈：老人按下去要能确认「点到没有」，光看 0.18s 的底色渐变不够 */
+.chk:active{transform:scale(.92);border-color:var(--ok)}
+.chk.done:active{background:#0f6b48;transform:scale(.92)}
 .chk.done{
-  background:var(--ok);border-color:transparent;color:#fff;box-shadow:none;
+  background:var(--ok);border-color:transparent;color:#fff;
+  box-shadow:0 4px 12px -6px rgba(20,133,90,.5);
 }
 /* 图表：淡渐变底，替代纯白 */
 .chart-shell{
   background:#fff;border-radius:12px;padding:8px 4px 4px;margin:2px 0 4px;
 }
 svg.chart{width:100%;height:auto;display:block;overflow:visible}
-.legend{display:flex;gap:10px 16px;flex-wrap:wrap;font-size:16px;color:var(--sub);margin-top:12px;line-height:1.7}
-.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:0}
+.legend{display:flex;gap:10px 16px;flex-wrap:wrap;font-size:16px;color:var(--sub);margin-top:12px;line-height:1.9}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:7px;vertical-align:-2px;
+  box-shadow:inset 0 0 0 1px rgba(20,24,28,.10)}
+/* 渐变图例块要宽一点才看得出是五个等级 */
+.legend i[style*="linear-gradient"]{width:46px}
 .tabs{display:flex;gap:8px;margin:0 0 16px;background:#eff1f2;padding:4px;border-radius:12px}
 .tabs button{
-  flex:1;padding:11px;font-size:17px;background:transparent;color:var(--sub);
+  flex:1;padding:13px 4px;font-size:17px;background:transparent;color:#5f666c;
   border-radius:12px;transition:all .18s;font-weight:700;
+  white-space:nowrap;   /* 4 个按钮等宽，折行会变成高低不齐 */
 }
-.tabs button.on{
-  background:#fff;color:var(--brand2);
-  box-shadow:0 2px 8px -2px rgba(16,50,45,.18);
-}
-/* 底部操作条：去掉整条白底，改成悬浮胶囊 */
-.fab{
-  position:fixed;left:0;right:0;bottom:0;z-index:50;
-  padding:12px 18px calc(14px + env(safe-area-inset-bottom));
-  background:linear-gradient(180deg,rgba(244,245,246,0) 0%,rgba(244,245,246,.92) 38%,var(--bg) 100%);
-  pointer-events:none;
-}
-.fab button{
-  pointer-events:auto;width:100%;max-width:560px;margin:0 auto;display:block;
-  padding:16px;border-radius:14px;font-size:21px;color:#fff;letter-spacing:.6px;
-  background:var(--accent);box-shadow:0 8px 20px -10px rgba(201,74,24,.6);
-  transition:transform .1s, background .15s;
-}
-/* 页面底部留够空间：保证最下面的按钮滚到底时不会被这条悬浮条盖住 */
-body{padding-bottom:calc(190px + constant(safe-area-inset-bottom));padding-bottom:calc(190px + env(safe-area-inset-bottom))}
-/* 正在填血压时把悬浮条收起来——那时不需要它，还会挡住保存按钮 */
-body.editing .fab{display:none}
-.fab button:active{transform:scale(.99);background:var(--accent2)}
+/* 选中态统一成深墨实底：白块+灰底只有 13% 对比，老人看不出现在选的是哪个；
+   这跟腿肿那组分段按钮的选中态也终于一致了。 */
+.tabs button.on{background:var(--brand2);color:#fff}
+/* 底部操作条已改由记录页内的 .rec-actions 承担（贴内容吸底），
+   原来那条全屏固定的 .fab 已无对应元素，连同它撑出来的 190px 底部留白一起删掉。
+   留白改由 .rec-actions 自己占位，见下方 .page 与 body 的 padding-bottom。 */
 /* ---------- 底部选项卡 ----------
    4 个格子等高，选中变深色。放在最下层，z-index 低于弹窗与 toast。
    页面按 data-tab 切换显示：只有当前页的 .page 可见，其余 display:none。 */
@@ -194,10 +204,12 @@ body.editing .fab{display:none}
 }
 .tabbar button{
   background:none;border:none;border-radius:0;padding:9px 2px 8px;display:flex;flex-direction:column;
-  align-items:center;gap:3px;color:#949a9f;font-size:15px;font-weight:700;letter-spacing:.2px;
+  /* #5d6369 对白底约 5.3:1；原来的 #949a9f 只有 2.8:1，老花眼基本看不清（导航文字不是装饰） */
+  align-items:center;gap:3px;color:#5d6369;font-size:16px;font-weight:700;letter-spacing:.2px;
   transition:color .15s;
 }
-.tabbar button .tb-ico{font-size:22px;line-height:1;filter:grayscale(1);opacity:.62;transition:opacity .15s,filter .15s}
+/* 不上灰度滤镜：灰度会把 emoji 图标压成一团，分不出是哪个页 */
+.tabbar button .tb-ico{font-size:22px;line-height:1;opacity:.85;transition:opacity .15s}
 .tabbar button.on{color:var(--ink)}
 .tabbar button.on .tb-ico{filter:none;opacity:1}
 .tabbar button:active{background:#f4f5f6}
@@ -205,14 +217,17 @@ body.editing .fab{display:none}
 .page{display:none}
 .page.on{display:block}
 /* 底栏占了位置，页面底部要留够，否则最后一张卡被盖住 */
-body{padding-bottom:calc(96px + constant(safe-area-inset-bottom));padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+body{padding-bottom:calc(104px + constant(safe-area-inset-bottom));padding-bottom:calc(104px + env(safe-area-inset-bottom))}
 /* 记录页里的「马上记一次」条：原来悬浮，现在贴着内容走 */
-.rec-actions{position:sticky;bottom:calc(78px + env(safe-area-inset-bottom));z-index:40;margin:16px 0 4px}
+.rec-actions{position:sticky;bottom:calc(78px + env(safe-area-inset-bottom));z-index:40;margin:16px 0 14px}
+/* 白字压 #e8662f 只有 3.30:1，达不到 4.5；换成深墨色文字约 4.6:1，
+   橙色饱和度不变，观感仍是「最醒目的那颗按钮」。 */
 .rec-actions button{
-  width:100%;padding:17px;border-radius:14px;font-size:21px;color:#fff;letter-spacing:.6px;
+  width:100%;padding:17px;border-radius:14px;font-size:21px;color:#2b1710;letter-spacing:.6px;font-weight:800;
   background:var(--accent);box-shadow:0 8px 20px -10px rgba(201,74,24,.6);
 }
-.rec-actions button:active{background:var(--accent2)}
+/* 按下时底色变深，深墨字会糊住：按下态换成白字（白字压 #cf4d17 约 4.4:1） */
+.rec-actions button:active{background:var(--accent2);color:#fff}
 /* 记录页顶部的紧急直达：不显眼，但一直在 */
 .sos-link{
   display:block;width:100%;text-align:center;margin:0 0 10px;padding:9px;
@@ -220,6 +235,20 @@ body{padding-bottom:calc(96px + constant(safe-area-inset-bottom));padding-bottom
   font-size:16px;font-weight:700;color:#a8302a;
 }
 .sos-link:active{background:#fbe9e5}
+/* 可折叠卡片：腿肿、吃药默认收起，让「先填血压」这件事排在前面。
+   标题旁标一行状态，收起时也知道今天记了没有。 */
+.fold-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.fold-head h2{margin-bottom:0}
+.fold-state{font-size:17px;font-weight:600;color:var(--sub);margin-left:8px}
+.fold-btn{flex:0 0 auto;min-height:48px;padding:10px 20px;font-size:17px;font-weight:700;
+  color:#2f6f8f;background:#eef6fa;border:1.5px solid #cfe3ee;border-radius:12px}
+.fold-btn:active{background:#dcecf5}
+.fold-body{margin-top:14px}
+/* 键盘/遥控/开关设备的焦点提示：全局 outline:none 会让「现在选中哪」完全看不见。
+   只在键盘操作时出现，触摸点按不会亮。 */
+button:focus-visible,a:focus-visible,select:focus-visible,[tabindex]:focus-visible{
+  outline:3px solid #2f6f8f;outline-offset:2px;
+}
 @media print{.tabbar,.rec-actions,.sos-link{display:none!important}}
 .toast{
   position:fixed;left:50%;bottom:140px;transform:translateX(-50%) translateY(16px) scale(.96);
@@ -234,7 +263,8 @@ body{padding-bottom:calc(96px + constant(safe-area-inset-bottom));padding-bottom
   border-radius:16px;padding:14px 16px;font-size:17px;line-height:1.6;margin-top:12px;
 }
 .warnbar.danger{background:#fdf1ef;border-color:#f5cdc7;color:#9b2b22}
-.warnbar.caution{background:#fff8ec;border-color:#f0dcb8;color:#7d5307}
+/* caution 的边框要明显深于本体：三档原来只差 1-2% 明度，阳光下分不出 */
+.warnbar.caution{background:#fff8ec;border-color:#e8c27a;color:#7d5307}
 .footnote{text-align:center;color:var(--sub);font-size:16px;margin:26px 0 14px;line-height:1.8;letter-spacing:.2px}
 .modal{
   position:fixed;inset:0;background:rgba(9,32,29,.5);display:none;z-index:200;
@@ -259,14 +289,14 @@ body.modal-open{overflow:hidden}
   border-radius:0;
 }
 .modal .head button{
-  background:#f2f3f4;color:var(--ink2);font-size:20px;line-height:1;
-  width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:#f2f3f4;color:var(--ink2);font-size:24px;line-height:1;
+  width:48px;height:48px;min-width:48px;border-radius:24px;display:flex;align-items:center;justify-content:center;
 }
 .modal .body{padding:18px 20px}
 .bigbtn{
   width:100%;padding:17px;font-size:19px;background:#fff;color:var(--ink);
   margin-top:10px;text-align:center;font-weight:700;border-radius:12px;
-  border:1px solid #d8dcdf;transition:background .15s;
+  border:1.5px solid #a9b2b9;transition:background .15s;
 }
 .bigbtn:active{background:#eff1f2}
 .bigbtn.primary{
@@ -303,18 +333,19 @@ body.modal-open{overflow:hidden}
 .card > .hint, #adviceBox, .footnote{font-size:19px}
 .list .t{font-size:18px !important}
 .legend{font-size:17px !important}
-.pill{font-size:17px !important}
-:root{--sub:#6a7076}
+:root{--sub:#5f666c}
 
 /* 最近记录：整行不再可点，右侧是独立按钮，触控区域够大 */
 .list li{gap:8px;padding:12px 0}
-.rec-main{display:flex;flex-direction:column;flex:1;min-width:0}
+/* flex:1 1 auto + min-width:0：按钮和标签的宽度固定后，剩下的空间全给读数，
+   否则 20px 字号下「11月13日 21:01 晨起」会被挤成两行，一行记录变得很高 */
+.rec-main{display:flex;flex-direction:column;flex:1 1 auto;min-width:0}
 .rec-main .v{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
-.rec-main .t{color:var(--sub);font-size:17px !important;margin-top:2px;line-height:1.4}
+.rec-main .t{color:var(--sub);margin-top:2px;line-height:1.45;white-space:nowrap}
 .rec-btn{
-  flex:0 0 auto;min-width:56px;min-height:44px;padding:10px 12px;
-  font-size:16px;font-weight:700;border-radius:10px;
-  background:#fff;color:var(--ink);border:1px solid #d8dcdf;
+  flex:0 0 auto;min-width:56px;min-height:48px;padding:10px 10px;
+  font-size:17px;font-weight:700;border-radius:10px;
+  background:#fff;color:var(--ink);border:1.5px solid #a9b2b9;
 }
 .rec-btn:active{background:#eff1f2}
 .rec-btn.del{background:#fdf0ee;color:#c33b31;border-color:#f6dcd8}
@@ -329,20 +360,10 @@ body.modal-open{overflow:hidden}
 .tag.lowsys{background:#e4f0fb;color:#1f5d8c}
 
 /* ===== 2026-11-15 新增：问一问医学 AI（小安） ===== */
-.vb-float{display:none;align-items:center;gap:8px;padding:11px 16px;border-radius:999px;
-  background:#fff;color:var(--ink);border:1.5px solid #d8dcdf;
-  font-size:17px;font-weight:800;letter-spacing:.2px;transition:transform .1s,background .15s}
-.vb-float:active{transform:scale(.95);background:#eff1f2}
-.vb-float .vb-dot{width:9px;height:9px;border-radius:50%;background:#9aa3aa;flex:0 0 auto}
-/* 手机上：小安做成页面内大按钮，同时底部有个圆形悬浮键，随时随地能问 */
-@media (max-width:700px){.vb-float{display:inline-flex}}
-.vb-fab{position:fixed;right:16px;bottom:calc(104px + env(safe-area-inset-bottom));z-index:55;
-  width:68px;height:68px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  background:#2f6f8f;color:#fff;
-  box-shadow:0 8px 18px -8px rgba(47,111,143,.65);transition:transform .1s}
-.vb-fab:active{transform:scale(.94)}
-.vb-fab .vb-fab-t{font-size:15px;font-weight:800;line-height:1.1;white-space:nowrap}
-.vb-fab .vb-fab-s{font-size:11px;opacity:.85;line-height:1.2}
+/* 顶栏那个「问小安」按钮已删除：底部「小安」选项卡就是同一个入口，
+   同一件事两个按钮只会让老人犹豫点哪个。 */
+/* 手机上：「问小安」做成页内按钮；底部那个圆形悬浮键已删除（它挡住腿肿选项），
+   入口统一走底部「小安」选项卡，这里不再保留 .vb-fab 的样式。 */
 .vb-intro{background:#f4f5f6;border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:19px;line-height:1.6;color:var(--ink2)}
 .vb-row{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
 .vb-quick{flex:1 1 46%;min-height:52px;padding:12px;border-radius:12px;background:#fff;border:1.5px solid #d8dcdf;
@@ -361,19 +382,23 @@ body.modal-open{overflow:hidden}
   background:#fff;border:1.5px solid #cfd4d8;box-shadow:none;transition:transform .1s,background .15s}
 .vb-mic:active{transform:scale(.99)}
 .vb-mic.on{background:var(--bad);box-shadow:0 0 0 4px rgba(192,51,43,.16)}
-.vb-mic[disabled]{opacity:.55;box-shadow:none}
-.vb-status{font-size:19px;color:#7d5307;text-align:center;margin-top:10px;line-height:1.5}
+.vb-mic[disabled]{opacity:.45;box-shadow:none}
+/* 进度类提示用中性灰：琥珀色在别处都表示「出问题了」，老人会误读成故障 */
+.vb-status{font-size:19px;color:var(--sub);text-align:center;margin-top:10px;line-height:1.5}
 .vb-input{width:100%;font-size:19px;font-weight:600;padding:13px 12px;border-radius:14px;border:1.5px solid var(--sub);
   background:#fff;color:var(--ink);font-family:inherit;text-align:left}
 .vb-input:focus{outline:none;border-color:var(--ink2);box-shadow:0 0 0 4px rgba(20,24,28,.08)}
 .vb-send{width:100%;margin-top:10px;padding:16px;font-size:20px;color:#fff;border-radius:12px;
   background:#2f6f8f}
 .vb-send[disabled]{opacity:.5}
+/* 设置页的文字输入（姓名/年龄/电话）：全局 input 是 32px 居中的数字框样式，
+   直接套用会把「zhangdefu」这种拼音名字挤断、也不像文字框。数字框仍保持 32px 居中。 */
+.txt-in{font-size:21px !important;font-weight:600 !important;text-align:left !important;background:#fff !important}
 .vb-keyrow{display:flex;gap:8px;margin-top:8px}
 .vb-keyrow .vb-mic{flex:1;min-width:0}
 .vb-keyrow .vb-input{flex:1;min-width:0;font-size:17px}
 .vb-note{font-size:18px;color:var(--sub);line-height:1.6;margin-top:10px}
-@media print{.vb-fab,.vb-log,.vb-mic,.vb-keyrow{display:none!important}}
+@media print{.vb-log,.vb-mic,.vb-keyrow{display:none!important}}
 
 /* ===== 问一问对话：参照 DeepSeek 的对话版式 ===== */
 /* 桌面/横屏：弹窗变成居中的对话卡片，而不是贴底的抽屉 */
@@ -397,8 +422,9 @@ body.modal-open{overflow:hidden}
 /* 底部输入条：单行圆角输入框 + 右侧发送按钮 */
 .vb-composer{position:sticky;bottom:0;margin-top:10px;padding-top:8px;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,#fff 18%)}
 /* 输入条：一个圆角框，左边语音、中间输入、右边发送（圆形箭头） */
-.vb-sendbar{display:flex;gap:8px;align-items:center;border:1.5px solid #d8dcdf;border-radius:26px;padding:6px 8px;background:#fff}
-.vb-sendbar:focus-within{border-color:#b9c0c6}
+.vb-sendbar{display:flex;gap:8px;align-items:center;border:1.5px solid #a9b2b9;border-radius:26px;padding:6px 8px;background:#fff}
+/* 聚焦时边框要变深，以前反而变浅，等于焦点提示反向 */
+.vb-sendbar:focus-within{border-color:#2b3238;border-width:2px}
 .vb-sendbar .vb-input{flex:1;min-width:0;border:none;background:transparent;border-radius:0;padding:10px 4px;font-size:19px;box-shadow:none}
 .vb-sendbar .vb-input:focus{box-shadow:none}
 .vb-sendbar .vb-mic{width:44px;height:44px;flex:0 0 auto;min-width:0;margin:0;padding:0;border-radius:50%;
@@ -409,23 +435,23 @@ body.modal-open{overflow:hidden}
 /* 底部小字：一行免责说明 + 清空 */
 /* 天气卡片：一行读数 + 三天预报 + 穿衣建议 */
 .wx-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.wx-city{font-size:15px;color:var(--sub)}
+.wx-city{font-size:19px;color:var(--ink2)}
 .wx-now{display:flex;align-items:baseline;gap:10px;margin:6px 0 12px}
 .wx-temp{font-size:44px;font-weight:800;letter-spacing:-1.5px;font-variant-numeric:tabular-nums;line-height:1}
 .wx-desc{font-size:18px;color:var(--ink2);font-weight:600}
 .wx-days{display:flex;gap:8px}
 .wx-day{flex:1;text-align:center;background:#f2f8fb;border:1px solid #dcebf2;border-radius:10px;padding:8px 4px}
-.wx-day .d{font-size:14px;color:var(--sub)}
+.wx-day .d{font-size:18px;color:var(--sub)}
 .wx-day .t{font-size:18px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
-.wx-day .w{font-size:14px;color:var(--sub);margin-top:2px}
-.wx-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:15px;color:var(--ink2);margin:0 0 12px}
+.wx-day .w{font-size:17px;color:var(--sub);margin-top:2px}
+.wx-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:17px;color:var(--ink2);margin:0 0 12px}
 .wx-meta span{white-space:nowrap}
 .wx-hourly{display:flex;gap:6px;overflow-x:auto;margin-top:10px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .wx-hourly::-webkit-scrollbar{display:none}
 .wx-h{flex:0 0 auto;text-align:center;background:#fff;border:1px solid #dcebf2;border-radius:10px;padding:7px 9px;min-width:60px}
-.wx-h .t2{font-size:13px;color:var(--sub)}
+.wx-h .t2{font-size:16px;color:var(--sub)}
 .wx-h .v{font-size:17px;font-weight:800;margin-top:2px}
-.wx-h .p{font-size:12px;color:#2f6f8f;margin-top:1px}
+.wx-h .p{font-size:15px;color:#2f6f8f;margin-top:1px}
 .wx-aqi{font-size:16px;line-height:1.6;margin-top:10px;padding:10px 12px;border-radius:10px;display:none}
 .wx-aqi.show{display:block}
 .wx-aqi.good{background:#eaf7ef;color:#14603f;border:1px solid #cfe9d9}
@@ -439,22 +465,22 @@ body.modal-open{overflow:hidden}
 .sw-opts{display:flex;flex-direction:column;gap:10px}
 .sw-opt{
   width:100%;text-align:left;display:flex;align-items:center;gap:12px;
-  padding:15px 16px;border-radius:12px;border:1.5px solid var(--line);background:#fff;
+  padding:15px 16px;border-radius:12px;border:1.5px solid #a9b2b9;background:#fff;
   font-size:19px;font-weight:700;color:var(--ink);transition:border-color .15s,background .15s;
 }
 .sw-opt:active{background:#f2f4f4}
-.sw-opt .sw-dot{width:22px;height:22px;border-radius:50%;border:2px solid #cfd6d9;flex:0 0 auto}
+.sw-opt .sw-dot{width:22px;height:22px;border-radius:50%;border:2px solid #9aa3aa;flex:0 0 auto}
 .sw-opt .sw-txt{flex:1;line-height:1.4}
-.sw-opt .sw-sub{display:block;font-size:15px;font-weight:600;color:var(--sub);margin-top:3px}
-.sw-opt.on{border-color:var(--ink2);background:#f4f7f8}
-.sw-opt.on .sw-dot{border-color:var(--ink2);background:var(--ink2);box-shadow:inset 0 0 0 3px #fff}
+.sw-opt .sw-sub{display:block;font-size:17px;font-weight:600;color:var(--sub);margin-top:3px}
+.sw-opt.on{border-color:#2f6f8f;background:#f3f8fb}
+.sw-opt.on .sw-dot{border-color:#2f6f8f;background:#2f6f8f;box-shadow:inset 0 0 0 3px #fff}
 .sw-rows{margin-top:16px}
 .sw-row{display:flex;align-items:center;gap:12px;margin-top:10px}
 .sw-lbl{font-size:17px;font-weight:700;color:var(--sub);flex:0 0 auto;min-width:66px}
 .sw-seg{display:flex;gap:8px;flex:1}
 .sw-seg button{
   flex:1;padding:12px 8px;font-size:17px;font-weight:700;color:var(--ink);
-  background:#fff;border:1.5px solid var(--line);border-radius:11px;
+  background:#fff;border:1.5px solid #a9b2b9;border-radius:11px;
 }
 .sw-seg button.on{background:var(--ink2);border-color:var(--ink2);color:#fff}
 .sw-warn{font-size:17px;line-height:1.65;margin-top:14px;padding:12px 14px;border-radius:11px;
@@ -471,10 +497,10 @@ body.modal-open{overflow:hidden}
 /* 每日热点：标题列表，来源和时间用小字 */
 .hot-tabs{display:flex;gap:8px;margin:0 0 14px;background:#eff1f2;padding:4px;border-radius:12px}
 .hot-tabs button{
-  flex:1;padding:10px 4px;font-size:16px;font-weight:700;color:var(--sub);
+  flex:1;padding:13px 4px;font-size:17px;font-weight:700;color:#5d6369;
   background:none;border-radius:9px;transition:background .15s,color .15s;
 }
-.hot-tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(20,24,28,.08)}
+.hot-tabs button.on{background:var(--brand2);color:#fff}
 .hot-list{display:flex;flex-direction:column}
 .hot-item{
   display:block;padding:13px 0;border-bottom:1px solid var(--line);text-decoration:none;color:inherit;
@@ -482,10 +508,17 @@ body.modal-open{overflow:hidden}
 .hot-item:last-child{border-bottom:none}
 .hot-item:active{background:#f7f8f8}
 .hot-t{font-size:18px;font-weight:700;line-height:1.5;color:var(--ink)}
-.hot-m{font-size:14px;color:#949a9f;margin-top:4px;letter-spacing:.2px}
-.hot-foot{font-size:15px;color:#949a9f;margin-top:12px;line-height:1.6}
+.hot-m{font-size:18px;color:var(--sub);margin-top:4px;letter-spacing:.2px}
+.hot-foot{font-size:17px;color:var(--sub);margin-top:12px;line-height:1.6}
 .hot-empty{font-size:17px;color:var(--sub);line-height:1.7;padding:10px 0}
-.hot-note{font-size:14px;color:#a0a6ab;margin-top:12px;line-height:1.6}
+.hot-note{font-size:17px;color:var(--sub);margin-top:12px;line-height:1.6}
+/* 腿肿趋势：范围按钮跟血压图保持同一套外观 */
+.sw-tabs{display:flex;gap:8px;margin:0 0 16px;background:#eff1f2;padding:4px;border-radius:12px}
+.sw-tabs button{
+  flex:1;padding:13px 4px;font-size:17px;font-weight:700;color:#5d6369;
+  background:none;border-radius:9px;transition:background .15s,color .15s;
+}
+.sw-tabs button.on{background:var(--brand2);color:#fff}
 /* 吃药打卡：一行一顿药，右边一个大勾 */
 .med-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .med-head h2{margin-bottom:0}
@@ -498,14 +531,16 @@ body.modal-open{overflow:hidden}
 .med-name{flex:1;min-width:0}
 .med-name .n{font-size:19px;font-weight:800}
 .med-name .t{font-size:15px;color:var(--sub);margin-top:2px}
-.med-chk{width:54px;height:54px;flex:0 0 auto;border-radius:50%;border:2px solid #d8dcdf;background:#fff;
-  font-size:24px;color:#c2c8cd;display:flex;align-items:center;justify-content:center}
+.med-chk{width:56px;height:56px;flex:0 0 auto;border-radius:50%;border:2px solid #b6bcc1;background:#fff;
+  font-size:24px;color:#6a7076;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.med-chk:active{transform:scale(.92);border-color:var(--ok)}
+.med-chk.done:active{background:#0f6b48;transform:scale(.92)}
 .med-chk.done{background:var(--ok);border-color:transparent;color:#fff;box-shadow:0 4px 12px -6px rgba(20,133,90,.5)}
 .med-stat{margin-top:12px;font-size:16px;color:var(--ink2);background:#f7f9f8;border:1px solid var(--line);
   border-radius:10px;padding:10px 12px;line-height:1.6}
 .med-stat.warn{background:#fdf7ea;border-color:#f2e2c4;color:#7a5b12}
 .med-warn{font-size:15px;color:#a3301f;margin-top:8px}
-.vb-hint{font-size:16px;color:#8a9096;margin:0 0 10px;line-height:1.5}
+.vb-hint{font-size:18px;color:#5f646a;margin:0 0 10px;line-height:1.5}
 /* 快捷提问：输入框上方的小胶囊，像通用 AI 的推荐问题 */
 .vb-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .vb-chips::-webkit-scrollbar{display:none}
@@ -514,15 +549,16 @@ body.modal-open{overflow:hidden}
 .vb-chip:active{background:#eff1f2}
 .vb-log:has(.vb-msg)~.vb-composer .vb-chips{display:none}
 @media print{.vb-chips{display:none!important}}
-.vb-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;font-size:15px;color:#8a9096}
-.vb-foot-btn{background:none;border:none;padding:6px 2px;font-size:15px;color:#8a9096;font-weight:600}
+.vb-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;font-size:17px;color:#5f646a}
+/* 点击区域从 27px 抬到 40px 以上：老人手指粗，靠边的小字最容易点空 */
+.vb-foot-btn{background:none;border:none;padding:12px 8px;font-size:17px;color:#5f646a;font-weight:600}
 .vb-foot-btn:active{color:#1b1e22}
 /* 空状态欢迎语：居中，像通用 AI 的首页 */
 .vb-hello{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:26px 10px 10px;min-height:180px}
 .vb-hello-mark{width:56px;height:56px;border-radius:50%;background:#f0f1f2;border:1px solid var(--line);
   display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:var(--ink);margin-bottom:16px}
 .vb-hello-t{font-size:23px;font-weight:800;color:var(--ink)}
-.vb-hello-s{font-size:17px;color:#8a9096;margin-top:8px;line-height:1.6}
+.vb-hello-s{font-size:19px;color:#5f646a;margin-top:8px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -531,12 +567,12 @@ body.modal-open{overflow:hidden}
   <div class="toprow">
     <div>
       <h1 id="greet">我的健康小本子</h1>
+      <div class="sub" id="whoLine"></div>
       <div class="sub" id="todayLine">今天</div>
     </div>
     <button class="avatar" id="avatarBtn" type="button" aria-label="切换记录的人">爸</button>
   </div>
   <div id="heroZone"></div>
-  <button class="vb-float" id="vbHero" type="button"><span class="vb-dot"></span>问小安</button>
 </header>
 
 <main class="wrap">
@@ -546,17 +582,11 @@ body.modal-open{overflow:hidden}
 
   <div class="page on" id="page-rec">
   <button class="sos-link" id="sosLink" type="button">🆘 紧急情况怎么办（点这里）</button>
-
-  <section class="card no-print" id="weatherCard" style="display:none">
-    <div class="wx-top"><h2>郑州天气</h2><span class="wx-city" id="wxUpdated"></span></div>
-    <div class="wx-now"><span class="wx-temp" id="wxTemp">--</span><span class="wx-desc" id="wxDesc"></span></div>
-    <div class="wx-meta" id="wxMeta"></div>
-    <div class="wx-days" id="wxDays"></div>
-    <div class="wx-hourly" id="wxHourly"></div>
-    <div class="wx-tip" id="wxTip"></div>
-    <div class="wx-aqi" id="wxAqi"></div>
-    <button class="wx-get" id="wxGet" type="button">看看郑州今天冷不冷</button>
-  </section>
+  <!-- 备份提醒：原来只在「更多」页，爸妈不切过去就永远看不到，等于没有提醒 -->
+  <div class="warnbar caution" id="backupHint" style="display:none;margin:0 0 10px">
+    <span id="backupHintText"></span>
+    <button class="hint-edit" id="backupHintBtn" type="button" style="margin-top:8px">现在就备份</button>
+  </div>
 
   <section class="card no-print" id="entryCard">
     <h2 id="entryTitle">记一次血压</h2>
@@ -595,11 +625,15 @@ body.modal-open{overflow:hidden}
     <button class="btn-ghost" id="photoBtn" style="text-align:center;margin-top:12px">📷 拍血压计屏幕，放大照着填</button>
     <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none">
     <button class="btn-ghost" id="skipBtn" type="button" style="margin-top:10px">今天没量，做个记号</button>
-    <div class="hint" style="margin-top:10px">量之前先坐 5 分钟，不说话，胳膊放在桌上与心脏同高。</div>
+    <div class="hint" style="margin-top:10px">量之前先坐 5 分钟，不说话，胳膊放在桌上与心脏同高。<br>每天吃盐最好不超过 5 克，大约一平勺。</div>
   </section>
 
   <section class="card no-print" id="swellCard">
-    <h2>今天腿肿了吗</h2>
+    <div class="fold-head">
+      <h2>今天腿肿了吗<span class="fold-state" id="swState"></span></h2>
+      <button class="fold-btn" id="swFold" type="button" aria-expanded="false">展开</button>
+    </div>
+    <div class="fold-body" id="swBody" style="display:none">
     <div class="sw-hint" id="swHint">按一下小腿前面那块骨头旁边的肉，按 5 秒再松手，看有没有坑。</div>
     <div class="sw-opts" id="swOpts"></div>
     <div class="sw-rows">
@@ -614,11 +648,12 @@ body.modal-open{overflow:hidden}
     </div>
     <div class="sw-warn" id="swWarn" style="display:none"></div>
     <div class="sw-log" id="swLog"></div>
+    </div><!-- /fold-body -->
   </section>
 
   <section class="card no-print" id="medCard">
     <div class="med-head">
-      <h2>今天的药</h2>
+      <h2>今天的药<span class="fold-state" id="medState"></span></h2>
       <button class="med-toggle" id="medToggle" type="button" aria-pressed="false">开启</button>
     </div>
     <div class="med-body" id="medBody" style="display:none">
@@ -638,24 +673,39 @@ body.modal-open{overflow:hidden}
     <div class="tabs no-print">
       <button data-range="7" class="on">近7天</button>
       <button data-range="30">近30天</button>
-      <button data-range="90">近3个月</button>
+      <button data-range="90">近3月</button>
       <button data-range="month">按月看</button>
     </div>
     <div class="chart-shell"><svg class="chart" id="chart" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet"></svg></div>
+    <!-- 图例只留两条：超标线和红点已经直接画在图上了，图例越少越读得下去 -->
     <div class="legend">
       <span><i style="background:#3a4046"></i>高压</span>
       <span><i style="background:#e2632c"></i>低压</span>
-      <span><i style="background:#f0c9c6"></i>高压超标区（≥135）</span>
-      <span><i style="background:#c0392f"></i>那次偏高</span>
-      <span style="color:#8a5a00">低压超过 85 也会标红</span>
+      <span style="color:#8a5a00">虚线＝135 偏高线，点变红＝那次偏高</span>
     </div>
     <div id="statLine" class="hint" style="margin-top:12px"></div>
     <div id="extraLine" class="hint" style="margin-top:8px;color:#4a5056"></div>
   </section>
 
+  <section class="card" id="swellChartCard">
+    <h2>腿肿的变化</h2>
+    <div class="sw-tabs no-print" id="swTabs">
+      <button type="button" data-swrange="14" class="on">近2周</button>
+      <button type="button" data-swrange="30">近30天</button>
+      <button type="button" data-swrange="90">近3个月</button>
+    </div>
+    <div class="chart-shell"><svg class="chart" id="swellChart" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet"></svg></div>
+    <!-- 同血压图：颜色含义收进一句话，不再罗列五个色块 -->
+    <div class="legend">
+      <span><i style="background:linear-gradient(90deg,#14855a,#7fa52a,#d99b0b,#d9711f,#c0392f)"></i>柱子越高、颜色越红＝那天越肿</span>
+      <span style="color:#8a5a00">顶上带红点＝那天只有一条腿肿</span>
+    </div>
+    <div id="swStatLine" class="hint" style="margin-top:12px"></div>
+  </section>
+
   <section class="card">
     <h2>最近记录</h2>
-    <div class="hint" style="margin-bottom:6px">点一下某条记录可以删除，删除时会再问一次。</div>
+    <div class="hint" style="margin-bottom:6px">点「看看」看这一条的详情，「删除」会再问一次。</div>
     <ul class="list" id="recentList"></ul>
   </section>
   </div><!-- /page-trend -->
@@ -663,19 +713,32 @@ body.modal-open{overflow:hidden}
   <div class="page" id="page-ask">
   <section class="card no-print" id="voiceCard">
     <h2>问问小安（医学 AI）</h2>
-    <div class="vb-intro" id="vbCardState">说不清、拿不准的时候，按住下面的「按住说话」大按钮，把话直接说出来问它。</div>
+    <div class="vb-intro" id="vbCardState">点下面任意一个问题，小安就会回答。想自己说，就点最下面的橙色「开始对话」，里面有「按住说话」。</div>
     <div class="vb-row">
       <button class="vb-quick" type="button" data-vbq="我这次的血压要紧吗？">我这次的血压要紧吗？</button>
       <button class="vb-quick" type="button" data-vbq="我妈血压高，平时吃饭要注意什么？">吃饭要注意什么？</button>
       <button class="vb-quick" type="button" data-vbq="今天忘了吃药，现在要不要补？">忘了吃药怎么办？</button>
       <button class="vb-quick" type="button" data-vbq="这段时间血压忽高忽低，是什么原因？">忽高忽低怎么回事？</button>
     </div>
-    <button class="btn-ghost" id="vbOpen" type="button" style="margin-top:12px">💬 开始对话</button>
-    <div class="vb-note">小安讲的是通用的健康知识，不能代替医生看病开药。真不舒服请按上面的「紧急情况怎么办」处理。</div>
+    <button class="btn-main" id="vbOpen" type="button" style="margin-top:14px">💬 开始对话</button>
+    <button class="sos-link" id="vbSos" type="button" style="margin-top:12px">🆘 紧急情况怎么办</button>
+    <div class="vb-note">小安讲的是通用的健康知识，不能代替医生看病开药。真不舒服请点上面的「紧急情况怎么办」。</div>
   </section>
   </div><!-- /page-ask -->
 
   <div class="page" id="page-more">
+  <!-- 天气搬到这里：它把记录页的血压表单压到下面去了，而老人真正每天要做的是记血压 -->
+  <section class="card no-print" id="weatherCard" style="display:none">
+    <div class="wx-top"><h2>郑州天气</h2><span class="wx-city" id="wxUpdated"></span></div>
+    <div class="wx-now"><span class="wx-temp" id="wxTemp">--</span><span class="wx-desc" id="wxDesc"></span></div>
+    <div class="wx-meta" id="wxMeta"></div>
+    <div class="wx-days" id="wxDays"></div>
+    <div class="wx-hourly" id="wxHourly"></div>
+    <div class="wx-tip" id="wxTip"></div>
+    <div class="wx-aqi" id="wxAqi"></div>
+    <button class="wx-get" id="wxGet" type="button">看看郑州今天冷不冷</button>
+  </section>
+
   <section class="card no-print" id="hotCard">
     <h2>今天的大事</h2>
     <div class="hot-tabs" id="hotTabs">
@@ -687,18 +750,13 @@ body.modal-open{overflow:hidden}
     <div class="hot-list" id="hotList"></div>
     <div class="hot-foot" id="hotFoot"></div>
     <button class="btn-ghost" id="hotRefresh" type="button">刷新一下</button>
-    <div class="hot-note">新闻来自中新网和人民网，点标题看原文。断网时这一栏不显示，不影响记录。</div>
+    <div class="hot-note">新闻来自网络（中新网），点标题会离开本页去看原文。打不开就是网络问题，不影响记录。</div>
   </section>
 
   <section class="card no-print" id="tipCard">
     <h2>今天的小知识</h2>
     <div id="tipBox" class="hint" style="font-size:18px;line-height:1.7"></div>
     <button class="btn-ghost" id="tipNext" style="margin-top:12px">换一条</button>
-  </section>
-
-  <section class="card" id="dietCard">
-    <h2>今天怎么吃</h2>
-    <div id="dietBox" class="hint"></div>
   </section>
 
   <section class="card" id="emergencyCard">
@@ -716,11 +774,11 @@ body.modal-open{overflow:hidden}
   <section class="card no-print">
     <h2>设置</h2>
     <div class="row">
-      <div><label class="field" for="nameInput">姓名</label><input type="text" id="nameInput" placeholder="例如：张德福"></div>
-      <div><label class="field" for="ageInput">年龄</label><input type="text" id="ageInput" inputmode="numeric" maxlength="3" placeholder="例如：68"></div>
+      <div><label class="field" for="nameInput">姓名</label><input class="txt-in" type="text" id="nameInput" placeholder="例如：张德福"></div>
+      <div><label class="field" for="ageInput">年龄</label><input class="txt-in" type="text" id="ageInput" inputmode="numeric" maxlength="3" placeholder="例如：68"></div>
     </div>
     <div class="row">
-      <div><label class="field" for="kinInput">家人电话（紧急时拨打）</label><input type="text" id="kinInput" inputmode="tel" placeholder="留空就不显示"></div>
+      <div><label class="field" for="kinInput">家人电话（紧急时拨打）</label><input class="txt-in" type="text" id="kinInput" inputmode="tel" placeholder="留空就不显示"></div>
     </div>
     <div class="hint" style="margin-top:8px">所有记录只存在这台手机上，不联网。只有你主动问「小安」时，才会把整理好的血压摘要发给 AI 服务商（见下面小安设置）。</div>
     <button class="btn-ghost" id="reportBtn">📄 生成报告给医生看</button>
@@ -738,7 +796,7 @@ body.modal-open{overflow:hidden}
 
   <div class="footnote">
     本页面只作日常记录和趋势参考，<br>不能替代医生诊断和处方。不舒服请及时就医。<br>
-    <span style="font-size:13px">记录保存在本机 · 只有问小安时才联网</span>
+    <span style="font-size:16px">记录保存在本机 · 只有问小安时才联网</span>
   </div>
   </div><!-- /page-more -->
 </main>
@@ -773,6 +831,16 @@ function safePeriod(p){
   return PERIODS.indexOf(p)>=0 ? p : '未记录';
 }
 
+/* 数据损坏标志：为真时禁止写入，否则用户随便点一下就用空状态把原数据覆盖了。
+   只有成功导入备份之后才解除。 */
+var LOAD_BROKEN=false;
+/* 这两个"已提示过"的标志必须声明在 loadState 之前：
+   损坏流程里那段代码虽然跑在 setTimeout 里（那时它们早已赋值），
+   但放在后面会让静态检查一直报"后置变量引用"，也容易被人误改。 */
+var saveBlockedShown=false;
+var saveFailureShown=false;
+var _loadedRaw=null;    // 最近一次读到/写下的存储原文，用来发现"别的标签页改过了"
+try{ _loadedRaw=localStorage.getItem(ROOT); }catch(e){}
 var S=loadState();
 function uid(){ return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
 function loadState(){
@@ -782,19 +850,46 @@ function loadState(){
     try{ o=JSON.parse(raw); }
     catch(e){ parseFailed=true; o=null; }
   }
-  // 数据损坏：不能静默当成"没有数据"，否则下一次保存会把原数据覆盖掉，永久丢失
-  if(parseFailed || (raw && !o)){
+  // 数据损坏：不能静默当成"没有数据"，否则下一次保存会把原数据覆盖掉，永久丢失。
+  // 除了「JSON 解析失败」，还有一种更隐蔽的：JSON 合法、但结构不对（如字符串、"people":[]）。
+  // 这种以前会静默走空状态，用户继续录入就整份覆盖掉原数据。
+  var shapeBad = !!(raw && !parseFailed && (!o || typeof o!=='object' || Array.isArray(o) ||
+                  !Array.isArray(o.people) || o.people.length===0));
+  if(parseFailed || (raw && !o) || shapeBad){
+    LOAD_BROKEN=true;
     try{ localStorage.setItem(ROOT+'-corrupt', raw); }catch(e){}
     setTimeout(function(){
       showModal('数据读不出来',
         '<div class="warnbar danger">存在手机里的记录读不出来了，可能是数据损坏。<br><br>'+
-        '原始数据已经另存了一份，没有被覆盖。请先找一下之前的备份，用「从备份恢复」导入。</div>'+
+        '原始数据已经另存了一份，没有被覆盖。<b>在你从备份恢复之前，新的记录不会写进手机</b>——'+
+        '否则会把原来那份冲掉。请先找一下之前的备份，用「从备份恢复」导入。</div>'+
         '<button class="bigbtn primary" id="corruptCopy">复制原始数据（找子女帮忙看看）</button>'+
         '<button class="bigbtn" id="corruptReset">我知道了，先不管</button>');
       var c=$('corruptCopy');
       if(c) c.onclick=function(){ copyText(raw||'','原始数据已复制'); };
       var r2=$('corruptReset');
-      if(r2) r2.onclick=closeModal;
+      if(r2) r2.onclick=function(){
+        /* 「先不管」以前只是关个弹窗，损坏标志还在，用户会一直被拦着却不知道怎么办。
+           这里给它一条真正的出路，但必须二次确认并说清后果。 */
+        showModal('确定放弃恢复吗？',
+          '<div class="warnbar danger">放弃之后，<b>原来那份记录就找不回来了</b>，'+
+          '页面会从空白开始记。原始数据还会在手机里留一份，但需要找人帮忙才能取出来。</div>'+
+          '<div class="hint" style="margin-top:10px">建议先点上面的「复制原始数据」，把它发给自己或家人存着。</div>'+
+          '<button class="bigbtn primary" id="corruptGiveUp" style="margin-top:12px">确定放弃，从空白开始</button>'+
+          '<button class="bigbtn" id="corruptKeep">还是再等等</button>');
+        var gv=$('corruptGiveUp'), kp=$('corruptKeep');
+        if(kp) kp.onclick=closeModal;
+        if(gv) gv.onclick=function(){
+          LOAD_BROKEN=false;
+          saveBlockedShown=false;
+          try{ localStorage.removeItem(ROOT); }catch(e0){}   // 主键里那份是坏的，清掉才能重新开始
+          S=loadState();
+          try{ _loadedRaw=localStorage.getItem(ROOT); }catch(e0){}
+          closeModal();
+          renderAll();
+          toast('已从空白开始。原始数据仍在手机里，需要时找人帮忙');
+        };
+      };
     }, 300);
   }
   if(o&&Array.isArray(o.people)&&o.people.length){
@@ -804,7 +899,20 @@ function loadState(){
       p.skipped=(p.skipped&&typeof p.skipped==='object')?p.skipped:{};
       p.meds=sanitizeMeds(p.meds);
       p.swell=sanitizeSwell(p.swell);         // 腿肿记录：只留合法的等级与日期键
+      p.swellOld=sanitizeSwell(p.swellOld);   // 归档区同样清洗：它也是腿肿记录
+      /* 加载时也裁一次：swellPrune 原本只在写腿肿时跑，
+         用户很久不记腿肿的话，超过 90 天的键会一直留在日常区里——
+         不显示、却一直占地方，还让「另有 N 天不在窗口内」的数字只增不减。 */
+      try{ swellPruneCache(p); }catch(e){}
+      /* 加载时也裁一次：swellPrune 原本只在写腿肿时跑，
+         用户很久不记腿肿的话，超过 90 天的键会一直留在日常区里——
+         不显示、却一直占地方，还让「另有 N 天不在窗口内」的数字只增不减。
+         注意 keepArchived:true：别把归档区也顺手裁掉。 */
+      if(p.swell && typeof p.swell==='object' && Object.keys(p.swell).length){
+        try{ swellPruneCache(p); }catch(e){}
+      }
       p.label=String(p.label||''); p.name=String(p.name||''); p.age=String(p.age||''); p.kin=String(p.kin||'');
+      if(!p.pid) p.pid=String(p.id||'');      // 老数据没有 pid：用本机 id 补上，保证备份里能带上稳定身份
     });
     if(!o.current||!o.people.some(function(p){return p.id===o.current;})) o.current=o.people[0].id;
     return o;
@@ -836,6 +944,9 @@ function sanitizeSwell(o){
     if(mo<1||mo>12||dd<1||dd>31) return;
     var probe=new Date(y,mo-1,dd);
     if(probe.getFullYear()!==y || probe.getMonth()!==mo-1 || probe.getDate()!==dd) return;
+    /* 日期上限：超过「今天 + 1 天」的腿肿记录没有任何来路
+       （界面只能记今天），导入进来也永远不在图里，还会一直占着存储不被裁剪。 */
+    if(probe.getTime()>Date.now()+86400000) return;
     var v=o[k];
     if(!v || typeof v!=='object') return;
     var lv=Number(v.lv);
@@ -852,6 +963,11 @@ function sanitizeRecords(arr){
     if(!r) return;
     var ts=Number(r.ts), sys=Number(r.sys), dia=Number(r.dia), pulse=r.pulse==null?null:Number(r.pulse);
     if(!isFinite(ts)||!isFinite(sys)||!isFinite(dia)) return;
+    /* 时间戳要有合理范围：以前只判 isFinite，1e18 这种天文数字也能过，
+       页面上就会显示「NaN月NaN日 NaN:NaN」。下限定 2010 年，上限留两天余量补记。 */
+    /* 下限 2010 年（家庭记录不可能更早）；上限留 365 天：
+       对方设备时钟快几天是老人机常见情况，卡 2 天会把合法的记录静默丢掉。 */
+    if(ts<1262304000000 || ts>Date.now()+365*86400000) return;
     if(sys<50||sys>260||dia<30||dia>180||dia>=sys) return;
     if(pulse!=null&&(pulse<30||pulse>220)) pulse=null;
     // rid 必须稳定：同一份备份重复导入要得到同一个 id，否则按 rid 去重会失效。
@@ -867,15 +983,181 @@ function sanitizeRecords(arr){
    否则会出现"界面显示已保存、刷新后记录没了"或"删掉了、刷新后复活"。
    常见触发：手机存储已满、iOS 隐私模式、微信内置浏览器禁用存储。 */
 function save(){
+  // 数据损坏且还没恢复：绝不写入，否则空状态会把原始数据整份覆盖掉（不可逆）
+  if(LOAD_BROKEN){ showSaveBlocked(); return false; }
   try{
-    localStorage.setItem(ROOT,JSON.stringify(S));
+    /* 多标签页保护：本页载入后别的标签页写过，就把两边合并后再写，
+       不能直接拿本页的旧快照覆盖对方新记的数据。
+       要点：绝对不能在这里换掉 S —— 调用方手里可能还握着 cur() 返回的旧对象，
+       一旦 S 被换成新对象，那条刚记的记录就写不进去了，界面却提示成功。 */
+    var curRaw=localStorage.getItem(ROOT);
+    /* _loadedRaw 为 null＝本页不知道存储现状（刚被别的标签页同步过），
+       这时必须先把对方的内容并进来，否则对方新增的人/字段会被整份覆盖。 */
+    if(curRaw!==null && (_loadedRaw===null || curRaw!==_loadedRaw)){
+      mergeIncoming(curRaw);
+    }
+    /* 这里曾加过一次「写前按墓碑剔一遍」，已撤回：
+       它会把本页刚新增、但 rid 恰好撞上历史墓碑的记录也剔掉，
+       而且墓碑是持久化的，一次误判会连着后续所有保存一起剔。
+       正确的做法是在「合并」这一步过滤（mergeIncoming 里已做），不在这里。 */
+    var txt=JSON.stringify(S);
+    localStorage.setItem(ROOT,txt);
+    _loadedRaw=txt;
+    saveFailureShown=false; saveBlockedShown=false;
+    if(_mergeSawNewPerson){
+      // 另一个标签页新增了人，这里没法原地合并结构，提示刷新一次即可看到
+      _mergeSawNewPerson=false;
+      try{ toast('另一个页面新增了记录人，刷新一下就能看到'); }catch(e){}
+    }
     return true;
   }catch(e){
     showSaveFailure();
     return false;
   }
 }
-var saveFailureShown=false;
+/* 本页删掉过的记录 rid：合并时不能因为对方还留着就复活。
+   上限 5000 条（原写 500，但一次「清空这个人全部记录」可能上千条，
+   卡 500 会把最早登记的一批丢掉，别的标签页一保存就把它们补回来）。 */
+var DEAD_KEY='family-health-tombstone';
+var DEAD_RIDS=Object.create(null);
+var _deadOrder=[];
+var _mergeSawNewPerson=false;   // 合并时发现对方新增了人：本次写入后提示刷新
+/* 墓碑必须落盘：只存在内存里的话，本页一刷新墓碑就没了，
+   另一个还开着的标签页一保存，删掉的记录又会被合并回来。
+   放在独立键里，不塞进 S，免得污染主数据和备份格式。 */
+/* 标脏 + 合并写：清空 800 条记录会连续登记 800 次，
+   每次全量 JSON.stringify 再 setItem 在低端手机上会明显卡顿。
+   这里只打标记，真正的落盘合并到下一轮事件循环里做一次。 */
+var _tombDirty=false, _tombTimer=null;
+function persistTombstones(){
+  _tombDirty=true;
+  if(_tombTimer) return;
+  _tombTimer=setTimeout(function(){
+    _tombTimer=null;
+    if(!_tombDirty) return;
+    _tombDirty=false;
+    flushTombstones();
+  },0);
+}
+function flushTombstones(){
+  try{
+    localStorage.setItem(DEAD_KEY, JSON.stringify({rids:_deadOrder.slice(-5000), taken:_deadTakenOrder.slice(-5000)}));
+  }catch(e){}
+}
+function loadTombstones(){
+  try{
+    var o=JSON.parse(localStorage.getItem(DEAD_KEY)||'null');
+    if(!o) return;
+    if(Array.isArray(o.rids)) o.rids.forEach(function(k){ if(k && !DEAD_RIDS[k]){ DEAD_RIDS[k]=1; _deadOrder.push(k); } });
+    if(Array.isArray(o.taken)) o.taken.forEach(function(k){ if(k && !DEAD_TAKEN[k]){ DEAD_TAKEN[k]=1; _deadTakenOrder.push(k); } });
+  }catch(e){}
+}
+/* 墓碑过滤只在 mergeIncoming 与 applyBackup 合并里做，没有全局剔一遍的函数——
+   曾经有过一个 purgeDeadFromMemory 在 save() 里跑，会把本页刚新增、
+   但 rid 恰好撞上历史墓碑的记录也剔掉（墓碑是持久化的，一次误判会连锁影响后续保存）。
+   已删除。 */
+/* 撤回一条墓碑：键和顺序表都要删。
+   只删键的话，persistTombstones 会把 _deadOrder 原样落盘，
+   下次启动时复活成墓碑，那条记录在别的标签页保存时会被当成「已删除」过滤掉。 */
+function unmarkDead(rid){
+  if(!rid || !DEAD_RIDS[rid]) return;
+  delete DEAD_RIDS[rid];
+  _deadOrder=_deadOrder.filter(function(x){ return x!==rid; });
+  persistTombstones();
+}
+function markDead(rid){
+  if(!rid || DEAD_RIDS[rid]) return;
+  DEAD_RIDS[rid]=1; _deadOrder.push(rid);
+  // 上限放宽到 5000：一次「清空这个人全部记录」可能有上千条，
+  // 卡 500 会把最早登记的一批丢掉，别的标签页一保存就把它们补回来。
+  // 一次批量删除会连续 push 上千条，逐条 shift 是 O(n²)；改成超限时一次性截断
+  if(_deadOrder.length>5000){
+    var drop=_deadOrder.length-5000;
+    _deadOrder.slice(0,drop).forEach(function(x){ delete DEAD_RIDS[x]; });
+    _deadOrder=_deadOrder.slice(drop);
+  }
+  persistTombstones();
+}
+/* 打卡键（天|顿）的墓碑：关闭吃药栏会清空全部勾选，
+   另一个标签页还留着旧数据时不能把它补回来，否则会出现「关掉了又自己打上勾」。 */
+var DEAD_TAKEN=Object.create(null);
+var _deadTakenOrder=[];
+function markDeadTaken(k){
+  if(!k || DEAD_TAKEN[k]) return;
+  DEAD_TAKEN[k]=1; _deadTakenOrder.push(k);
+  if(_deadTakenOrder.length>5000){
+    var dropT=_deadTakenOrder.length-5000;
+    _deadTakenOrder.slice(0,dropT).forEach(function(x){ delete DEAD_TAKEN[x]; });
+    _deadTakenOrder=_deadTakenOrder.slice(dropT);
+  }
+  persistTombstones();
+}
+/* 撤回打卡墓碑：与 unmarkDead 同样的规矩——键和顺序表一起清。
+   只删键的话，_deadTakenOrder 会被原样落盘，刷新后复活成墓碑，
+   那几顿本来还能勾的药就被永久挡住了。 */
+function unmarkDeadTaken(k){
+  if(!k || !DEAD_TAKEN[k]) return;
+  delete DEAD_TAKEN[k];
+  _deadTakenOrder=_deadTakenOrder.filter(function(x){ return x!==k; });
+  persistTombstones();
+}
+/* 把「别的标签页刚写的内容」并入当前 S（原地修改，不替换对象引用）。
+   规则：以本页为准，对方新增的记录/腿肿日/打卡补进来；对方删掉的本页不再复活。 */
+function mergeIncoming(raw){
+  var other=null;
+  try{ other=JSON.parse(raw); }catch(e){ return; }
+  if(!other || !Array.isArray(other.people)) return;
+  var byId={};
+  S.people.forEach(function(p){ byId[p.pid||p.id]=p; });
+  other.people.forEach(function(op){
+    if(!op) return;
+    var tgt=byId[op.pid||op.id];
+    if(!tgt){
+      // 对方新增的人：本页没加载过，结构上没法原地合并。
+      // 但不能一声不响地丢掉——刷一次新就能看到，所以明确提示用户。
+      _mergeSawNewPerson=true;
+      return;
+    }
+    // 记录：按 rid 取并集。本页已删除的 rid 记在墓碑里，对方那份不能再补回来。
+    if(Array.isArray(op.records)){
+      var have={};
+      tgt.records.forEach(function(r){ have[r.rid]=true; });
+      var added=false;
+      op.records.forEach(function(r){
+        if(!r || !r.rid) return;
+        if(DEAD_RIDS[r.rid]) return;                 // 本页删过：不复活
+        if(!have[r.rid]){ tgt.records.push(r); have[r.rid]=true; added=true; }
+      });
+      if(added) tgt.records.sort(function(a,b){ return a.ts-b.ts; });
+    }
+    // 腿肿：按天补，已有日子以本页为准
+    if(op.swell && typeof op.swell==='object'){
+      if(!tgt.swell || typeof tgt.swell!=='object') tgt.swell={};
+      Object.keys(op.swell).forEach(function(k){ if(!tgt.swell[k]) tgt.swell[k]=op.swell[k]; });
+    }
+    // 打卡：按「天|顿」补，已有以本页为准
+    if(op.taken && typeof op.taken==='object'){
+      if(!tgt.taken || typeof tgt.taken!=='object') tgt.taken={};
+      Object.keys(op.taken).forEach(function(k){
+        if(DEAD_TAKEN[k]) return;                 // 本页刚清掉打勾：不补回来
+        if(!(k in tgt.taken)) tgt.taken[k]=op.taken[k];
+      });
+    }
+  });
+  // 注意：这里不能把基准设成对方的原文。基准要在写入成功之后由 save() 设成本次写下的 txt，
+  // 否则「本页新增、对方没有」的内容会被当成已同步而丢掉。
+}
+function showSaveBlocked(){
+  if(saveBlockedShown) return;
+  saveBlockedShown=true;
+  showModal('先恢复备份，再记录',
+    '<div class="warnbar danger">手机里原来那份记录读出来是坏的。<b>在你恢复备份之前，新的记录不会存进去</b>——'+
+    '不然会把原来那份冲掉，就真的找不回来了。</div>'+
+    '<div class="hint" style="margin-top:10px">请到底部「更多」这一页，往下找到 <b>「📥 从备份恢复」</b> 这个按钮，把之前的备份导入进来。导入成功后就恢复正常。</div>'+
+    '<button class="bigbtn primary" id="sbOk" style="margin-top:12px">知道了</button>',
+    function(){ saveBlockedShown=false; });
+  var b=$('sbOk'); if(b) b.onclick=closeModal;
+}
 function showSaveFailure(){
   if(saveFailureShown) return;      // 避免连续失败时弹窗套弹窗
   saveFailureShown=true;
@@ -909,6 +1191,23 @@ function safeTime(t){
 }
 function dayKey(d){ d=d||new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
 function fmt(ts){ var d=new Date(ts); return (d.getMonth()+1)+'月'+d.getDate()+'日 '+pad(d.getHours())+':'+pad(d.getMinutes()); }
+/* 列表里的短格式：今天/昨天用词，其余用「月-日」，固定宽度不换行。
+   时段（晨起/睡前）挪进「看看」的详情里——列表一行的宽度要留给读数和两个按钮，
+   挤成两行时整列就对不齐了。 */
+function fmtShort(ts){
+  var d=new Date(ts), t=dayKey(d), today=dayKey();
+  // 「昨天」必须按日历减一天算：减 24 小时在凌晨 0 点前后会算成前天
+  var y=new Date(); y.setDate(y.getDate()-1);
+  var head = t===today ? '今天' : (t===dayKey(y) ? '昨天' : (d.getMonth()+1)+'月'+d.getDate()+'日');
+  return head+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+}
+/* 判级标签在窄屏里最长的「收缩压高·舒张压低」会挤掉读数，列表里用短说法 */
+function shortGrade(g){
+  if(g.level==='ish') return '压差大';
+  if(g.level==='lowdia') return '低压低';
+  if(g.level==='lowsys') return '高压低';
+  return g.text;
+}
 
 /* 家庭自测判级：先判高、后判低。
    家庭自测标准 ≥135/85 即为升高（不同于诊室 140/90）。
@@ -939,9 +1238,17 @@ function grade(sys,dia){
 var HL_SYS=135, HL_DIA=85;
 function isHigh(sys,dia){ return sys>=HL_SYS||dia>=HL_DIA; }
 
+/* 系统开了「减少动态效果」时，JS 里的平滑滚动也要跟着关掉。
+   CSS 的 @media (prefers-reduced-motion) 管不到 window.scrollTo / scrollIntoView。 */
+var MOTION_REDUCE=false;
+try{ MOTION_REDUCE=!!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }catch(e){ MOTION_REDUCE=false; }
+var SCROLL_BEHAVIOR=MOTION_REDUCE?'auto':'smooth';
+
 /* ---------- 弹窗 ---------- */
 var modalCbs={};
 function showModal(title,html,onClose){
+  // 弹窗优先级高于 toast：不清掉上一条「已记下」，它会压在弹窗文字上，老人会以为根本没出错
+  try{ hideToast(); }catch(e){}
   // 默认清掉上一次的 chat 版式（对话界面会自己加回来），避免样式串到别的弹窗
   $('modal').classList.remove('chat');
   var sh=document.querySelector('.modal .sheet'); if(sh){ sh.style.display=''; sh.style.flexDirection=''; }
@@ -977,8 +1284,8 @@ function esc(s){
 var IS_WECHAT=/MicroMessenger/i.test(navigator.userAgent||'');
 
 /* 复制文本：微信内 navigator.clipboard 常被禁，用 textarea + execCommand 兜底 */
-function copyText(text, okMsg){
-  var done=function(){ toast(okMsg||'已复制'); };
+function copyText(text, okMsg, onOk){
+  var done=function(){ toast(okMsg||'已复制'); if(onOk){ try{ onOk(); }catch(e){} } };
   if(navigator.clipboard&&navigator.clipboard.writeText&&!IS_WECHAT){
     navigator.clipboard.writeText(text).then(done).catch(function(){ fallback(); });
     return;
@@ -1014,6 +1321,7 @@ function showCopyFallback(text){
   var ok=$('fallbackOk'); if(ok) ok.onclick=closeModal;
 }
 
+function hideToast(){ var t=$('toast'); if(t){ t.classList.remove('show'); clearTimeout(t._h); } }
 function toast(msg){
   var t=$('toast'); t.textContent=msg; t.classList.add('show');
   clearTimeout(t._h); t._h=setTimeout(function(){ t.classList.remove('show'); },2400);
@@ -1169,21 +1477,27 @@ function renderSummary(){
   var p=cur(); var rs=p.records; var last=rs.length?rs[rs.length-1]:null;
   var hero=$('heroZone'), adv=$('adviceBox'), advCard=$('adviceCard');
   $('avatarBtn').textContent=(p.name&&p.name.length>=2)?p.name.slice(-2):(p.label||'我').slice(-2);
+  // 「正在看谁的记录」：两位老人共用一部手机时，这是最容易记串的地方
+  var who=$('whoLine');
+  if(who){
+    var pn=String(p.name||'').trim();
+    who.textContent='正在看：'+(pn?pn:(p.label||'我'));
+  }
   var st=todayStatus(p);
   // 今天明确标了"没量"：无论有没有历史记录，都要先说清楚"今天没量"，
   // 否则大字形显示的是昨天的数字，容易被当成今天的。
   if(st==='skipped' && rs.length){
     var yest=last;
     hero.innerHTML='<div class="hero-empty">今天还没量'+
-      '<span style="font-size:15px;opacity:.75;display:block;margin-top:6px">已做记号。上次是 '+fmt(yest.ts)+' 的 '+esc(yest.sys)+'/'+esc(yest.dia)+'</span></div>';
+      '<span style="font-size:17px;color:var(--sub);display:block;margin-top:6px">已做记号。上次是 '+fmt(yest.ts)+' 的 '+esc(yest.sys)+'/'+esc(yest.dia)+'</span></div>';
     if(advCard) advCard.style.display='none';
   }else if(!last){
     // 没有历史记录时：如果今天已经标了"没量"，也要显示出来，
     // 否则老人点了按钮看不到任何变化，会以为没点上。
     if(st==='skipped'){
-      hero.innerHTML='<div class="hero-empty">今天还没量<span style="font-size:15px;opacity:.75;display:block;margin-top:6px">已做记号。想记的时候随时点下面的按钮</span></div>';
+      hero.innerHTML='<div class="hero-empty">今天还没量<span style="font-size:17px;color:var(--sub);display:block;margin-top:6px">已做记号。想记的时候随时点下面的按钮</span></div>';
     }else{
-      hero.innerHTML='<div class="hero-empty">还没有记录<br><span style="font-size:15px;opacity:.75">点下面的按钮，记下今天第一次血压</span></div>';
+      hero.innerHTML='<div class="hero-empty">还没有记录<br><span style="font-size:17px;color:var(--sub)">点下面的按钮，记下今天第一次血压</span></div>';
     }
     if(advCard) advCard.style.display='none';
   }else{
@@ -1217,7 +1531,6 @@ function renderSummary(){
   var d=new Date();
   var wd=['日','一','二','三','四','五','六'][d.getDay()];
   $('todayLine').textContent=hello+' · '+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+wd;
-  renderDiet(last?grade(last.sys,last.dia):null);
   renderEmergency(p);
 }
 /* 判级到样式的映射：ish / lowdia 需要单独的配色，不能只靠 ok/warn/bad */
@@ -1227,7 +1540,10 @@ function tagClass(g){ return g.level==='ish' ? 'ish' : (g.level==='lowdia' ? 'lo
 function gapText(ts){
   var days=Math.floor((Date.now()-ts)/86400000);
   var todayKeyStr=dayKey(new Date(ts))===dayKey();
-  if(todayKeyStr) return '今天 · ';
+  if(todayKeyStr) return '最近一次 · ';
+  // 时间戳在未来（时钟不准、或导入的数据）：不能说「-1 天前」，按「最近一次」处理即可。
+  // 补记只能选今天/昨天/前天，正常情况下到不了这里。
+  if(days<0) return '最近一次 · ';
   if(days<=1) return '最近一次 · ';
   if(days<=3) return days+' 天前 · ';
   return days+' 天前（该量量了） · ';
@@ -1242,24 +1558,6 @@ function adviceText(level){
   if(level==='lowdia') return '这次高压还好，但低压偏低。老年人血管弹性下降后常见这种情况，不用紧张；如果平时容易头晕、起身发黑，请告诉医生。';
   if(level==='watch') return '比理想值高一点点，不用紧张。今天清淡些，晚上睡前再量一次看看。';
   return '这次在正常范围，保持得很好。👍';
-}
-function renderDiet(g){
-  var level=g?g.level:'none';
-  var lines={
-    ok:'保持这样就好：饭菜少放盐，每天走一走；如有医生开的降压药，请按时服用。',
-    watch:'今天少放半勺盐，别吃咸菜、腊肉、方便面，多吃些新鲜青菜。',
-    high:'今天饭菜清淡些，少吃咸菜、腊肉、咸汤；作息规律，不要熬夜。',
-    ish:'少盐、少吃腌制品。把记录带给医生看看吧。',
-    danger:'今天就吃清淡的，不喝咸汤，不吃腌制的东西，安静休息。',
-    low:'今天多喝点水，吃饭别太少，起身慢一点。',
-    lowsys:'今天多喝点水，吃饭别太少，起身慢一点。',
-    lowdia:'饭菜照常，注意别一下子站起来，起身时扶一下。',
-    none:'饭菜少放盐，每天走一走。'
-  };
-  var tip=lines[level]||lines.none;
-  $('dietBox').innerHTML='<div style="font-size:18px;line-height:1.6">'+tip+'</div>'+
-    '<div style="font-size:16px;color:#6a7076;margin-top:8px">每天吃盐最好不超过 5 克，大约一平勺。'+
-    '有肾病、或不确定自己该吃什么药的，先问问医生。</div>';
 }
 function renderEmergency(p){
   var telRaw=String(p.kin||'').replace(/[^0-9+]/g,'');
@@ -1276,7 +1574,8 @@ var rangeDays=7;
 /* ---------- 统计增强：脉压差、达标率、波动幅度 ----------
    这些都用已有数据算，不需要老人多填任何东西。 */
 function computeExtra(p){
-  var rs=p.records||[];
+  // 只用「不超过此刻」的记录：未来日期的那条不能当"最近一次"
+  var rs=(p.records||[]).filter(function(r){ return r && Number(r.ts)<=Date.now(); });
   if(rs.length<2) return null;
   var recent=rs.slice(-30);   // 看最近 30 次，避免陈旧数据拉偏
   var arrS=recent.map(function(r){ return Number(r.sys); }).filter(function(v){ return isFinite(v); });
@@ -1351,7 +1650,11 @@ function renderChart(){
   var svg=$('chart'), p=cur();
   var W=600,H=300,padL=54,padR=16,padT=18,padB=34;
   var now=Date.now(), from=now-rangeDays*86400000;
-  var rs=p.records.filter(function(r){ return r.ts>=from; });
+  /* 只取「窗口内」的记录：以前只判 r.ts>=from，没有上界，
+     一条日期在未来的记录（导入别人数据、或设备时钟不准）会被算到画布外
+     （实测 cx=23298，绘图区上限才 584），折线直接拖出屏幕。 */
+  var rs=p.records.filter(function(r){ return r.ts>=from && r.ts<=now; });
+  var futureCount=p.records.filter(function(r){ return r.ts>now; }).length;
   // 下界要跟着数据走：低压可能低到 30-49，固定 50 会把点画到坐标轴外
   var yMin=50,yMax=200;
   if(rs.length){
@@ -1389,7 +1692,7 @@ function renderChart(){
   if(!rs.length){
     g+='<g opacity="0.5"><rect x="'+(W/2-46)+'" y="'+(H/2-46)+'" width="92" height="66" rx="10" fill="none" stroke="#b9cbc8" stroke-width="2"/>'+
         '<polyline points="'+(W/2-34)+','+(H/2-8)+' '+(W/2-16)+','+(H/2-24)+' '+(W/2+2)+','+(H/2-4)+' '+(W/2+20)+','+(H/2-20)+' '+(W/2+34)+','+(H/2-6)+'" fill="none" stroke="#b9cbc8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>';
-    g+='<text x="'+(W/2)+'" y="'+(H/2+44)+'" text-anchor="middle" font-size="16" fill="#8ba09e">这段时间还没有记录</text>';
+    g+='<text x="'+(W/2)+'" y="'+(H/2+44)+'" text-anchor="middle" font-size="17" fill="#5f666c">这段时间还没有记录</text>';
     svg.innerHTML=g; $('statLine').textContent=''; return;
   }
   function series(key,color,limit){
@@ -1435,12 +1738,105 @@ function renderChart(){
     }
   }
   // 去掉百分比和"超标"这种审判式的说法，避免让老人觉得在被打分
+  // 未来日期的记录不进图（会把折线拖出画布），但要告诉用户它们还在
+  var futureNote = futureCount>0
+    ? ' · <span style="color:#8a5700">另有 '+futureCount+' 条日期在将来，暂不显示</span>'
+    : '';
   $('statLine').innerHTML='共 '+n+' 次 · 平均 <b>'+Math.round(sS/n)+'/'+Math.round(sD/n)+'</b> · '+
-    (over===0?'都还算平稳':('其中 '+over+' 次偏高'))+extra;
-  // 脉压差、波动、达标率：用已有数据算，不需要老人多填
-  var ex=computeExtra(p);
+    (over===0?'都还算平稳':('其中 '+over+' 次偏高'))+extra+futureNote;
+  /* 脉压差、波动、达标率都要跟图同口径：
+     图和统计行只看窗口内、不超过此刻的记录；
+     传 p（全部记录）进去会让「图上 1 个点、下面写平均 2 次」，也会让未来日期的记录
+     被当成"最近一次"影响脉压差。 */
+  var ex=computeExtra({records:rs});
   var el2=document.getElementById('extraLine');
   if(el2){ el2.innerHTML = ex ? extraText(ex) : ''; }
+}
+
+/* ---------- 腿肿趋势图 ----------
+   腿肿是 0-4 的离散分级，不是连续数值，所以用柱状图，不用折线：
+   折线会把"不肿(0)→很明显(3)"连成一条斜线，暗示中间存在 1.5 这种状态，是误导。
+   柱高 = 等级+1，保证"不肿"也有一小截可见，否则零高度看不出那天记了没有。 */
+var SW_RANGE_DAYS=14;
+var SW_BAR_COLORS=['#14855a','#7fa52a','#d99b0b','#d9711f','#c0392f'];
+function renderSwellChart(){
+  var svg=$('swellChart'), p=cur();
+  if(!svg) return;
+  var W=600,H=280,padL=44,padR=14,padT=16,padB=52;
+  var now=new Date();
+  var today0=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  var days=SW_RANGE_DAYS;
+  var m=swellMap(p);
+  // 按天取数：只取窗口内、等级合法的
+  var list=[];
+  for(var i=days-1;i>=0;i--){
+    var dt=new Date(today0.getTime()-i*86400000);
+    var k=dayKey(dt);
+    var v=m[k];
+    var lv=(v && typeof v==='object' && isFinite(Number(v.lv))) ? Number(v.lv) : null;
+    if(lv!==null && (lv<0||lv>4)) lv=null;
+    list.push({d:dt, k:k, lv:lv, side:(v&&v.side)||'both'});
+  }
+  var g='';
+  var plotW=W-padL-padR, plotH=H-padT-padB;
+  // 横向参考线：每级一条
+  for(var lvl=0;lvl<=4;lvl++){
+    var y=padT+plotH*(1-(lvl+1)/5);
+    g+='<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="#eef0f1" stroke-width="1"/>';
+    var label=(lvl===0?'不肿':(lvl===1?'有点':(lvl===2?'明显':(lvl===3?'厉害':'不回弹'))));
+    g+='<text x="'+(padL-8)+'" y="'+(y+5).toFixed(1)+'" text-anchor="end" font-size="14" fill="#6a7076" font-weight="600">'+label+'</text>';
+  }
+  if(!list.some(function(o){return o.lv!==null;})){
+    g+='<text x="'+(W/2)+'" y="'+(H/2)+'" text-anchor="middle" font-size="17" fill="#5f666c">这段时间还没有记腿肿</text>';
+    svg.innerHTML=g;
+    var sl=$('swStatLine'); if(sl) sl.textContent='在「记录」页点一下当天的肿的程度，这里就会出现变化。';
+    return;
+  }
+  // 柱子：宽度跟着天数走，天多就窄
+  var slot=plotW/list.length;
+  var barW=Math.max(3, Math.min(26, slot*0.62));
+  list.forEach(function(o,idx){
+    var cx=padL+slot*(idx+0.5);
+    if(o.lv===null) return;
+    var h=plotH*((o.lv+1)/5);
+    var y=padT+plotH-h;
+    var col=SW_BAR_COLORS[o.lv];
+    g+='<rect x="'+(cx-barW/2).toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+barW.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="'+(barW>8?4:2)+'" fill="'+col+'" opacity="0.92"/>';
+    // 单侧肿加一个白点标记：这条信息比等级更值得提醒
+    if(o.side==='left'||o.side==='right'){
+      g+='<circle cx="'+cx.toFixed(1)+'" cy="'+(y-8).toFixed(1)+'" r="3.5" fill="#c0392f" stroke="#fff" stroke-width="1.5"/>';
+    }
+  });
+  // 横轴日期：最多标 7 个，避免挤成一团
+  var step=Math.max(1, Math.ceil(list.length/7));
+  list.forEach(function(o,idx){
+    if(idx%step!==0 && idx!==list.length-1) return;
+    var cx=padL+slot*(idx+0.5);
+    g+='<text x="'+cx.toFixed(1)+'" y="'+(H-padB+22)+'" text-anchor="middle" font-size="13" fill="#6a7076" font-weight="600">'+(o.d.getMonth()+1)+'/'+o.d.getDate()+'</text>';
+  });
+  // 横轴底线
+  g+='<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+(padT+plotH)+'" y2="'+(padT+plotH)+'" stroke="#c9d7d6" stroke-width="1"/>';
+  svg.innerHTML=g;
+  // 一句话总结：只描述事实，不吓人
+  var got=list.filter(function(o){return o.lv!==null;});
+  var hi=got.filter(function(o){return o.lv>=3;});
+  var sideDays=got.filter(function(o){return o.side==='left'||o.side==='right';});
+  var txt='最近 '+days+' 天记了 <b>'+got.length+'</b> 天';
+  if(hi.length) txt+='，其中 <b>'+hi.length+' 天肿得比较厉害</b>';
+  else txt+='，都不算厉害';
+  if(sideDays.length) txt+=' · 有 '+sideDays.length+' 天只有一条腿肿（这个要看医生）';
+  if(got.length<3) txt+=' · 记录还少，多记几天才看得出变化';
+  /* 窗口外的日子要说出来：血压图那边也有同样的提示。
+     不说的话，用户看到「记了却没显示」会以为丢数据。
+     口径必须和图一致：只数「日常区里、落在本窗口之前」的合法日子；
+     90 天档与 SW_KEEP_DAYS 同宽，此时不该有窗口外的日子，出现非 0 就是脏键，干脆不提。 */
+  if(days<SW_KEEP_DAYS){
+    var winFrom=dayKey(new Date(today0.getTime()-(days-1)*86400000));
+    var outside=Object.keys(m).filter(function(k){ return k<winFrom; }).length;
+    if(outside>0) txt+=' · <span style="color:#8a5700">另有 '+outside+' 天在更早的时候，可在记录里查</span>';
+  }
+  var sl2=$('swStatLine');
+  if(sl2) sl2.innerHTML=txt;
 }
 
 /* ---------- 吃药打卡 ---------- */
@@ -1450,15 +1846,28 @@ function medTaken(p,id){ return !!(p.taken && p.taken[medKey(id)]); }
 
 function toggleMed(id){
   var p=cur();
+  var prevTaken=JSON.parse(JSON.stringify(p.taken||{}));
   if(!p.taken) p.taken={};
   var k=medKey(id);
   if(p.taken[k]) delete p.taken[k]; else p.taken[k]=1;
   // 只保留最近 60 天的打卡记录，防止无限增长
-  var keys=Object.keys(p.taken), cut={};
+  var keys=Object.keys(p.taken), cut={}, prunedKeys=[];
   var keepFrom=dayKey(new Date(Date.now()-60*86400000));
-  keys.forEach(function(k2){ if(k2.slice(0,10)>=keepFrom) cut[k2]=1; });
+  keys.forEach(function(k2){
+    if(k2.slice(0,10)>=keepFrom){ cut[k2]=1; }
+    else { prunedKeys.push(k2); }      // 裁掉的键登记墓碑，双标签页时不会被补回来
+  });
   p.taken=cut;
-  if(!save()){ toast('没能保存，请再点一次'); }
+  prunedKeys.forEach(markDeadTaken);
+  if(!save()){
+    // 存不下就把它改回去：否则界面显示「已打卡」，实际什么都没记住，
+    // 子女看到的是假的按时吃药记录。刚登记的裁剪墓碑也要撤回。
+    p.taken=prevTaken;
+    prunedKeys.forEach(unmarkDeadTaken);
+    renderMeds();
+    toast('没能保存，请再点一次');
+    return;
+  }
   renderMeds();
 }
 
@@ -1557,14 +1966,34 @@ function loadHot(force){
   if(typeof fetch!=='function'){ renderHot([], ''); return; }
   box.innerHTML='<div class="hot-empty">正在取新闻…</div>';
   var feed=hotFeed(hotCur);
+  var wantCat=hotCur;              // 记下发请求时的分类，迟到的响应不许覆盖别的分类
   var api='https://api.rss2json.com/v1/api.json?count=10&rss_url='+encodeURIComponent(feed.url);
-  fetch(api).then(function(r){ return r.json(); }).then(function(j){
-    if(!j || j.status!=='ok' || !j.items || !j.items.length){ throw new Error('bad'); }
+  /* 必须自己掐超时：中转站挂住不返回时，fetch 的 then/catch 都不会执行，
+     页面就会永远停在「正在取新闻…」，而且 _hotLoaded 已是 true，切回来也不会重取。 */
+  var ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
+  var settled=false;
+  var timer=setTimeout(function(){
+    if(settled) return; settled=true;
+    if(ctrl){ try{ ctrl.abort(); }catch(e){} }
+    if(wantCat===hotCur){ renderHot([],'新闻没取到：网络太慢。点下面「刷新一下」再试。'); }
+    _hotLoaded=false;              // 允许下次进来重取
+  },8000);
+  var opts=ctrl?{signal:ctrl.signal}:{};
+  fetch(api,opts).then(function(r){ return r.json(); }).then(function(j){
+    if(settled) return; settled=true; clearTimeout(timer);
+    if(wantCat!==hotCur) return;   // 用户已经切到别的分类，丢弃这次结果
+    if(!j || j.status!=='ok' || !j.items || !j.items.length){
+      renderHot([],'新闻没取到：中转站返回的内容不对，过一会儿点「刷新一下」。');
+      _hotLoaded=false; return;
+    }
     var items=j.items.map(function(it){ return {title:it.title, link:it.link, pubDate:it.pubDate}; });
     renderHot(items, '更新于 '+fmt(Date.now()), feed.name);
     try{ localStorage.setItem(key, JSON.stringify({t:Date.now(), items:items})); }catch(e){}
   }).catch(function(){
-    renderHot([], '');
+    if(settled) return; settled=true; clearTimeout(timer);
+    if(wantCat!==hotCur) return;
+    renderHot([],'新闻没取到：可能是没联网。点下面「刷新一下」再试。');
+    _hotLoaded=false;
   });
 }
 /* 高亮单独抽出来：切页返回「更多」时也要同步，否则会出现
@@ -1603,35 +2032,104 @@ function swellToday(p){
   if(!isFinite(lv) || lv<0 || lv>4) return null;
   return {lv:lv, side:(v.side==='left'||v.side==='right')?v.side:'both', ts:Number(v.ts)||0};
 }
-/* 只保留最近 90 天，避免 localStorage 无限增长 */
-function swellPrune(p){
+/* 日常统计只用最近 90 天，避免 localStorage 无限增长。
+   但**不销毁**：超期的腿肿记录挪进 p.swellOld 归档区，需要时还查得到。
+   以前是直接删，一天腿肿记录没了就真没了，而这正是要给医生看的东西。 */
+var SWOLD_KEEP_DAYS=730;          // 归档区最多留两年，兜住"内存不够用"的情况
+/* 加载阶段的轻量裁剪：只做「超 90 天搬迁进归档区」，不动归档区本身，
+   也不依赖 cur()/save() 之类的外部状态（loadState 跑的时候它们还没就绪）。 */
+function swellPruneCache(p){
+  if(!p || typeof p!=='object') return;
+  var m=(p.swell && typeof p.swell==='object' && !Array.isArray(p.swell)) ? p.swell : null;
+  if(!m) return;
+  if(!p.swellOld || typeof p.swellOld!=='object' || Array.isArray(p.swellOld)) p.swellOld={};
+  /* 这里的 90 必须写死数字，不能引用 SW_KEEP_DAYS：
+     本函数在 loadState（第 839 行）里被调用，而 SW_KEEP_DAYS 到两千多行才赋值。
+     var 声明提升但赋值不提升，那时读到的是 undefined →
+     from 变成 "NaN-NaN-NaN" → 所有键都被判成「过期」搬进归档区，
+     结果是每次打开页面都把腿肿记录全搬走、图上永远是空的。 */
+  var from=dayKey(new Date(Date.now()-90*86400000));
+  var keep={};
+  Object.keys(m).forEach(function(k){
+    if(k>=from){ keep[k]=m[k]; }
+    else if(!p.swellOld[k]){ p.swellOld[k]=m[k]; }
+  });
+  p.swell=keep;
+}
+function swellPrune(p, opts){
   var m=swellMap(p);
   var from=dayKey(new Date(Date.now()-SW_KEEP_DAYS*86400000));
-  var cut={};
-  Object.keys(m).forEach(function(k){ if(k>=from) cut[k]=m[k]; });
+  var cut={}, moved=0;
+  if(!p.swellOld || typeof p.swellOld!=='object' || Array.isArray(p.swellOld)) p.swellOld={};
+  Object.keys(m).forEach(function(k){
+    if(k>=from){ cut[k]=m[k]; }
+    else{
+      if(!p.swellOld[k]){ p.swellOld[k]=m[k]; moved++; }
+    }
+  });
   p.swell=cut;
+  // 归档区也要有个上限，否则几年后同样会撑满。
+  // opts.keepArchived=true 时跳过裁剪：导入合并刚并进来的老记录不能被当场删掉。
+  if(!(opts && opts.keepArchived)){
+    var oldFrom=dayKey(new Date(Date.now()-SWOLD_KEEP_DAYS*86400000));
+    Object.keys(p.swellOld).forEach(function(k){ if(k<oldFrom) delete p.swellOld[k]; });
+  }
+  return moved;
 }
 function swellSet(lv, side){
   var p=cur();
+  // 归档区也要一起备份：swellPrune 会把超期记录挪进去，
+  // 保存失败时只还原 swell 而不管 swellOld，归档区就留下了一份本不该有的数据。
   var prev=p.swell ? JSON.parse(JSON.stringify(p.swell)) : {};
+  var prevOld=p.swellOld ? JSON.parse(JSON.stringify(p.swellOld)) : null;
   var m=swellMap(p);
   var key=dayKey();
   var old=m[key]||{};
   m[key]={lv:lv, side:(side==='left'||side==='right')?side:'both', ts:old.ts||Date.now()};
   swellPrune(p);
-  if(!save()){ p.swell=prev; renderSwell(); toast('没能保存，请再点一次'); return; }
+  if(!save()){
+    p.swell=prev;
+    if(prevOld===null){ delete p.swellOld; } else { p.swellOld=prevOld; }
+    renderSwell(); toast('没能保存，请再点一次'); return;
+  }
   renderSwell();
+  try{ renderSwellChart(); }catch(e){}   // 趋势页的图同步更新，切过去就是最新的
 }
 function swellSetSide(side){
   var p=cur(), t=swellToday(p);
   if(!t){ toast('先选一下肿到几分'); return; }
   swellSet(t.lv, side);
 }
+/* 折叠状态：腿肿、吃药默认收起。只存内存，不进备份——这是显示偏好，不是数据。 */
+var FOLD={sw:false, med:false};
+function setFold(which, open){
+  FOLD[which]=!!open;
+  var body=$(which==='sw'?'swBody':'medBody');
+  var btn=$(which==='sw'?'swFold':null);
+  if(body){
+    if(which==='med'){ /* 吃药栏的展开同时受「开启」开关控制，见 renderMedPanel */ }
+    else body.style.display = open?'':'none';
+  }
+  if(btn){
+    btn.textContent = open?'收起':'展开';
+    btn.setAttribute('aria-expanded', open?'true':'false');
+  }
+  if(which==='sw') renderSwellState();
+}
+/* 收起时也要知道今天记了没有：标题旁那行小字 */
+function renderSwellState(){
+  var el=$('swState');
+  if(!el) return;
+  var t=swellToday(cur());
+  el.textContent = t ? ('今天：'+SW_LEVELS[t.lv].t.split('，')[0]) : '今天还没记';
+}
+
 function renderSwell(){
   var p=cur(), box=$('swOpts');
   if(!box) return;
   var t=swellToday(p);
   var curLv = t ? t.lv : -1;
+  renderSwellState();
   var html='';
   SW_LEVELS.forEach(function(o){
     html+='<button class="sw-opt'+(o.lv===curLv?' on':'')+'" type="button" data-swlv="'+o.lv+'">'+
@@ -1667,20 +2165,43 @@ function renderSwellLog(p){
   var box=$('swLog');
   if(!box) return;
   var m=swellMap(p);
-  var keys=Object.keys(m).filter(function(k){
+  var allKeys=Object.keys(m).filter(function(k){
     var v=m[k]; var lv=Number(v&&v.lv);
     return isFinite(lv)&&lv>=0&&lv<=4;
-  }).sort().reverse().slice(0,14);
-  if(!keys.length){ box.innerHTML=''; return; }
-  var days='';
-  keys.forEach(function(k){
-    var lv=Number(m[k].lv);
-    days+='<span class="sw-day lv'+lv+'">'+(Number(k.slice(8)))+'日 '+SW_LEVELS[lv].t.split('，')[0]+'</span>';
-  });
-  var hi=keys.filter(function(k){ return Number(m[k].lv)>=3; }).length;
-  var line='最近 '+keys.length+' 天记了 '+keys.length+' 次';
-  if(hi) line+='，其中 <b>'+hi+' 天肿到 3 分以上</b>';
-  box.innerHTML=line+'<div class="sw-days">'+days+'</div>';
+  }).sort().reverse();
+  var oldKeys=Object.keys(p.swellOld||{}).filter(function(k){
+    var v=p.swellOld[k]; var lv=Number(v&&v.lv);
+    return isFinite(lv)&&lv>=0&&lv<=4;
+  }).sort().reverse();
+  if(!allKeys.length && !oldKeys.length){ box.innerHTML=''; return; }
+
+  /* withMonth=true 时带上月份：归档区可能横跨好几个月，
+     只写「16日」会出现两个 16 日分不清的情况。 */
+  function dayChip(k,src,withMonth){
+    var v=src[k], lv=Number(v.lv);
+    var datePart = withMonth ? (Number(k.slice(5,7))+'月'+Number(k.slice(8))+'日') : (Number(k.slice(8))+'日');
+    return '<span class="sw-day lv'+lv+'">'+datePart+' '+SW_LEVELS[lv].t.split('，')[0]+'</span>';
+  }
+  var html='';
+  if(allKeys.length){
+    var shown=allKeys.slice(0,14);
+    var days=shown.map(function(k){ return dayChip(k,m); }).join('');
+    var hi=shown.filter(function(k){ return Number(m[k].lv)>=3; }).length;
+    var line='最近 '+shown.length+' 天记了 '+shown.length+' 次';
+    if(hi) line+='，其中 <b>'+hi+' 天肿到 3 分以上</b>';
+    if(allKeys.length>shown.length) line+='（更早的 '+(allKeys.length-shown.length)+' 天在下面归档里）';
+    html+=line+'<div class="sw-days">'+days+'</div>';
+  }
+  /* 归档区也要能看到：趋势图的提示会说「另有 N 天在更早的时候」，
+     但那句话如果兑现不了，用户就永远查不到自己记过什么。
+     这里把超期搬走的记录列出来，只列最近 7 条，够看、不占版面。 */
+  if(oldKeys.length){
+    var oldShown=oldKeys.slice(0,14);
+    html+='<div style="margin-top:10px">更早记录的归档（共 '+oldKeys.length+' 天'+
+          (oldKeys.length>oldShown.length?('，这里显示最近 '+oldShown.length+' 天'):'')+'）</div>'+
+          '<div class="sw-days">'+oldShown.map(function(k){ return dayChip(k,p.swellOld,true); }).join('')+'</div>';
+  }
+  box.innerHTML=html;
 }
 
 /* 吃药栏是可选的：老人没在吃药就不该看到它。
@@ -1701,6 +2222,19 @@ function renderMedPanel(){
     btn.setAttribute('aria-pressed', on?'true':'false');
   }
   if(on) renderMeds();
+  renderMedState();
+}
+/* 标题旁一行状态：收起时也能知道今天吃没吃药，不用点开展开看 */
+function renderMedState(){
+  var el=$('medState');
+  if(!el) return;
+  var p=cur();
+  if(!medOn(p)){ el.textContent='没开启'; return; }
+  var meds=(p.meds&&p.meds.length)?p.meds:[];
+  if(!meds.length){ el.textContent='还没设时间'; return; }
+  var done=0;
+  meds.forEach(function(m){ if(medTaken(p,m.id)) done++; });
+  el.textContent = (done===meds.length) ? ('都吃了 '+done+'/'+meds.length) : ('吃了 '+done+'/'+meds.length);
 }
 function toggleMedPanel(){
   var p=cur();
@@ -1712,9 +2246,17 @@ function toggleMedPanel(){
   var prevOn=medOn(p);
   var prevTaken=JSON.parse(JSON.stringify(p.taken||{}));
   p.medOn = !prevOn;
-  if(p.medOn===false) p.taken={};      // 关掉就清掉打卡，免得下次开启时冒出旧数据
+  var clearedKeys=[];
+  if(p.medOn===false){
+    // 关掉就清掉打卡，免得下次开启时冒出旧数据。
+    // 被清掉的键要登记墓碑，否则另一个标签页一保存就把勾补回来了。
+    clearedKeys=Object.keys(p.taken||{});
+    clearedKeys.forEach(markDeadTaken);
+    p.taken={};
+  }
   if(!save()){                         // 存不下就还原，别让界面跟存储对不上
     p.medOn=prevOn; p.taken=prevTaken;
+    clearedKeys.forEach(unmarkDeadTaken);
     renderMedPanel();
     return;
   }
@@ -1744,6 +2286,10 @@ function renderMeds(){
     stat.className='med-stat'+(st.warn?' warn':'');
     stat.textContent=st.text;
   }
+  /* 标题旁那行「吃了 N/M」也要跟着更新：
+     它是收起状态下的唯一提示，勾完不刷新会一直显示「吃了 0/M」，
+     老人看到以为没点上，再点一次反而把勾取消了。 */
+  try{ renderMedState(); }catch(e){}
 }
 
 /* 本月统计：只用「开始打卡以来」的区间计算，避免把没用过的日子算成漏吃。
@@ -1970,13 +2516,15 @@ function startEditRecord(r){
   showTab('rec');
   renderLastHint(); checkHourPeriod();
   var ec=$('entryCard');
-  if(ec && ec.scrollIntoView) ec.scrollIntoView({behavior:'smooth',block:'center'});
+  if(ec && ec.scrollIntoView) ec.scrollIntoView({behavior:SCROLL_BEHAVIOR,block:'center'});
   toast('改好数字后点保存');
 }
 
 /* 切换标题与按钮文案，让老人清楚现在是"记新的"还是"改旧的" */
 function setEditingMode(on){
-  // 编辑时收起底部悬浮条，免得挡住「保存」按钮
+  /* body 上的 editing 类现在没有任何 CSS 规则——
+     它原本用来收起一条早就删掉的底部悬浮条。
+     留着当「当前在编辑」的全局标记，别再指望它改变布局。 */
   document.body.classList.toggle('editing', !!on);
   var t=$('entryTitle'), b=$('saveBtn');
   if(t) t.textContent = on ? '修改这次记录' : '记一次血压';
@@ -2042,14 +2590,19 @@ function renderLastHint(){
   var isToday=dayKey(new Date(last.ts))===dayKey();
   var when = isToday ? '今天' : fmt(last.ts);
   el.style.display='';
-  el.innerHTML='上次是 <b>'+esc(last.sys)+'/'+esc(last.dia)+'</b>（'+when+' '+esc(last.period)+'）';
+  /* 顺手给一个「改」按钮：原来改一条记录要切到趋势页、滚过两张图、点「看看」、再切回记录页，
+     老人最容易卡在「想不到记录列表在趋势页底部」。这里直接把入口放到手边。 */
+  el.innerHTML='上次是 <b>'+esc(last.sys)+'/'+esc(last.dia)+'</b>（'+when+' '+esc(last.period)+'）'+
+    ' <button class="hint-edit" type="button" id="lastEditBtn">改这次</button>';
+  var eb=$('lastEditBtn');
+  if(eb) eb.onclick=function(){ startEditRecord(last); };
 }
 
 function renderRecent(){
   var ul=$('recentList'), p=cur();
   ul.innerHTML='';
   var rs=p.records.slice(-10).reverse();
-  if(!rs.length){ ul.innerHTML='<li><span class="t">还没有记录</span></li>'; return; }
+  if(!rs.length){ ul.innerHTML='<li><span class="t" style="text-align:center;padding:6px 0">还没有记录。填上高压、低压，点下面的「保存这次记录」就记上了。</span></li>'; return; }
   rs.forEach(function(r){
     var g=grade(r.sys,r.dia);
     var li=document.createElement('li');
@@ -2058,9 +2611,9 @@ function renderRecent(){
     li.innerHTML=
       '<span class="rec-main">'+
         '<span class="v">'+esc(r.sys)+'/'+esc(r.dia)+'</span>'+
-        '<span class="t">'+fmt(r.ts)+' '+esc(r.period)+'</span>'+
+        '<span class="t">'+fmtShort(r.ts)+'</span>'+
       '</span>'+
-      '<span class="pill '+tagClass(g)+'">'+esc(g.text)+'</span>'+
+      '<span class="pill '+tagClass(g)+'">'+esc(shortGrade(g))+'</span>'+
       '<button class="rec-btn" type="button" data-act="detail">看看</button>'+
       '<button class="rec-btn del" type="button" data-act="del">删除</button>';
     // 防御：元素找不到时不要让整个列表渲染中断
@@ -2108,9 +2661,17 @@ function confirmDeleteRecord(r){
   $('delNo').onclick=closeModal;
   $('delYes').onclick=function(){
     var key=r.rid||r.ts;
-    var backup=p.records.slice();
+    // 深拷贝：浅拷贝在失败回滚时恢复的是同一批对象，改动其实没退回去
+    var backup=JSON.parse(JSON.stringify(p.records));
     p.records=p.records.filter(function(x){ return (x.rid||x.ts)!==key; });
-    if(!save()){ p.records=backup; return; }
+    // 登记墓碑：另一个标签页还留着这条时，合并不能把它补回来
+    if(r.rid) markDead(r.rid);
+    if(!save()){
+      p.records=backup;
+      // 撤回墓碑要连 _deadOrder 一起清，只删键的话会被落盘、刷新后复活成墓碑
+      if(r.rid) unmarkDead(r.rid);
+      return;
+    }
     closeModal(); renderAll(); toast('已删除');
   };
 }
@@ -2184,15 +2745,35 @@ function row(k,v){ return '<tr><td style="padding:8px 0;color:#6a7076">'+k+'</td
 /* ---------- 导入导出 ---------- */
 /* 备份必须包含所有人。只导出当前人会让人在换手机时
    静默丢掉另一个人的全部记录 —— 这是最危险的数据丢失路径。 */
-function buildBackup(){
+/* 备份成功的时间戳单独记：不要在「生成备份内容」时就写，
+   那时候用户还没真正存下来（复制失败、导出抛错都算不成功），
+   提前写会让 30 天提醒永远不再出现。 */
+function markBackedUp(){
   try{ localStorage.setItem(LAST_BACKUP_KEY, String(Date.now())); }catch(e){}
+  try{ checkBackupAge(); }catch(e){}
+}
+function buildBackup(){
+  /* 数据损坏且还没恢复时，绝不能拿内存里的空壳当备份——
+     老人一旦把这份空备份留起来，原始数据就彻底没救了。
+     此时直接返回原始存档，让用户把它完整保存下来。 */
+  if(LOAD_BROKEN){
+    var rawBroken=null;
+    try{ rawBroken=localStorage.getItem(ROOT+'-corrupt')||localStorage.getItem(ROOT)||''; }catch(e){}
+    return {app:'family-health',version:2,broken:true,exportedAt:new Date().toISOString(),
+            rawText:rawBroken,people:[]};
+  }
   return {app:'family-health',version:2,exportedAt:new Date().toISOString(),
           people:S.people.map(function(p){
             // swell 必须一起导出：腿肿是"这几天肿没肿"的趋势数据，
             // 漏掉它，换手机或复制备份文字恢复后腿肿记录会静默消失，事前毫无提示。
-            return {label:p.label,name:p.name,age:p.age,kin:p.kin,
+            // pid 是这台设备内部的稳定标识：恢复时优先靠它认人，
+            // 否则两台设备上默认都叫「爸爸」的两个人会被当成同一个人并到一起。
+            // medOn 也要导出：漏了它，换手机后吃药栏会按「有打卡就算开」自己又开起来，
+            // 而老人明明点过「关闭」。写成 undefined 而不是 false，是为了让老备份仍走原来的推断。
+            return {pid:p.pid||p.id,label:p.label,name:p.name,age:p.age,kin:p.kin,
                     records:p.records,meds:p.meds,taken:p.taken,skipped:p.skipped||{},
-                    swell:p.swell||{}};
+                    medOn:(p.medOn===true||p.medOn===false)?p.medOn:undefined,
+                    swell:p.swell||{}, swellOld:p.swellOld||{}};
           })};
 }
 function exportData(){
@@ -2202,10 +2783,12 @@ function exportData(){
   var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'});
   var a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='健康记录备份-'+dayKey()+'.json';
+  // 数据损坏时导出的是「原始数据原文」，文件名要能一眼看出来，别当成正常备份
+  a.download=(LOAD_BROKEN?'原始数据（损坏前）-':'健康记录备份-')+dayKey()+'.json';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(function(){ URL.revokeObjectURL(a.href); },2000);
-  toast('备份文件已保存');
+  markBackedUp();
+  toast(LOAD_BROKEN?'已导出原始数据，请留着别丢':'备份文件已保存');
 }
 
 /* ---------- 事件 ---------- */
@@ -2221,11 +2804,78 @@ function numOf(el){
    要点：不能因为"手快"就把第二次记录吞掉。
    只在"80ms 内、且输入内容完全相同"时才算重复点击。
    老人量完立刻复测（数值不同）或者重新填写，都能正常保存。 */
+/* 记录太多时的自动归档：把最老的 1000 条导出成文件，再从主记录里移走。
+   返回 false 表示「没归档成功」，调用方必须停下，不能继续存——否则老人以为记上了，其实没记。
+   注意：这里只移走，不删。导出的文件由用户自己收着，主记录里也留了归档键。 */
+var ARCHIVE_BATCH=1000;
+var ARCHIVE_KEY='family-health-archive';
+var ARCHIVE_MAX=5000;      // 归档键最多留 5000 条，防止它自己把存储撑满
+function autoArchiveOldRecords(p){
+  var rs=p.records.slice().sort(function(a,b){ return a.ts-b.ts; });
+  var take=rs.slice(0,ARCHIVE_BATCH);
+  if(!take.length) return true;
+  // 记下归档前的主记录：保存失败时要整体还原，见下面的 _archivedRollback
+  var beforeArchive=p.records.slice();
+  // ① 先写归档键（本机可查），写失败就整个停下
+  try{
+    var prev=[];
+    try{ prev=JSON.parse(localStorage.getItem(ARCHIVE_KEY)||'[]'); }catch(e){ prev=[]; }
+    if(!Array.isArray(prev)) prev=[];
+    var merged=prev.concat(take);
+    // 归档键也要有上限：不加的话每满 5000 条就多 1000 条永不清理，
+    // 几年后它自己把存储撑满，反而导致「再也存不进新记录」。
+    // 截断要按时间排序取最新的那批：按写入顺序取末尾，会把早先积压但时间更近的记录丢掉。
+    if(merged.length>ARCHIVE_MAX){
+      merged.sort(function(a,b){ return (Number(a&&a.ts)||0)-(Number(b&&b.ts)||0); });
+      merged=merged.slice(merged.length-ARCHIVE_MAX);
+    }
+    localStorage.setItem(ARCHIVE_KEY, JSON.stringify(merged));
+  }catch(e){
+    toast('记录太多了，但没能整理。请先点「备份数据」把记录存下来，再联系家人帮忙');
+    return false;
+  }
+  /* ② 再导出成文件，让用户手里有一份。
+     这一步要放到下一个事件循环里做：URL.createObjectURL 会克隆整个 Blob，
+     1000 条记录的 JSON 不小，同步做会把界面卡住几十秒（实测 headless 下能卡到超时）。
+     先让「已记下」的界面刷新出来，再慢慢导出；导不出也不影响主流程。 */
+  var exportData={app:'family-health',version:2,exportedAt:new Date().toISOString(),
+                  people:[{label:p.label,name:p.name,age:p.age,kin:p.kin,
+                           records:take,meds:[],taken:{},skipped:{},swell:{}}]};
+  setTimeout(function(){
+    try{
+      var blob=new Blob([JSON.stringify(exportData,null,2)],{type:'application/json;charset=utf-8'});
+      var a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download='健康记录-旧记录归档-'+dayKey()+'.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function(){ try{ URL.revokeObjectURL(a.href); }catch(e){} },2000);
+    }catch(e){ /* 导不出文件不算致命：归档键里已经有一份 */ }
+  },0);
+  // ③ 从主记录移走（不是删：归档键里还留着）。
+  //    必须按「对象引用」剔除，不能按 rid：两条记录可能共用同一个 rid
+  //    （导入的旧备份没有 rid 时会按内容生成指纹），按 rid 剔除会把没进归档的那条也一起删掉。
+  //    用 Set 装对象引用，语义就是注释承诺的那个，不靠字符串键去猜。
+  var inTake=new Set(take);
+  p.records=p.records.filter(function(r){ return !inTake.has(r); });
+  // 不承诺"存成文件"：微信内置浏览器里下载常常不落地。
+  // 说清楚"移到了归档、可以自己导出"，不给人一个到手的东西其实没拿到的错觉。
+  toast('记录太多，最老的 '+take.length+' 条已移到归档，这次照常记下。想留档请点「备份数据」');
+  // 返回归档前的主记录快照：只交给这一次 doSave 用，不放在模块级变量里。
+  // 放模块级会残留——归档后如果走了「凌晨时段确认」这类提前 return 的路径，
+  // 下一次别的保存失败时就会拿这份陈旧快照去还原，把记录改回上一个时刻的样子。
+  return beforeArchive;
+}
+/* 剔除用的键：优先 rid，没有就用内容指纹，保证同一条记录可以精确定位 */
 var lastSaveAt=0, lastSaveKey='';
 $('saveBtn').onclick=function(){
   var now=Date.now();
-  var key=[$('sys').value,$('dia').value,$('pulse').value,$('period').value].join('|');
-  if(now-lastSaveAt < 80 && key===lastSaveKey && key!=='|||') return;
+  // 去重键必须带上「哪天测的」和「量了几遍」：
+  // 少了它们，老人填同样的数、只把「今天」改成「昨天」再点保存，会被当成重复点击吞掉。
+  var whenEl=$('when'), roundsEl=$('rounds');
+  var key=[$('sys').value,$('dia').value,$('pulse').value,$('period').value,
+           whenEl?whenEl.value:'', roundsEl?roundsEl.value:'',
+           editingRid||''].join('|');
+  if(now-lastSaveAt < 80 && key===lastSaveKey && key.indexOf('|||')!==0) return;
   lastSaveAt=now; lastSaveKey=key;
   doSave();
 };
@@ -2251,13 +2901,22 @@ function doSave(){
     var target=null;
     for(var k=0;k<p.records.length;k++){ if(p.records[k].rid===editingRid){ target=p.records[k]; break; } }
     if(!target){ editingRid=null; toast('找不到这条记录了'); return; }
-    var backupRec={sys:target.sys,dia:target.dia,pulse:target.pulse,period:target.period};
+    // rounds 也要一起备份：漏了它，保存失败回滚后「量了几遍」会停在新值上
+    var backupRec={sys:target.sys,dia:target.dia,pulse:target.pulse,period:target.period,rounds:target.rounds};
     var roundsSel2=$('rounds');
     var roundsVal2=roundsSel2?(parseInt(roundsSel2.value,10)||2):target.rounds;
     target.sys=sys; target.dia=dia; target.pulse=pulse||null; target.period=periodVal; target.rounds=roundsVal2;
     if(!save()){
+      // 数值回滚了，编辑态也必须一起退掉：
+      // 否则标题还写着「保存修改」、editingRid 还指着那条，用户会以为改成功了。
       target.sys=backupRec.sys; target.dia=backupRec.dia;
-      target.pulse=backupRec.pulse; target.period=backupRec.period;
+      target.pulse=backupRec.pulse; target.period=backupRec.period; target.rounds=backupRec.rounds;
+      editingRid=null;
+      /* 输入框必须一起清掉：留着回滚后的旧值，用户再点一下保存，
+         就会把这串旧数字当成一条新记录存进去，凭空多一条。 */
+      $('sys').value=''; $('dia').value=''; $('pulse').value='';
+      try{ setEditingMode(false); }catch(e){}
+      renderAll();
       return;
     }
     editingRid=null;
@@ -2269,11 +2928,14 @@ function doSave(){
     return;
   }
 
-  /* ---- 新增记录 ---- */
-  // 防止记录无限增长：超出上限提示先备份
+  /* ---- 新增记录 ----
+     记录太多时不能只弹一句「请先备份再清理」：老人根本不知道该怎么清理，
+     结果就是从此记不进去了。这里改成自动帮他做完：
+     ① 把最老的 1000 条导成一个文件让他收着；② 从主记录里移走；③ 照常保存这次的。 */
+  var archivedBefore=null;   // 本次保存前做过归档的话，这里是归档前的记录快照
   if(p.records.length>=5000){
-    toast('记录已经很多了，请先点一次备份，再清理一部分旧记录');
-    return;
+    archivedBefore=autoArchiveOldRecords(p);
+    if(!archivedBefore) return;             // 导不出来就停下，绝不先删后存
   }
   // 支持补记昨天、前天
   var whenSel=$('when');
@@ -2328,8 +2990,11 @@ function doSave(){
          rid:'r'+ts.toString(36)+Math.random().toString(36).slice(2,5)};
   p.records.push(r); p.records.sort(function(a,b){ return a.ts-b.ts; });
   if(!save()){
-    // 存不进去就回滚，避免界面显示已保存但实际没存
-    p.records=p.records.filter(function(x){ return x.rid!==r.rid; });
+    // 存不进去就回滚，避免界面显示已保存但实际没存。
+    // 如果刚才为了腾空间做过归档，要把主记录整份还原回去——
+    // 否则界面上少了 1000 条、存储里还是 5000 条，再点保存又归档一次、又失败，死循环。
+    if(archivedBefore){ p.records=archivedBefore; }
+    else { p.records=p.records.filter(function(x){ return x.rid!==r.rid; }); }
     return;
   }
   $('sys').value=''; $('dia').value=''; $('pulse').value='';
@@ -2368,7 +3033,7 @@ $('photoInput').onchange=function(e){
   $('photoOk').onclick=function(){
     closeModal();
     $('sys').focus();
-    setTimeout(function(){ var _se_entryCard=document.getElementById('entryCard'); if(_se_entryCard&&_se_entryCard.scrollIntoView) _se_entryCard.scrollIntoView({behavior:'smooth',block:'center'}); },80);
+    setTimeout(function(){ var _se_entryCard=document.getElementById('entryCard'); if(_se_entryCard&&_se_entryCard.scrollIntoView) _se_entryCard.scrollIntoView({behavior:SCROLL_BEHAVIOR,block:'center'}); },80);
   };
   e.target.value='';
 };
@@ -2378,8 +3043,11 @@ $('photoInput').onchange=function(e){
    切换时只改显示，不再往页面上叠内容；切换后滚到顶，老人不会「停在半空」。 */
 var TABS=['rec','trend','ask','more'];
 var TITLE_OF={rec:'记录',trend:'趋势',ask:'小安',more:'更多'};
-function showTab(name){
+var curTab='rec';
+function showTab(name,restore){
   if(TABS.indexOf(name)<0) name='rec';
+  var same=(name===curTab);
+  curTab=name;
   TABS.forEach(function(t){
     var pg=document.getElementById('page-'+t);
     if(pg) pg.className='page'+(t===name?' on':'');
@@ -2389,17 +3057,25 @@ function showTab(name){
     b.className=on?'on':'';
     b.setAttribute('aria-selected', on?'true':'false');
   });
-  // 切到趋势页要重画一次：隐藏时算出来的 svg 尺寸是 0
-  if(name==='trend'){ try{ renderChart(); }catch(e){} }
+  // 切到趋势页重画两张图。两张都用固定 viewBox，不读容器实际尺寸，
+  // 所以隐藏状态下画出来的结果也是对的（这一点经审查实测确认）。
+  if(name==='trend'){ try{ renderChart(); renderSwellChart(); }catch(e){} }
   if(name==='rec'){ try{ renderSwell(); renderMedPanel(); }catch(e){} }
   // 新闻只在真的打开「更多」时取一次，不预加载
   if(name==='more'){
     try{ hotMarkTabs(); }catch(e){}     // 每次进来都对齐高亮，不只在第一次
     if(!_hotLoaded){ _hotLoaded=true; try{ loadHot(false); }catch(e){} }
   }
-  // 小安页只有一张卡，进去就开对话，少一次点击；关闭弹窗仍停在选项卡上
-  if(name==='ask'){ try{ openAssistant(''); }catch(e){} }
-  try{ window.scrollTo(0,0); }catch(e){}
+  // 小安页不再自动弹模态框：以前一点「小安」就先蹦出一个「请输入口令」的窗口，
+  // 老人会以为自己点错了。现在页面上是完整的小安介绍 + 四个常用问题 + 「开始对话」大按钮，
+  // 由用户自己决定进不进去。
+  // 滚动位置由调用方决定：
+  //  - 换页（!same）→ 回到顶部，否则会停在上一页的半空中
+  //  - 再点一次当前标签 → 平滑回到顶部，这是老人最习惯的「回到上面」
+  //  - 启动恢复上次标签时传 restore=true，不动滚动位置
+  if(restore){ /* 什么都不做 */ }
+  else if(same){ try{ window.scrollTo({top:0,behavior:SCROLL_BEHAVIOR}); }catch(e){} }
+  else { try{ window.scrollTo(0,0); }catch(e){} }
   try{ localStorage.setItem('family-health-tab', name); }catch(e){}
 }
 Array.prototype.forEach.call(document.querySelectorAll('#tabbar [data-tab]'),function(b){
@@ -2410,8 +3086,18 @@ var _sos=$('sosLink');
 if(_sos) _sos.onclick=function(){
   showTab('more');
   var el=document.getElementById('emergencyCard');
-  if(el&&el.scrollIntoView) setTimeout(function(){ el.scrollIntoView({behavior:'smooth',block:'center'}); },80);
+  if(el&&el.scrollIntoView) setTimeout(function(){ el.scrollIntoView({behavior:SCROLL_BEHAVIOR,block:'center'}); },80);
 };
+
+/* 腿肿图的范围切换 */
+Array.prototype.forEach.call(document.querySelectorAll('#swTabs [data-swrange]'),function(b){
+  b.onclick=function(){
+    Array.prototype.forEach.call(document.querySelectorAll('#swTabs [data-swrange]'),function(x){ x.className=''; });
+    b.className='on';
+    SW_RANGE_DAYS=parseInt(b.getAttribute('data-swrange'),10)||14;
+    try{ renderSwellChart(); }catch(e){}
+  };
+});
 
 /* 热点：切分类 + 刷新。首次进「更多」页才联网，不拖慢记录页 */
 var _hotLoaded=false;
@@ -2423,7 +3109,7 @@ if(_hotRefresh) _hotRefresh.onclick=function(){ loadHot(true); };
 
 $('quickAdd').onclick=function(){
   showTab('rec');
-  var _se_entryCard=document.getElementById('entryCard'); if(_se_entryCard&&_se_entryCard.scrollIntoView) _se_entryCard.scrollIntoView({behavior:'smooth',block:'center'});
+  var _se_entryCard=document.getElementById('entryCard'); if(_se_entryCard&&_se_entryCard.scrollIntoView) _se_entryCard.scrollIntoView({behavior:SCROLL_BEHAVIOR,block:'center'});
   setTimeout(function(){ $('sys').focus(); },350);
 };
 Array.prototype.forEach.call(document.querySelectorAll('.tabs button'),function(b){
@@ -2472,71 +3158,243 @@ $('reportBtn').onclick=renderReport;
 var tipNextBtn=document.getElementById('tipNext');
 if(tipNextBtn) tipNextBtn.onclick=function(){ renderTip(true); };
 $('exportBtn').onclick=exportData;
-$('copyBackupBtn').onclick=function(){
+/* 备份动作只有一份：设置页的按钮和记录页的提醒都调它，避免两条路径提示不一致 */
+function doCopyBackup(){
+  if(LOAD_BROKEN){
+    copyText(JSON.stringify(buildBackup()),
+      '已复制原始数据（损坏前的原文），请发到微信收藏留着，别丢', markBackedUp);
+    return;
+  }
   var n=S.people.length, c=S.people.reduce(function(a,p){return a+p.records.length;},0);
   copyText(JSON.stringify(buildBackup()),
-    '已复制 '+n+' 个人的 '+c+' 条记录，请发到微信收藏或文件传输助手');
-};
+    '已复制 '+n+' 个人的 '+c+' 条记录，请发到微信收藏或文件传输助手', markBackedUp);
+}
+$('copyBackupBtn').onclick=doCopyBackup;
+var _bhBtn=$('backupHintBtn');
+if(_bhBtn) _bhBtn.onclick=doCopyBackup;
 $('importBtn').onclick=function(){
   showModal('从备份恢复',
     '<div class="hint">方式一：选择备份文件（用系统浏览器打开本页时可用）</div>'+
     '<button class="bigbtn primary" id="pickFile">📁 选择备份文件</button>'+
     '<div class="hint" style="margin-top:16px">方式二：把之前“复制备份文字”的内容粘进来（微信里用这个）</div>'+
-    '<textarea id="pasteBox" placeholder="在这里长按粘贴备份内容" style="width:100%;height:140px;font-size:15px;margin-top:8px;padding:10px;border:2px solid #e5e7e9;border-radius:12px;font-family:inherit"></textarea>'+
+    '<textarea id="pasteBox" placeholder="在这里长按粘贴备份内容" style="width:100%;height:140px;font-size:18px;margin-top:8px;padding:10px;border:2px solid #e5e7e9;border-radius:12px;font-family:inherit"></textarea>'+
     '<button class="bigbtn primary" id="pasteOk" style="margin-top:10px">从粘贴内容恢复</button>');
   var pf=$('pickFile'); if(pf) pf.onclick=function(){ closeModal(); $('importFile').click(); };
   var po=$('pasteOk'); if(po) po.onclick=function(){
     var txt=$('pasteBox').value.trim();
     if(!txt){ toast('还没粘贴内容'); return; }
-    try{ applyBackup(JSON.parse(txt)); }catch(e){ toast('内容读不出来，请检查是否复制完整'); }
+    var parsed=null;
+    try{ parsed=JSON.parse(txt); }
+    catch(e){ toast('内容读不出来，请检查是否复制完整'); return; }
+    // 解析成功之后再出错，是导入过程的问题，不能再说「内容读不出来」——
+    // 否则用户会拿同一份完整备份反复重试，永远过不去。
+    try{ applyBackup(parsed); }
+    catch(e){
+      try{ console.error('导入出错',e); }catch(e2){}
+      toast('备份读出来了，但导入时出错，请把这条提示告诉子女');
+    }
   };
 };
 
 /* 统一的恢复入口：校验结构后合并 */
 function applyBackup(o){
+  /* 损坏状态下导出的「原始数据」文件：rawText 里是损坏前的原文。
+     先试着把它当普通备份解析一次——如果原文其实是合法的（结构不对而已），就有救。 */
+  if(o && o.broken && typeof o.rawText==='string'){
+    var inner=null;
+    try{ inner=JSON.parse(o.rawText); }catch(e){ inner=null; }
+    if(inner && Array.isArray(inner.people) && inner.people.length){
+      o=inner;                                  // 原文可用，按正常备份继续
+    }else{
+      toast('这是损坏前的原始数据，只能存档留证，不能直接恢复');
+      return;
+    }
+  }
   var arr=null;
+  /* 只要文件里写了 app 且不是本应用，一律拒绝。
+     以前只检查了 people/records 的形状，别的应用导出的
+     {"app":"other-app","people":[...]} 照样能进来，白多出一个空的人。 */
+  if(o && o.app && o.app!=='family-health'){
+    toast('这不是本页面的备份，没有导入任何数据');
+    return;
+  }
   if(o&&Array.isArray(o.people)) arr=o.people;
-  else if(o&&Array.isArray(o.records)) arr=[{label:'恢复的人',records:o.records,name:o.name,age:o.age,meds:o.meds,taken:o.taken}];
+  /* 只认本应用的备份。以前任何带 records 数组的 JSON 都会被当成 v1 备份，
+     随便粘一份别的应用的数据进来，就会多出一个空的「恢复的人」，
+     还提示「已恢复 0 条记录」——老人会以为恢复成功了。 */
+  else if(o && o.app==='family-health' && Array.isArray(o.records)){
+    arr=[{label:'恢复的人',records:o.records,name:o.name,age:o.age,meds:o.meds,taken:o.taken}];
+  }
+  else if(o && !o.app && Array.isArray(o.records)){
+    // 很老的 v1 备份没有 app 字段：要求至少有一条长得像血压记录的数据才认
+    var looksV1=o.records.some(function(r){ return r && isFinite(Number(r.ts)) && isFinite(Number(r.sys)) && isFinite(Number(r.dia)); });
+    if(!looksV1){ toast('这不是本页面的备份，没有导入任何数据'); return; }
+    arr=[{label:'恢复的人',records:o.records,name:o.name,age:o.age,meds:o.meds,taken:o.taken}];
+  }
   if(!arr){ toast('这不是本页面的备份'); return; }
-  var existing={};
-  S.people.forEach(function(p){ existing[p.name||p.label]=p; });
-  var dupes=arr.filter(function(pp){ return existing[pp.name||pp.label||'恢复的人']; });
+  /* 认人的键：优先用备份里写下的 pid（稳定的内部 id），没有 pid 才退回 name/label。
+     只用 name||label 会让两台设备上默认都叫「爸爸」的两个人被当成同一个人。 */
+  var existing={}, existingByPid={};
+  S.people.forEach(function(p){
+    existing[p.name||p.label]=p;
+    if(p.pid) existingByPid[p.pid]=p;
+    else { p.pid=p.id; existingByPid[p.id]=p; }   // 老数据没 pid，用本机 id 兜底并补上
+  });
+  var findExist=function(pp){
+    if(pp.pid && existingByPid[pp.pid]) return existingByPid[pp.pid];
+    // 备份带了 pid、本机却没有一个人对得上：可能真是另一个人，
+    // 也可能是本机老数据的 pid 还没回填。这种情况退回姓名/标签再认一次，
+    // 避免把「同一个人」当成新人重复导入。只有名字也对不上，才判为新人。
+    return existing[pp.name||pp.label||'恢复的人']||null;
+  };
+  var dupes=arr.filter(function(pp){ return !!findExist(pp); });
   var proceed=function(mode){
-    var total=0, merged=0;
+    var total=0, merged=0, dropped=0;
+    // 导入前用户正在看的人：合并完成后要保持不变，否则恢复完"自己跑到别人页面上去了"
+    var curBefore=S.current;
     var peopleBackup=JSON.parse(JSON.stringify(S.people)), curBackup=S.current;
     arr.forEach(function(pp){
-      var key=pp.name||pp.label||'恢复的人';
+      var rawCount=(pp.records&&pp.records.length)?pp.records.length:0;
       var recs=sanitizeRecords(pp.records);
       total+=recs.length;
+      if(rawCount>recs.length) dropped+=rawCount-recs.length;
       var meds=sanitizeMeds(pp.meds);
-      if(mode==='merge'&&existing[key]){
-        var tgt=existing[key];
+      var _hit=(mode==='merge')?findExist(pp):null;
+
+      if(_hit){
+        var tgt=_hit;
         var have=Object.create(null);
         tgt.records.forEach(function(r){ have[r.rid]=true; });
-        recs.forEach(function(r){ if(!have[r.rid]){ tgt.records.push(r); have[r.rid]=true; merged++; } });
+        /* 墓碑在这里不拦。
+           原因：墓碑是防「另一个标签页把已删记录写回来」的，
+           而这里是用户自己点「从备份恢复」的明确动作——
+           「清空 → 从备份恢复」正是手机清缓存之后唯一的补救路径，
+           拦住它等于让恢复永远返回「已合并 0 条」。
+           用户主动导入＝他要的就是这些记录，所以把它们从墓碑里撤销并收下。 */
+        recs.forEach(function(r){
+          if(!have[r.rid]){ tgt.records.push(r); have[r.rid]=true; merged++; }
+          if(DEAD_RIDS[r.rid]) unmarkDead(r.rid);
+        });
         tgt.records.sort(function(a,b){ return a.ts-b.ts; });
         // 腿肿按天合并：已存在的日子以本机为准，不会把本机改过的等级覆盖掉
         if(!tgt.swell || typeof tgt.swell!=='object') tgt.swell={};
         var inSwell=sanitizeSwell(pp.swell);
         Object.keys(inSwell).forEach(function(k){ if(!tgt.swell[k]) tgt.swell[k]=inSwell[k]; });
-        swellPrune(tgt);
-        S.current=tgt.id;
+        // 归档区也并进来：不并的话，换手机后「以前那阵子肿得厉害」的历史就没了
+        if(!tgt.swellOld || typeof tgt.swellOld!=='object') tgt.swellOld={};
+        var inOld=sanitizeSwell(pp.swellOld);
+        Object.keys(inOld).forEach(function(k){ if(!tgt.swellOld[k]) tgt.swellOld[k]=inOld[k]; });
+        /* 吃药打卡和「今天没量」标记也要一起并：备份里明明有，只并 records/swell 的话，
+           换手机后吃的药一勾都没了，老人会以为系统没记住。键是「天|顿」，以本机已有的为准。 */
+        if(pp.taken && typeof pp.taken==='object'){
+          if(!tgt.taken || typeof tgt.taken!=='object') tgt.taken={};
+          Object.keys(pp.taken).forEach(function(k){
+            if(DEAD_TAKEN[k]) return;      // 本页刚清掉的打卡也不能被导入复活
+            if(!(k in tgt.taken)) tgt.taken[k]=pp.taken[k];
+          });
+        }
+        if(pp.skipped && typeof pp.skipped==='object'){
+          if(!tgt.skipped || typeof tgt.skipped!=='object') tgt.skipped={};
+          Object.keys(pp.skipped).forEach(function(k){ if(!(k in tgt.skipped)) tgt.skipped[k]=pp.skipped[k]; });
+        }
+        /* 姓名/年龄/家人电话也要带回来：合并是最常选的一项，
+           少了这三样，换手机后「紧急时拨打家人电话」会变成空的，
+           而这恰恰是急救时要用的。只有备份里有值、本机为空时才补，不覆盖本机填好的。 */
+        if(!String(tgt.name||'').trim() && String(pp.name||'').trim()) tgt.name=String(pp.name).slice(0,10);
+        if(!String(tgt.age||'').trim() && String(pp.age||'').trim()) tgt.age=String(pp.age).slice(0,3);
+        if(!String(tgt.kin||'').trim() && String(pp.kin||'').trim()) tgt.kin=String(pp.kin).slice(0,20);
+        /* 药单：本机还是默认的「早上/中午/晚上」三顿、而备份里改过，就采用备份的。
+           否则换手机后老人会发现「我明明把药改成一天两顿了，怎么又变三顿」。 */
+        var _isDefaultMeds=function(list){
+          /* 「没改过」必须是名称、时间、id 三样都和默认一致。
+             只比名字的话，用户把 08:00 改成 06:30 会被判成默认，
+             接着被备份里的默认药单静默覆盖——那是他自己设的时间。 */
+          if(!Array.isArray(list)||list.length!==DEFAULT_MEDS.length) return false;
+          return list.every(function(m,i){
+            var d=DEFAULT_MEDS[i];
+            return m && m.name===d.name && m.time===d.time && String(m.id)===String(d.id);
+          });
+        };
+        if(Array.isArray(pp.meds) && pp.meds.length && _isDefaultMeds(tgt.meds) && !_isDefaultMeds(pp.meds)){
+          tgt.meds=sanitizeMeds(pp.meds);
+        }
+        /* 吃药栏开关：只在本机从没设过（undefined）时才采用备份的值。
+           以前写成「以备份为准」，会把用户刚关掉的吃药栏又强行打开——
+           那是一次明确的用户操作，不能被一份旧备份顶掉。 */
+        if((tgt.medOn===undefined || tgt.medOn===null) && (pp.medOn===true || pp.medOn===false)){
+          tgt.medOn=pp.medOn;
+        }
+        // 这里只搬迁不裁剪：直接调 swellPrune 会把刚并进来的老归档当场删掉，等于白并
+        swellPrune(tgt,{keepArchived:true});
+        if(!curBefore) S.current=tgt.id;   // 用户原本在看谁就还看谁，别把人切走
       }else{
-        var np={id:uid(),label:String(pp.label||'恢复的人'),name:String(pp.name||''),age:String(pp.age||''),kin:String(pp.kin||''),
+        var np={id:uid(),pid:String(pp.pid||''),label:String(pp.label||'恢复的人'),name:String(pp.name||''),age:String(pp.age||''),kin:String(pp.kin||''),
           records:recs,meds:meds,taken:(pp.taken&&typeof pp.taken==='object')?pp.taken:{},skipped:(pp.skipped&&typeof pp.skipped==='object')?pp.skipped:{},
-          swell:sanitizeSwell(pp.swell)};
+          swell:sanitizeSwell(pp.swell),swellOld:sanitizeSwell(pp.swellOld)};
+        // 吃药栏开没开也是这个人状态的一部分（备份里带 medOn 才跟着走），恢复后不该擅自变回「关闭」
+        if(pp.medOn===true || pp.medOn===false){
+          np.medOn=pp.medOn;
+        }else if(Object.keys(np.taken||{}).length){
+          /* 老备份没有 medOn 字段（导出时是 undefined，JSON 会把它丢掉），
+             但 taken 里有打卡记录。这时必须按 medOn() 的同一套推断补成 true，
+             否则新建出来的人显示「没开启」，之前吃的药一个勾都看不到。 */
+          np.medOn=true;
+        }
         S.people.push(np);
         S.current=np.id;
       }
     });
-    if(!save()){ S.people=peopleBackup; S.current=curBackup; return; }
+    var wasBroken=LOAD_BROKEN;
+    /* 导入成功＝数据已经重建。除了本页解除标志，还要把 -corrupt 副本转成归档：
+       否则别的标签页每次同步都会把它自己那份旧的 LOAD_BROKEN 并回来，
+       这个页面就永远卡在「先恢复备份」上，明明已经恢复过了。
+       原始数据不删，改名成带时间戳的归档键，需要时还能找到。 */
+    if(wasBroken){
+      try{
+        var rawCorrupt=localStorage.getItem(ROOT+'-corrupt');
+        if(rawCorrupt){
+          localStorage.setItem(ROOT+'-corrupt-'+Date.now(), rawCorrupt);
+          localStorage.removeItem(ROOT+'-corrupt');
+        }
+      }catch(e0){}
+    }
+    LOAD_BROKEN=false;              // 已用备份重建数据，允许重新写入
+    if(!save()){
+      // 回滚到导入前，并把损坏标志还原成导入前的值：
+      // 正常状态下导入失败不能把用户锁进「先恢复备份」的状态。
+      S.people=peopleBackup; S.current=curBackup; LOAD_BROKEN=wasBroken;
+      // 归档要还原成 -corrupt：导入失败时那份原始数据必须还在原位
+      try{
+        if(wasBroken){
+          Object.keys(localStorage).filter(function(k){ return k.indexOf(ROOT+'-corrupt-')===0; })
+            .sort().slice(-1).forEach(function(k){
+              localStorage.setItem(ROOT+'-corrupt', localStorage.getItem(k));
+              localStorage.removeItem(k);
+            });
+        }
+      }catch(e1){}
+      renderAll();
+      toast('这次没能存进手机，恢复没有完成，请再试一次');
+      return;
+    }
     closeModal(); renderAll();
+    // 有记录被丢弃时必须说出来，不能让人以为全都恢复了
+    if(dropped>0){
+      showModal('有一部分没能恢复',
+        '<div class="warnbar caution" style="font-size:17px">备份里有 <b>'+dropped+'</b> 条记录的数值或日期不正常，没能导进来。'+
+        '其余的 '+(mode==='merge'?merged:total)+' 条已经恢复。</div>'+
+        '<div class="hint" style="margin-top:10px">如果这份备份是从别的手机导出的，可能那台手机的日期不对。'+
+        '原文件请先留着别删。</div>'+
+        '<button class="bigbtn primary" id="impDropOk" style="margin-top:12px">我知道了</button>');
+      var b=$('impDropOk'); if(b) b.onclick=closeModal;
+      return;
+    }
     toast(mode==='merge'?('已合并 '+merged+' 条记录'):('已恢复 '+total+' 条记录'));
   };
   if(dupes.length){
     showModal('已经有这个人了',
       '<div class="warnbar">备份里「'+esc(dupes.map(function(d){return d.name||d.label;}).join('、'))+'」'+
-      '和现在页面上的人同名。要合并到原来那个人，还是单独新建一份？</div>'+
+      '在现在页面上已经有这个人了。要合并到原来那个人，还是单独新建一份？</div>'+
       '<button class="bigbtn primary" id="mergeYes" style="margin-top:12px">合并到原来那个人</button>'+
       '<button class="bigbtn" id="mergeNo">单独新建一份</button>');
     $('mergeYes').onclick=function(){ proceed('merge'); };
@@ -2546,19 +3404,22 @@ function applyBackup(o){
   proceed('new');
 }
 $('importFile').onchange=function(e){
-  var f=e.target.files[0];
+  var f=e.target.files&&e.target.files[0];
   if(!f) return;
+  // 先复位再处理：导入中途抛异常时也能再次选同一个文件，
+  // 否则 input 的 value 一直留着，选同一文件不会再触发 change。
+  try{ e.target.value=''; }catch(err){}
   var fr=new FileReader();
   fr.onload=function(){
     var o=null;
     try{ o=JSON.parse(fr.result); }
-    catch(err){ toast('这个文件读不出来'); e.target.value=''; return; }
-    applyBackup(o);
+    catch(err){ toast('这个文件读不出来'); return; }
+    try{ applyBackup(o); }
+    catch(err){ try{ console.error('导入出错',err); }catch(e2){} toast('备份读出来了，但导入时出错'); }
   };
   // 必须显式指定 utf-8：不给编码时 FileReader 按浏览器默认编码解释（中文环境下
   // 常是 GBK），导出文件里的中文会读成乱码，JSON.parse 直接失败或字段变成乱码。
   fr.readAsText(f,'utf-8');
-  e.target.value='';
 };
 $('clearBtn').onclick=function(){
   var p=cur();
@@ -2583,26 +3444,61 @@ $('clearBtn').onclick=function(){
     btn.disabled=true;
     btn.onclick=null;
     setTimeout(function(){
+      // 弹窗在这 1.2 秒内被关掉时，btn 已不在页面上，不能再给它挂处理函数
+      if(!document.body.contains(btn)) return;
       btn.disabled=false;
       btn.textContent='好，我确定，清空';
       btn.onclick=function(){
-        var recBackup=p.records.slice(), takenBackup=JSON.parse(JSON.stringify(p.taken));
+        var recBackup=JSON.parse(JSON.stringify(p.records)), takenBackup=JSON.parse(JSON.stringify(p.taken));
+        /* 清空＝批量删除：每一条都登记墓碑，否则另一个标签页一保存就把它们全补回来。
+           回滚时只能撤「本次新登记的」——有些 rid 可能早就在墓碑里了
+           （之前删过、后来又从旧备份导回来），那些不属于这次清空，撤了就会让历史删除失效。 */
+        var newlyDead=[], newlyDeadTaken=[];
+        recBackup.forEach(function(x){
+          if(x&&x.rid&&!DEAD_RIDS[x.rid]){ markDead(x.rid); newlyDead.push(x.rid); }
+          else if(x&&x.rid){ markDead(x.rid); }
+        });
+        Object.keys(takenBackup||{}).forEach(function(k){
+          if(!DEAD_TAKEN[k]){ markDeadTaken(k); newlyDeadTaken.push(k); }
+        });
         p.records=[]; p.taken={};
-        if(!save()){ p.records=recBackup; p.taken=takenBackup; return; }
+        if(!save()){
+          p.records=recBackup; p.taken=takenBackup;
+          // 只撤本次新登记的那批
+          newlyDead.forEach(function(r){ unmarkDead(r); });
+          newlyDeadTaken.forEach(function(k){ unmarkDeadTaken(k); });
+          return;
+        }
         closeModal(); renderAll(); toast('已清空');
       };
     },1200);
   };
 };
-$('nameInput').onchange=function(){ cur().name=this.value.trim().slice(0,10); this.value=cur().name; save(); renderSummary(); };
-$('ageInput').onchange=function(){
-  var v=this.value.replace(/[^0-9]/g,'').slice(0,3);
-  if(v===''||Number(v)===0){ cur().age=''; }
-  else if(Number(v)>120){ cur().age=''; toast('年龄看着不太对，请核对'); }
-  else { cur().age=v; }
-  this.value=cur().age; save();
+/* 设置页三个输入框：保存失败必须把输入框改回存储里的值，
+   否则界面上显示「已经改了」，实际一个字都没存进去。 */
+$('nameInput').onchange=function(){
+  var p=cur(), v=this.value.trim().slice(0,10), before=p.name;
+  p.name=v;
+  if(!save()){ p.name=before; }
+  this.value=p.name;
+  renderSummary();
 };
-$('kinInput').onchange=function(){ cur().kin=this.value.trim().slice(0,20); this.value=cur().kin; save(); renderEmergency(cur()); };
+$('ageInput').onchange=function(){
+  var p=cur(), before=p.age;
+  var v=this.value.replace(/[^0-9]/g,'').slice(0,3);
+  if(v===''||Number(v)===0){ p.age=''; }
+  else if(Number(v)>120){ p.age=''; toast('年龄看着不太对，请核对'); }
+  else { p.age=v; }
+  if(!save()){ p.age=before; }
+  this.value=p.age;
+};
+$('kinInput').onchange=function(){
+  var p=cur(), before=p.kin;
+  p.kin=this.value.trim().slice(0,20);
+  if(!save()){ p.kin=before; }
+  this.value=p.kin;
+  renderEmergency(cur());
+};
 
 /* ---------- 健康小知识 ----------
    同一天固定显示同一条，第二天自动换，让老人有机会反复看到同一条。
@@ -2946,7 +3842,12 @@ function askAboutKidLine(){
 }
 
 /* 调用接口。任何失败都要能给出一句老人看得懂的话，不能只抛英文错误。 */
-function askSend(text){
+/* opts.probe=true 是「先试连一下」专用：
+   只发一句 hello，不拼系统提示、不带历史、不带血压摘要，
+   否则测个网络就把父母的血压数值发出去，还会被念出来。 */
+function askSend(text,opts){
+  opts=opts||{};
+  var probe=!!opts.probe;
   var key=askKey();
   if(!key){ return Promise.reject({code:'NO_KEY'}); }
   var site=askSite();
@@ -2956,11 +3857,13 @@ function askSend(text){
 
   var body={
     model:String(site.model||'deepseek-flash'),
-    messages:[{role:'system',content:askSystemPrompt()}]
-      .concat(askHistory())
-      .concat([{role:'user',content:String(text||'').slice(0,1000)}]),
+    messages:(probe
+        ? [{role:'user',content:'hi'}]
+        : [{role:'system',content:askSystemPrompt()}]
+            .concat(askHistory())
+            .concat([{role:'user',content:String(text||'').slice(0,1000)}])),
     temperature:0.3,
-    max_tokens:600,
+    max_tokens:probe?20:600,
     stream:false
   };
   var ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
@@ -3270,11 +4173,19 @@ function bindAssistantEvents(){
   if(box) box.onkeydown=function(e){ if(e.key==='Enter'){ e.preventDefault(); var t=this.value; this.value=''; sendAsk(t); } };
   var clr=$('vbClear');
   if(clr) clr.onclick=function(){
-    askState.history=[];
-    try{ localStorage.removeItem(ASK_LOGKEY); }catch(e){}
-    var log=$('vbLog');
-    if(log) log.innerHTML='<div class="vb-msg sys"><div class="bub">对话已清空。</div></div>';
-    toast('对话已清空');
+    // 清空不可撤销，且按钮就在输入框旁边，误点概率不低——先问一次
+    showModal('清空聊天记录？',
+      '<div class="hint">清空之后，之前和小安的对话就找不回来了。你的血压记录不受影响。</div>'+
+      '<button class="bigbtn danger-solid" id="vbClearYes" style="margin-top:14px">清空</button>'+
+      '<button class="bigbtn" id="vbClearNo">还是留着吧</button>');
+    var y=$('vbClearYes'), n=$('vbClearNo');
+    if(n) n.onclick=function(){ closeModal(); openAssistant(''); };
+    if(y) y.onclick=function(){
+      askState.history=[];
+      try{ localStorage.removeItem(ASK_LOGKEY); }catch(e){}
+      closeModal(); openAssistant('');
+      toast('对话已清空');
+    };
   };
 }
 
@@ -3447,17 +4358,30 @@ function openAskSettings(){
       }catch(e){}
     };
     testBtn.disabled=true; testBtn.textContent='正在连接…';
-    askSend('你好，请用一句话回答。').then(function(){
+    // 结果就地显示在设置窗口里：失败时不能重开弹窗，否则刚填的网址/密钥全被冲掉
+    var tipBox=document.getElementById('vbTestTip');
+    if(tipBox){ tipBox.style.display='none'; tipBox.innerHTML=''; }
+    var showTestTip=function(cls,html){
+      var box=document.getElementById('vbTestTip');
+      if(!box){
+        box=document.createElement('div');
+        box.id='vbTestTip';
+        if(testBtn.parentNode) testBtn.parentNode.insertBefore(box,testBtn.nextSibling);
+      }
+      box.className='warnbar '+cls;
+      box.style.marginTop='10px';
+      box.innerHTML=html;
+    };
+    // probe 模式：只发 hello，不带血压摘要、不写进对话、不朗读
+    askSend('你好，请用一句话回答。',{probe:true}).then(function(){
       testBtn.disabled=false; testBtn.textContent='连接成功 ✓';
       toast('连接成功，小安能答话');
       restore();
     },function(err){
       testBtn.disabled=false; testBtn.textContent='先试连一下';
       restore();
-      showModal('连接没有成功','<div class="warnbar danger">'+esc(askErrorText(err))+'</div>'+
-        '<div class="hint" style="margin-top:10px">常见原因：密钥复制少了字符、密钥已失效、或者账户余额不足。</div>'+
-        '<button class="bigbtn primary" id="vbBack" style="margin-top:12px">回去改</button>');
-      var b=$('vbBack'); if(b) b.onclick=openAskSettings;
+      showTestTip('danger', esc(askErrorText(err))+
+        '<div style="margin-top:8px;font-size:17px">常见原因：密钥复制少了字符、密钥已失效、或者账户余额不足。改完可以再点一次「先试连一下」。</div>');
     });
   };
   var delBtn=$('vbKeyDel');
@@ -3478,38 +4402,67 @@ function renderAskCard(){
     return;
   }
   if(askPassSet()&&!askPassOk()){
-    el.innerHTML='小安已经准备好。<span style="color:#8a5700;font-weight:700">第一次用要先输家人口令</span>，输过之后这台设备就不用再输了。';
+    // 老人未必知道「口令」是什么，这里说清楚是一串数字、输一次就够
+    el.innerHTML='小安已经准备好。<span style="color:#8a5700;font-weight:700">第一次用要输一串家里人事先设好的数字</span>，这串数字不是手机密码，输过一次以后就不问了。';
     return;
   }
-  el.innerHTML='小安已经可以用了。按住「按住说话」那个大按钮，它会结合你本机的血压记录回答。';
+  el.innerHTML='小安已经可以用了。点下面的问题和它说话，它会结合你本机的血压记录回答。';
 }
 
 /* ---------- 启动 ---------- */
 /* 太久没备份就提醒。安卓浏览器清缓存会丢数据，养成备份习惯能救回来。 */
-function checkBackupAge(){
-  var el=document.getElementById('backupWarn');
-  if(!el) return;
+/* 多久没备份。返回 -1＝从没备份过，-2＝不需要提醒（没有数据或刚备份过），否则是天数。
+   两处提示共用这一份判断，避免两套算法算出不同结果。 */
+function backupAgeDays(){
   var last=null;
   try{ last=localStorage.getItem(LAST_BACKUP_KEY); }catch(e){}
   var hasData = S.people.some(function(p){ return p.records && p.records.length>0; });
-  if(!hasData){ el.style.display='none'; return; }
-  var days;
-  if(!last){ days=-1; }
-  else { days=Math.floor((Date.now()-Number(last))/86400000); }
-  if(days<0){
-    el.style.display='';
-    el.innerHTML='还没有备份过。手机清了缓存记录会丢掉，建议现在点下面的「复制备份文字」存一份。';
-  }else if(days>=30){
-    el.style.display='';
-    el.innerHTML='已经 <b>'+days+'</b> 天没备份了。手机清了缓存记录会丢掉，建议点下面的「复制备份文字」存一份。';
-  }else{
-    el.style.display='none';
+  if(!hasData) return -2;
+  if(!last) return -1;
+  var n=Number(last);
+  // 时间戳不是数字、或是未来时间（设备时钟被往前调过、或导入过别人的备份），
+  // 一律当作「没备份过」，否则算出来是负数，提醒会被永远藏起来。
+  if(!isFinite(n) || n>Date.now()) return -1;
+  var days=Math.floor((Date.now()-n)/86400000);
+  return days>=30 ? days : -2;
+}
+function checkBackupAge(){
+  var days=backupAgeDays();
+  // ① 「更多」页里的那条
+  var el=document.getElementById('backupWarn');
+  if(el){
+    if(days===-2){ el.style.display='none'; }
+    else if(days===-1){
+      el.style.display='';
+      el.innerHTML='还没有备份过。手机清了缓存记录会丢掉，建议现在点下面的「复制备份文字」存一份。';
+    }else{
+      el.style.display='';
+      el.innerHTML='已经 <b>'+days+'</b> 天没备份了。手机清了缓存记录会丢掉，建议点下面的「复制备份文字」存一份。';
+    }
+  }
+  // ② 记录页顶部那条：这才是爸妈每天会看到的页面
+  var tip=document.getElementById('backupHint'), txt=document.getElementById('backupHintText');
+  if(tip && txt){
+    if(days===-2){ tip.style.display='none'; }
+    else{
+      tip.style.display='';
+      txt.innerHTML = (days===-1)
+        ? '还没有备份过。手机清一下缓存，记录就全没了，建议现在备份一次。'
+        : '已经 <b>'+days+'</b> 天没备份了。手机清一下缓存，记录就全没了，建议现在备份一次。';
+    }
   }
 }
 
 function renderAll(){
   var p=cur();
   $('nameInput').value=p.name||''; $('ageInput').value=p.age||''; $('kinInput').value=p.kin||'';
+  // 一条记录都没有时，首屏提示说「点下面的按钮」，但那个按钮在好几屏之外。
+  // 文案改成能对上的指引式说法，老人滚过去就知道自己点对了。
+  var qa=$('quickAdd');
+  if(qa){
+    var empty=!p.records||!p.records.length;
+    qa.textContent = empty ? '＋ 开始记今天第一次血压' : '＋ 马上记一次血压';
+  }
   renderSummary(); renderChart(); renderRecent(); renderTip(); checkBackupAge(); renderLastHint(); renderAskCard(); renderMedPanel(); renderSwell();
 }
 
@@ -3519,31 +4472,116 @@ function renderAll(){
 loadAskLog();
 (function bindAskEntries(){
   /* 2026-11-16 起小安是底部「小安」选项卡；入口只负责切页，不再弹窗 */
-  var tops=[$('vbHero'),$('vbOpen')];
-  tops.forEach(function(b){ if(b) b.onclick=function(){ showTab('ask'); }; });
-  Array.prototype.forEach.call(document.querySelectorAll('[data-vbq]'),function(b){
+  // 「开始对话」和四个常用问题：直接开对话（有问题就顺手发出去）
+  var openBtn=$('vbOpen');
+  if(openBtn) openBtn.onclick=function(){ openAssistant(''); };
+  Array.prototype.forEach.call(document.querySelectorAll('#voiceCard [data-vbq]'),function(b){
     b.onclick=function(){ openAssistant(b.getAttribute('data-vbq')||''); };
   });
+  // 小安页里的紧急直达：和记录页顶部那条红色按钮走同一条路——
+  // 切到「更多」页并滚到真正的急救清单。落到记录页顶上是看不见任何急救内容的。
+  var sos2=$('vbSos');
+  if(sos2) sos2.onclick=function(){
+    showTab('more');
+    var el=document.getElementById('emergencyCard');
+    if(el&&el.scrollIntoView) setTimeout(function(){ el.scrollIntoView({behavior:SCROLL_BEHAVIOR,block:'start'}); },80);
+  };
   var sb=$('vbSetupBtn');
   if(sb) sb.onclick=openAskSettings;
   var mt=$('medToggle');
   if(mt) mt.onclick=toggleMedPanel;
+  // 腿肿折叠：默认收起，标题旁已有「今天记了没有」的状态
+  var swf=$('swFold');
+  if(swf) swf.onclick=function(){
+    var willOpen=!FOLD.sw;
+    setFold('sw', willOpen);
+    /* 展开后选项可能正好被底部选项卡盖住：实测 414×896 下最后两个选项落在
+       底栏下面，真实点击会被底栏接走（elementFromPoint 命中 tabbar）。
+       展开时把这张卡滚进可视区，保证选项点得到。 */
+    if(willOpen){
+      var card=document.getElementById('swellCard');
+      if(card&&card.scrollIntoView) setTimeout(function(){
+        try{ card.scrollIntoView({behavior:SCROLL_BEHAVIOR,block:'start'}); }catch(e){}
+      },60);
+    }
+  };
+  setFold('sw', false);
 })();
+/* 启动时把「补齐过 pid 等字段」的状态静默写回一次。
+   不写回的话，老用户只要不做任何会触发保存的操作，备份里就永远带不上 pid，
+   换手机恢复时又会退回「按名字认人」。这里失败也不提示：数据本身没变。 */
+(function persistUpgradedState(){
+  if(LOAD_BROKEN) return;            // 数据损坏时一个字都不写（放在最前，连读都不必）
+  try{
+    var raw=localStorage.getItem(ROOT);
+    if(!raw) return;                     // 全新用户：第一次保存时自然会带上
+    var obj=JSON.parse(raw);
+    if(!obj || !Array.isArray(obj.people)) return;
+    var need=obj.people.some(function(p){ return p && !p.pid; });
+    if(!need) return;
+    // 读和写之间必须重比一次：另一个标签页刚保存过的话，这里再写就是拿旧数据覆盖新数据
+    if(localStorage.getItem(ROOT)!==raw) return;
+    var txt=JSON.stringify(S);
+    localStorage.setItem(ROOT,txt);
+    _loadedRaw=txt;                  // 基准同步，否则下一次保存会误判成「别人改过」
+  }catch(e){}
+})();
+// 先把上次留下的墓碑读回来：否则刷新后「删掉的记录被别的标签页补回来」会再发生
+loadTombstones();
+// 页面要关掉时把还没落盘的墓碑写下去，否则最后那一批删除记录会失去保护
+window.addEventListener('pagehide',function(){ if(_tombDirty) flushTombstones(); });
 renderAll();
 autoPickPeriod();   // 首次打开按当前时间预选时段，避免误记成"晨起"
 loadWeather();      // 只读本机缓存；没缓存就显示一个按钮，不自动联网
 /* 恢复上次停留的标签页；没记录过就停在「记录」，跟以前一样 */
 try{
   var _lastTab=localStorage.getItem('family-health-tab');
-  showTab(_lastTab||'rec');
-}catch(e){ showTab('rec'); }
+  showTab(_lastTab||'rec', true);   // true = 启动恢复，不要把用户上次停的位置打回顶部
+}catch(e){ showTab('rec', true); }
 
 /* 多标签页保护：另一个标签写入时，本页重新读取，避免整份覆盖 */
+function syncFromStorage(){
+  var wasBroken=LOAD_BROKEN;
+  var raw=null;
+  try{ raw=localStorage.getItem(ROOT); }catch(e){}
+  if(wasBroken && !raw) return;   // 存储不可用：保持「损坏」状态，绝不退回空壳
+  /* 正在改一条记录时，数据被整个换掉是危险的：
+     editingRid 指向的是旧对象里那条记录，换完之后就找不到了，
+     用户辛苦填的数字会在点保存时变成「找不到这条记录了」。先退掉编辑态并说清楚。 */
+  var wasEditing=!!editingRid;
+  if(wasEditing){
+    editingRid=null;
+    try{ $('sys').value=''; $('dia').value=''; $('pulse').value=''; }catch(e0){}
+    try{ setEditingMode(false); }catch(e0){}
+  }
+  /* 后端标志的语义：本页「原先那份数据坏了」这件事，只能由
+     ① 成功导入备份、② 用户明确放弃 这两条路来解除。
+     别的标签页往存储里写了新数据，不构成解除理由——
+     以前这里无条件写 false，指望 loadState 重新置位；
+     可对方写进来的若是好数据，loadState 就不会置位，
+     本页的损坏状态被静默抹掉，-corrupt 里那份原始数据从此没人管。 */
+  S=loadState();
+  LOAD_BROKEN = LOAD_BROKEN || wasBroken;
+  /* 基准必须设成 null，不能对齐到存储原文。
+     对齐了等于告诉 save()「我已经和存储一致」，于是「别人改过 → 先合并」那条永远进不去。
+     而 loadState 只能还原「人」这一层，对方在本次改动里新增的人/新字段
+     不会被本页的 S 完整带上，下一次保存就会把对方新增的部分整份覆盖掉。
+     设成 null 后，下一次保存会强制走一遍 mergeIncoming，把两边并起来。 */
+  _loadedRaw=null;
+  /* 必须先渲染再让出事件循环：loadState 里的损坏弹窗是用 setTimeout 300ms 延迟弹的，
+     如果这里也异步渲染，那个弹窗会抢在前面把整页盖住，记录页看着就是空的。 */
+  renderAll();
+  _syncWasEditing=wasEditing;
+}
+var _syncWasEditing=false;
 window.addEventListener('storage',function(e){
   if(e && e.key===ROOT){
-    S=loadState();
-    renderAll();
-    toast('检测到另一个页面改了数据，已同步刷新');
+    syncFromStorage();
+    // 一处只发一句：正在改的那次被同步打断，要明确告诉用户它没保存
+    toast(_syncWasEditing
+      ? '另一个页面改了数据，已同步刷新；刚才那次修改没有保存'
+      : '检测到另一个页面改了数据，已同步刷新');
+    _syncWasEditing=false;
   }
 });
 
