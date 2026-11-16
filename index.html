@@ -842,7 +842,21 @@ var saveFailureShown=false;
 var _loadedRaw=null;    // 最近一次读到/写下的存储原文，用来发现"别的标签页改过了"
 try{ _loadedRaw=localStorage.getItem(ROOT); }catch(e){}
 var S=loadState();
-function uid(){ return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
+/* 生成内部 id。必须避开已存在的 id/pid：
+   同一毫秒内连建两个人时，原来的写法有约 1/4.6 万的概率撞车，
+   撞了之后两人共用 pid——而打卡墓碑是按 pid 区分人的，
+   于是「爸妈互相误拦」这个 bug 会以低概率重新出现。 */
+function uid(){
+  var tries=0, cand='';
+  do{
+    cand='p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)+
+         (tries?Math.random().toString(36).slice(2,4):'');
+    tries++;
+  }while(tries<8 && S && S.people && S.people.some(function(p){
+    return p && (p.id===cand || p.pid===cand);
+  }));
+  return cand;
+}
 function loadState(){
   var o=null, raw=null, parseFailed=false;
   try{ raw=localStorage.getItem(ROOT); }catch(e){ raw=null; }
@@ -1035,14 +1049,20 @@ function persistTombstones(){
   _tombTimer=setTimeout(function(){
     _tombTimer=null;
     if(!_tombDirty) return;
-    _tombDirty=false;
-    flushTombstones();
+    // 先写，成功才清脏标记：写失败就留着，下次还会重试，
+    // 否则存储满时这一批墓碑会彻底丢失，另一个标签页一保存就把删掉的记录补回来。
+    if(flushTombstones()) _tombDirty=false;
   },0);
 }
+/* 落盘以「键集合」为准，顺序表只用来定裁剪顺序：
+   万一将来出现只删键、没清顺序表的路径，残留也不会被重新写回去。 */
 function flushTombstones(){
   try{
-    localStorage.setItem(DEAD_KEY, JSON.stringify({rids:_deadOrder.slice(-5000), taken:_deadTakenOrder.slice(-5000)}));
-  }catch(e){}
+    var rids=_deadOrder.filter(function(k){ return DEAD_RIDS[k]; }).slice(-5000);
+    var taken=_deadTakenOrder.filter(function(k){ return DEAD_TAKEN[k]; }).slice(-5000);
+    localStorage.setItem(DEAD_KEY, JSON.stringify({rids:rids, taken:taken}));
+    return true;
+  }catch(e){ return false; }
 }
 function loadTombstones(){
   try{
@@ -1105,11 +1125,16 @@ function markDeadTaken(k,pid){
    只删键的话，_deadTakenOrder 会被原样落盘，刷新后复活成墓碑，
    那几顿本来还能勾的药就被永久挡住了。 */
 function unmarkDeadTaken(k,pid){
+  if(!k) return;
   var key=takenTombKey(pid,k);
-  var target = DEAD_TAKEN[key] ? key : (DEAD_TAKEN[k] ? k : null);
-  if(!target) return;
-  delete DEAD_TAKEN[target];
-  _deadTakenOrder=_deadTakenOrder.filter(function(x){ return x!==target; });
+  /* 新旧两种键都要删：只删一个的话，另一种会永久残留。
+     旧格式键（无 pid）本来就是从老版本继承下来的，删干净才对。 */
+  var targets=[];
+  if(DEAD_TAKEN[key]) targets.push(key);
+  if(DEAD_TAKEN[k] && k!==key) targets.push(k);
+  if(!targets.length) return;
+  targets.forEach(function(t){ delete DEAD_TAKEN[t]; });
+  _deadTakenOrder=_deadTakenOrder.filter(function(x){ return targets.indexOf(x)<0; });
   persistTombstones();
 }
 /* 把「别的标签页刚写的内容」并入当前 S（原地修改，不替换对象引用）。
@@ -1869,12 +1894,14 @@ function toggleMed(id){
     else { prunedKeys.push(k2); }      // 裁掉的键登记墓碑，双标签页时不会被补回来
   });
   p.taken=cut;
-  prunedKeys.forEach(markDeadTaken);
+  // 必须带这个人：不带 pid 会写成旧格式键，退化成「爸妈互相误拦」
+  var prunePid=(p.pid||p.id);
+  prunedKeys.forEach(function(k2){ markDeadTaken(k2, prunePid); });
   if(!save()){
     // 存不下就把它改回去：否则界面显示「已打卡」，实际什么都没记住，
     // 子女看到的是假的按时吃药记录。刚登记的裁剪墓碑也要撤回。
     p.taken=prevTaken;
-    prunedKeys.forEach(unmarkDeadTaken);
+    prunedKeys.forEach(function(k2){ unmarkDeadTaken(k2, prunePid); });
     renderMeds();
     toast('没能保存，请再点一次');
     return;
@@ -4603,7 +4630,7 @@ loadAskLog();
 // 先把上次留下的墓碑读回来：否则刷新后「删掉的记录被别的标签页补回来」会再发生
 loadTombstones();
 // 页面要关掉时把还没落盘的墓碑写下去，否则最后那一批删除记录会失去保护
-window.addEventListener('pagehide',function(){ if(_tombDirty) flushTombstones(); });
+window.addEventListener('pagehide',function(){ if(_tombDirty && flushTombstones()) _tombDirty=false; });
 renderAll();
 autoPickPeriod();   // 首次打开按当前时间预选时段，避免误记成"晨起"
 loadWeather();      // 只读本机缓存；没缓存就显示一个按钮，不自动联网
