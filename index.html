@@ -928,6 +928,25 @@ function loadState(){
       p.label=String(p.label||''); p.name=String(p.name||''); p.age=String(p.age||''); p.kin=String(p.kin||'');
       if(!p.pid) p.pid=String(p.id||'');      // 老数据没有 pid：用本机 id 补上，保证备份里能带上稳定身份
     });
+    /* 全量去重：同一个人只能有一个 pid。
+       以前从别的设备导入时会原样继承备份里的 pid，两人可能撞车——
+       一旦撞车，mergeIncoming 会把两人映射成同一个人，记录互相搬错人。
+       这里发现重复就重新生成一个，代价是那个人在别的设备上的身份会变，但不至于串数据。 */
+    (function dedupePid(){
+      var seen=Object.create(null);
+      o.people.forEach(function(p){
+        var cand=String(p.pid||'');
+        if(cand && !seen[cand]){ seen[cand]=1; if(!p.id) p.id=cand; return; }
+        // 空或重复：生成一个新的，并保证它本身也不撞（只认这批数据，不看全局 S）
+        var tries=0, nid='';
+        do{
+          nid='p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)+
+              (tries?Math.random().toString(36).slice(2,4):'');
+          tries++;
+        }while(seen[nid] && tries<8);
+        p.pid=nid; p.id=nid; seen[nid]=1;
+      });
+    })();
     if(!o.current||!o.people.some(function(p){return p.id===o.current;})) o.current=o.people[0].id;
     return o;
   }
@@ -1105,7 +1124,11 @@ var _deadTakenOrder=[];
 /* 打卡墓碑的键必须带人：`medKey` 只返回「天|顿」，爸爸和妈妈同一天同一顿的键完全一样。
    不带人的话，爸爸关一次吃药栏，会把妈妈那天打的勾一起拦掉——在她看来就是「勾又没了」。
    旧墓碑（只有「天|顿」）继续兼容：判断时两种都查，登记时一律写带人前缀的新键。 */
-function takenTombKey(pid,k){ return String(pid||'')+'|'+String(k||''); }
+/* pid 为空时不拼前缀：否则会查/写一个 "|天|m1" 这种永远找不到对应人的键。 */
+function takenTombKey(pid,k){
+  var p=String(pid||'');
+  return p ? (p+'|'+String(k||'')) : String(k||'');
+}
 function isDeadTaken(pid,k){
   return !!(DEAD_TAKEN[takenTombKey(pid,k)] || DEAD_TAKEN[k]);
 }
@@ -3419,7 +3442,14 @@ function applyBackup(o){
         swellPrune(tgt,{keepArchived:true});
         if(!curBefore) S.current=tgt.id;   // 用户原本在看谁就还看谁，别把人切走
       }else{
-        var np={id:uid(),pid:String(pp.pid||''),label:String(pp.label||'恢复的人'),name:String(pp.name||''),age:String(pp.age||''),kin:String(pp.kin||''),
+        /* pid 不能照搬备份里的：
+           ① 备份里可能没有 pid（老备份），留空串会写出 "|天|m1" 这种找不到对应人的键；
+           ② 备份里带来的 pid 本机可能已经有人占着（从别的设备导过来），
+              两个人 pid 相同会让 mergeIncoming 的 byId 把两人映射成同一个人，记录互相搬错人。
+           所以：备份的 pid 只有在「非空且本机没人占用」时才沿用，否则新生成一个。 */
+        var _newPid=String(pp.pid||'');
+        if(!_newPid || existingByPid[_newPid]) _newPid=uid();
+        var np={id:_newPid,pid:_newPid,label:String(pp.label||'恢复的人'),name:String(pp.name||''),age:String(pp.age||''),kin:String(pp.kin||''),
           records:recs,meds:meds,taken:(pp.taken&&typeof pp.taken==='object')?pp.taken:{},skipped:(pp.skipped&&typeof pp.skipped==='object')?pp.skipped:{},
           swell:sanitizeSwell(pp.swell),swellOld:sanitizeSwell(pp.swellOld)};
         // 吃药栏开没开也是这个人状态的一部分（备份里带 medOn 才跟着走），恢复后不该擅自变回「关闭」
@@ -4618,8 +4648,14 @@ loadAskLog();
     if(!raw) return;                     // 全新用户：第一次保存时自然会带上
     var obj=JSON.parse(raw);
     if(!obj || !Array.isArray(obj.people)) return;
-    var need=obj.people.some(function(p){ return p && !p.pid; });
-    if(!need) return;
+    /* 需要写回的情况有两种：
+       ① 老数据缺 pid（换手机时会退回「按名字认人」）；
+       ② 加载期去重改动过 pid（两个人本来撞车，被改开了）——
+          不写回的话每次刷新都会重新生成一次，pid 不稳定，
+          而别的设备/标签页是按 pid 认人的。 */
+    var storedPids=obj.people.map(function(p){ return p && String(p.pid||''); }).join(',');
+    var memPids=S.people.map(function(p){ return p && String(p.pid||''); }).join(',');
+    if(storedPids===memPids) return;
     // 读和写之间必须重比一次：另一个标签页刚保存过的话，这里再写就是拿旧数据覆盖新数据
     if(localStorage.getItem(ROOT)!==raw) return;
     var txt=JSON.stringify(S);
