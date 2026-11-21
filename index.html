@@ -1180,6 +1180,7 @@ body.dark .hero-card:not(.empty){
         <span><i style="background:#165C56"></i>高压</span>
         <span><i style="background:#D46024"></i>低压</span>
         <span><i style="background:rgba(22,92,86,.16);border:1px solid rgba(22,92,86,.3)"></i>理想达标带 90–135</span>
+      <div class="hint" style="margin-top:8px;font-size:13.5px">依据说明：高压 135 mmHg 为家庭血压监测偏高阈值（对应诊室 140），90 mmHg 为常见高压偏低参考线；具体控压目标请遵医嘱。</div>
       </div>
       <div id="statLine" class="hint" style="margin-top:12px"></div>
       <div id="extraLine" class="hint" style="margin-top:6px;color:var(--ink2)"></div>
@@ -1948,7 +1949,7 @@ function renderSummary(){
         '<svg class="hero-art" viewBox="0 0 160 160" fill="none" stroke="currentColor" aria-hidden="true">'+'<circle cx="112" cy="48" r="28" stroke-width="1"/>'+'<circle cx="112" cy="48" r="50" stroke-width="0.9" stroke-dasharray="3 5"/>'+'<circle cx="112" cy="48" r="72" stroke-width="0.8"/>'+'<path d="M62 84h22l8-16 12 28 9-18h24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'+'</svg>'+
         '<div class="hero-top"><span class="hero-label">'+(st==='skipped'?'今天已标记未测':'今日血压档案')+'</span><span class="pill ok">准备就绪</span></div>'+
         '<div class="hero-reading"><span class="val">— —<small>/</small>— —</span><span class="unit">mmHg</span></div>'+
-        '<div class="hero-gauge">'+'<div class="hero-gauge-ticks" aria-hidden="true"><i class="maj"></i><i></i><i></i><i></i><i class="maj"></i><i></i><i></i><i></i><i class="maj"></i><i></i><i></i><i></i><i class="maj"></i></div>'+'<div class="hero-gauge-bar"></div><div class="hero-gauge-labels"><span>90</span><span>理想区间 90–135</span><span>180+</span></div></div>'+
+        '<div class="hero-gauge">'+'<div class="hero-gauge-ticks" aria-hidden="true"><i class="maj"></i><i></i><i></i><i></i><i class="maj"></i><i></i><i></i><i></i><i class="maj"></i><i></i><i></i><i></i><i class="maj"></i></div>'+'<div class="hero-gauge-bar"></div><div class="hero-gauge-labels"><span>90</span><span title="依据：家庭自测高压阈值 135 mmHg 与偏低参考 90 mmHg，具体请遵医嘱">理想区间 90–135 · 参考</span><span>180+</span></div></div>'+
         '<div class="hero-empty-note">静坐 5 分钟测完后，在下方填入高压与低压即可开始记录。</div>'+
       '</div>';
     if(advCard) advCard.style.display='none';
@@ -1969,7 +1970,7 @@ function renderSummary(){
         '<div class="hero-gauge">'+
           '<div class="hero-gauge-ticks" aria-hidden="true"><i class="maj"></i><i></i><i></i><i></i><i class="maj"></i><i></i><i></i><i></i><i class="maj"></i><i></i><i></i><i></i><i class="maj"></i></div>'+
           '<div class="hero-gauge-bar"><div class="hero-gauge-dot" style="left:'+pct+'%"></div></div>'+
-          '<div class="hero-gauge-labels"><span>偏低</span><span>理想 90–135</span><span>偏高</span></div>'+
+          '<div class="hero-gauge-labels"><span>偏低</span><span title="依据：家庭自测高压阈值 135 mmHg 与偏低参考 90 mmHg，具体请遵医嘱">理想 90–135 · 参考线</span><span>偏高</span></div>'+
         '</div>'+
         '<div class="hero-kpis">'+
           '<div class="hero-kpi"><span>脉压差</span><b>'+(Number(last.sys)-Number(last.dia))+'</b></div>'+
